@@ -222,6 +222,31 @@ select option { background:var(--surface2); }
 /* TOAST */
 .toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--surface2); border:1px solid var(--gold-dim); border-radius:8px; padding:0.7rem 1rem; font-family:'DM Mono',monospace; font-size:0.73rem; color:var(--text); z-index:300; transform:translateY(80px); opacity:0; transition:all 0.28s ease; max-width:250px; }
 .toast.show { transform:translateY(0); opacity:1; }
+
+/* SYNC BAR */
+.sync-bar { display:flex; align-items:center; gap:0.6rem; padding:0.48rem 1.75rem; background:rgba(201,151,58,0.04); border-bottom:1px solid rgba(201,151,58,0.12); flex-wrap:wrap; }
+.sync-label { font-family:'DM Mono',monospace; font-size:0.57rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-dim); }
+.sync-btn { display:flex; align-items:center; gap:0.3rem; background:var(--surface); border:1px solid var(--border2); border-radius:6px; color:var(--text2); cursor:pointer; font-family:'DM Mono',monospace; font-size:0.61rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.3rem 0.6rem; transition:all 0.18s; white-space:nowrap; }
+.sync-btn:hover { border-color:var(--gold); color:var(--gold); }
+.sync-btn.imp:hover { border-color:var(--blue); color:var(--blue); }
+.sync-hint { font-family:'DM Mono',monospace; font-size:0.55rem; color:var(--muted); margin-left:auto; }
+.last-saved-txt { font-family:'DM Mono',monospace; font-size:0.56rem; color:var(--muted); }
+@media(max-width:600px){ .sync-hint{display:none;} .sync-bar{padding:0.48rem 1rem;} }
+
+/* SYNC MODAL */
+.sync-tabs { display:flex; gap:0; margin-bottom:1rem; border:1px solid var(--border); border-radius:7px; overflow:hidden; }
+.stab { flex:1; background:var(--surface2); border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.48rem; cursor:pointer; transition:all 0.15s; border-right:1px solid var(--border); }
+.stab:last-child { border-right:none; }
+.stab.active { background:var(--gold-dim); color:var(--gold-light); }
+.sync-panel { display:none; }
+.sync-panel.active { display:block; }
+.code-box { background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:0.7rem; font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--text2); word-break:break-all; line-height:1.5; max-height:100px; overflow-y:auto; margin-bottom:0.7rem; cursor:pointer; user-select:all; }
+.import-area { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:7px; color:var(--text); font-family:'DM Mono',monospace; font-size:0.68rem; padding:0.6rem; resize:vertical; min-height:88px; outline:none; }
+.import-area:focus { border-color:var(--blue); }
+.btn-blue { width:100%; margin-top:0.6rem; background:var(--blue); color:#fff; border:none; border-radius:7px; padding:0.6rem; font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; transition:background 0.18s; }
+.btn-blue:hover { background:#6aaae0; }
+.file-upload-label { display:block; margin-top:0.6rem; text-align:center; padding:0.55rem; border:1px dashed var(--border2); border-radius:7px; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.62rem; cursor:pointer; transition:all 0.18s; }
+.file-upload-label:hover { border-color:var(--blue); color:var(--blue); }
 </style>
 </head>
 <body>
@@ -243,6 +268,13 @@ select option { background:var(--surface2); }
   <div class="nav-tab active" onclick="switchPage('books',this)">📚 Materials</div>
   <div class="nav-tab" onclick="switchPage('calendar',this)">📅 Daily Calendar</div>
   <div class="nav-tab" onclick="switchPage('strategies',this)">🧠 Strategies</div>
+</div>
+
+<div class="sync-bar">
+  <span class="sync-label">☁️ Firebase</span>
+  <span class="last-saved-txt" id="lastSavedTxt">Connecting…</span>
+  <button class="sync-btn" style="margin-left:auto" onclick="showSetupScreen()">⚙ Change Config</button>
+  <span class="sync-hint">Data syncs automatically across all your devices</span>
 </div>
 
 <!-- ═══ BOOKS ═══ -->
@@ -435,20 +467,67 @@ let activeId   = null;
 let calLog     = {};
 let modalDate  = null;
 
+// ══════════════ FIREBASE ══════════════
+let db = null;
+const DOC_ID = 'userData';
+
+async function initFirebase(config) {
+  const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+  const { getFirestore, doc, setDoc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+  const app = getApps().length ? getApps()[0] : initializeApp(config);
+  db = getFirestore(app);
+  window._fsDoc  = doc;
+  window._fsSet  = setDoc;
+  window._fsGet  = getDoc;
+  window._fsDb   = db;
+}
+
 // ══════════════ STORAGE ══════════════
 async function persist() {
+  // always save locally as cache
   try {
-    await window.storage.set('scc2_subs',   JSON.stringify(subjects));
-    await window.storage.set('scc2_active', activeId||'');
-    await window.storage.set('scc2_cal',    JSON.stringify(calLog));
+    localStorage.setItem('scc2_subs',   JSON.stringify(subjects));
+    localStorage.setItem('scc2_active', activeId||'');
+    localStorage.setItem('scc2_cal',    JSON.stringify(calLog));
   } catch(e){}
+
+  // save to Firebase
+  if (window._fsDb) {
+    try {
+      const ref = window._fsDoc(window._fsDb, 'studydata', DOC_ID);
+      await window._fsSet(ref, { subjects, activeId: activeId||'', calLog, updatedAt: Date.now() });
+      const now = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      const el = document.getElementById('lastSavedTxt');
+      if(el) el.textContent = '☁️ Synced at ' + now;
+    } catch(e){ console.warn('Firebase save error:', e); }
+  }
 }
+
 async function hydrate() {
+  // load from local cache first (instant)
   try {
-    const a = await window.storage.get('scc2_subs');   if(a) subjects = JSON.parse(a.value);
-    const b = await window.storage.get('scc2_active'); if(b) activeId = b.value||null;
-    const c = await window.storage.get('scc2_cal');    if(c) calLog   = JSON.parse(c.value);
+    const a = localStorage.getItem('scc2_subs');   if(a) subjects = JSON.parse(a);
+    const b = localStorage.getItem('scc2_active'); if(b) activeId = b||null;
+    const c = localStorage.getItem('scc2_cal');    if(c) calLog   = JSON.parse(c);
   } catch(e){}
+
+  // then load from Firebase (authoritative)
+  if (window._fsDb) {
+    try {
+      const ref = window._fsDoc(window._fsDb, 'studydata', DOC_ID);
+      const snap = await window._fsGet(ref);
+      if (snap.exists()) {
+        const data = snap.data();
+        subjects = data.subjects || subjects;
+        activeId = data.activeId || activeId;
+        calLog   = data.calLog   || calLog;
+        // update local cache with cloud data
+        localStorage.setItem('scc2_subs',   JSON.stringify(subjects));
+        localStorage.setItem('scc2_active', activeId||'');
+        localStorage.setItem('scc2_cal',    JSON.stringify(calLog));
+      }
+    } catch(e){ console.warn('Firebase load error:', e); }
+  }
 }
 
 // ══════════════ HELPERS ══════════════
@@ -472,9 +551,7 @@ function addSubject() {
   if (!name) { showToast('Enter a subject name'); return; }
   subjects.push({ id:'sub_'+Date.now(), name, emoji, color, examDate:date||null, books:[], checkedTopics:{}, isPHR:false });
   activeId = subjects[subjects.length-1].id;
-  closeSub();
-  persist();
-  renderAll();
+  closeSub(); persist(); renderAll();
   showToast(`${emoji} ${name} created!`);
 }
 
@@ -802,8 +879,55 @@ function renderAll() {
   if(sub&&sub.examDate) document.getElementById('bEnd').value=sub.examDate;
 }
 
+// ══════════════ SETUP SCREEN ══════════════
+function showSetupScreen() {
+  document.getElementById('setupOverlay').style.display='flex';
+}
+function hideSetupScreen() {
+  document.getElementById('setupOverlay').style.display='none';
+}
+
+async function connectFirebase() {
+  const raw = document.getElementById('fbConfigInput').value.trim();
+  const errEl = document.getElementById('fbError');
+  errEl.textContent = '';
+  if (!raw) { errEl.textContent = 'Please paste your Firebase config.'; return; }
+
+  // extract JSON object from the pasted text (handles full JS snippet or raw JSON)
+  let config;
+  try {
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('No config object found');
+    // convert JS object literal to valid JSON
+    const jsonStr = match[0]
+      .replace(/\/\/.*/g, '')           // strip comments
+      .replace(/([{,]\s*)(\w+)\s*:/g, '$1"$2":')  // quote keys
+      .replace(/,\s*([}\]])/g, '$1');   // trailing commas
+    config = JSON.parse(jsonStr);
+    if (!config.apiKey || !config.projectId) throw new Error('Missing required fields');
+  } catch(e) {
+    errEl.textContent = 'Could not parse config. Make sure you copied the full firebaseConfig object.';
+    return;
+  }
+
+  const btn = document.getElementById('fbConnectBtn');
+  btn.textContent = 'Connecting…'; btn.disabled = true;
+
+  try {
+    await initFirebase(config);
+    localStorage.setItem('scc2_fb_config', JSON.stringify(config));
+    hideSetupScreen();
+    await bootApp();
+    showToast('☁️ Connected to Firebase!');
+  } catch(e) {
+    errEl.textContent = 'Connection failed. Check your config and make sure Firestore is enabled.';
+    btn.textContent = 'Connect'; btn.disabled = false;
+    console.error(e);
+  }
+}
+
 // ══════════════ INIT ══════════════
-(async()=>{
+async function bootApp() {
   await hydrate();
   if(!subjects.length){
     subjects=[{id:'sub_phr',name:'PHR Exam',emoji:'🏅',color:'gold',examDate:'2026-06-18',books:[],checkedTopics:{},isPHR:true}];
@@ -812,7 +936,62 @@ function renderAll() {
   }
   if(!activeId||!subjects.find(s=>s.id===activeId)) activeId=subjects[0].id;
   renderAll();
+}
+
+(async function(){
+  const saved = localStorage.getItem('scc2_fb_config');
+  if (saved) {
+    try {
+      const config = JSON.parse(saved);
+      await initFirebase(config);
+      const el = document.getElementById('lastSavedTxt');
+      if(el) el.textContent = '☁️ Connected';
+    } catch(e){ console.warn('Firebase reconnect failed', e); }
+  } else {
+    showSetupScreen();
+    return; // bootApp runs after user connects
+  }
+  await bootApp();
 })();
 </script>
+<!-- FIREBASE SETUP OVERLAY -->
+<div id="setupOverlay" style="display:none;position:fixed;inset:0;background:rgba(11,13,17,0.97);backdrop-filter:blur(12px);z-index:1000;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:2rem;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:2rem;margin-bottom:0.5rem">☁️</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;margin-bottom:0.4rem">Connect Your Cloud Storage</h2>
+      <p style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.08em">One-time setup — your data will sync across all your devices</p>
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:1.25rem;font-size:0.78rem;color:var(--text2);line-height:1.8">
+      <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem">Step-by-Step Setup (free, ~5 min)</div>
+      <div style="display:flex;flex-direction:column;gap:0.55rem;">
+        <div style="display:flex;gap:0.7rem;align-items:flex-start"><div style="background:var(--gold-dim);color:var(--gold);border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:0.6rem;flex-shrink:0;margin-top:0.1rem">1</div><span>Go to <a href="https://firebase.google.com" target="_blank" style="color:var(--blue)">firebase.google.com</a> and click <strong>Get Started</strong> — sign in with your Google account</span></div>
+        <div style="display:flex;gap:0.7rem;align-items:flex-start"><div style="background:var(--gold-dim);color:var(--gold);border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:0.6rem;flex-shrink:0;margin-top:0.1rem">2</div><span>Click <strong>Create a project</strong>, give it any name (e.g. "my-study-tracker"), turn off Google Analytics, click <strong>Create</strong></span></div>
+        <div style="display:flex;gap:0.7rem;align-items:flex-start"><div style="background:var(--gold-dim);color:var(--gold);border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:0.6rem;flex-shrink:0;margin-top:0.1rem">3</div><span>Inside your project click the <strong>&lt;/&gt;</strong> web icon, give it a nickname, click <strong>Register app</strong> — copy the <strong>firebaseConfig</strong> object shown</span></div>
+        <div style="display:flex;gap:0.7rem;align-items:flex-start"><div style="background:var(--gold-dim);color:var(--gold);border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:0.6rem;flex-shrink:0;margin-top:0.1rem">4</div><span>In the left sidebar click <strong>Firestore Database → Create database → Start in test mode</strong>, pick any location, click <strong>Done</strong></span></div>
+        <div style="display:flex;gap:0.7rem;align-items:flex-start"><div style="background:var(--gold-dim);color:var(--gold);border-radius:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:0.6rem;flex-shrink:0;margin-top:0.1rem">5</div><span>Paste your <strong>firebaseConfig</strong> below and click Connect</span></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:0.7rem">
+      <label style="font-family:'DM Mono',monospace;font-size:0.57rem;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.4rem">Paste your firebaseConfig here</label>
+      <textarea id="fbConfigInput" placeholder='const firebaseConfig = {&#10;  apiKey: "...",&#10;  authDomain: "...",&#10;  projectId: "...",&#10;  ...&#10;};' style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'DM Mono',monospace;font-size:0.68rem;padding:0.7rem;resize:vertical;min-height:120px;outline:none;line-height:1.6;color-scheme:dark">const firebaseConfig = {
+  apiKey: "AIzaSyD9OxdcBplDwWWyipLCRB9OjKBGHJix19Q",
+  authDomain: "studyguide-79991.firebaseapp.com",
+  projectId: "studyguide-79991",
+  storageBucket: "studyguide-79991.firebasestorage.app",
+  messagingSenderId: "515832680988",
+  appId: "1:515832680988:web:ed0acc303f983c722785d9",
+  measurementId: "G-KMSPE8S7V3"
+};</textarea>
+      <div id="fbError" style="color:var(--danger);font-family:'DM Mono',monospace;font-size:0.63rem;margin-top:0.4rem;min-height:1rem"></div>
+    </div>
+
+    <button id="fbConnectBtn" onclick="connectFirebase()" style="width:100%;background:var(--gold);color:#0b0d11;border:none;border-radius:8px;padding:0.75rem;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background 0.18s">Connect to Firebase</button>
+    <p style="text-align:center;font-family:'DM Mono',monospace;font-size:0.56rem;color:var(--muted);margin-top:0.8rem">Your config is saved locally on this device — you won't be asked again</p>
+  </div>
+</div>
+
 </body>
 </html>
