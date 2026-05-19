@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d11;
+  --surface: #13161e;
+  --surface2: #1a1e2a;
+  --surface3: #222736;
+  --border: #242838;
+  --border2: #2e3448;
+  --gold: #c9973a;
+  --gold-light: #e8b84b;
+  --gold-dim: #6b4f1c;
+  --text: #ddd9cc;
+  --text2: #a09d94;
+  --muted: #5c5f6e;
+  --danger: #d95f5f;
+  --green: #4ea87e;
+  --blue: #5a8fc4;
+  --purple: #8a6fc4;
+  --teal: #4aacb0;
+  --radius: 10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; font-size: 14px; }
+body::after { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:9999; }
+
+/* HEADER */
+header { display:flex; align-items:center; gap:1.25rem; padding:0.85rem 1.75rem; border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(11,13,17,0.97); backdrop-filter:blur(16px); z-index:100; flex-wrap:wrap; }
+.brand h1 { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:900; }
+.brand h1 em { color:var(--gold); font-style:normal; }
+.brand p { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-top:0.1rem; }
+
+.subject-tabs { display:flex; gap:0.4rem; flex:1; flex-wrap:wrap; align-items:center; }
+.subject-tab { display:flex; align-items:center; gap:0.4rem; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:0.38rem 0.8rem; cursor:pointer; transition:all 0.18s; font-size:0.78rem; font-weight:500; color:var(--text2); white-space:nowrap; }
+.subject-tab:hover { border-color:var(--border2); color:var(--text); }
+.subject-tab.active { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
+.subject-tab .del-x { font-size:0.6rem; color:var(--muted); margin-left:0.25rem; padding:0.05rem 0.2rem; border-radius:3px; cursor:pointer; }
+.subject-tab .del-x:hover { color:var(--danger); }
+
+.add-sub-btn { background:none; border:1px dashed var(--border2); border-radius:6px; padding:0.38rem 0.7rem; color:var(--muted); cursor:pointer; font-size:0.72rem; font-family:'DM Mono',monospace; letter-spacing:0.05em; transition:all 0.18s; white-space:nowrap; }
+.add-sub-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+.cd-pill { background:linear-gradient(135deg,#1a1508,#1e190a); border:1px solid var(--gold-dim); border-radius:8px; padding:0.45rem 0.9rem; text-align:center; flex-shrink:0; }
+.cd-pill .n { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; color:var(--gold); line-height:1; }
+.cd-pill .l { font-family:'DM Mono',monospace; font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-dim); margin-top:0.1rem; }
+
+/* NAV */
+.nav-tabs { display:flex; border-bottom:1px solid var(--border); padding:0 1.75rem; background:var(--bg); gap:0; overflow-x:auto; }
+.nav-tab { padding:0.7rem 1.1rem; font-size:0.72rem; font-family:'DM Mono',monospace; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.18s; white-space:nowrap; }
+.nav-tab:hover { color:var(--text2); }
+.nav-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+/* PAGES */
+.page { display:none; padding:1.5rem 1.75rem 3rem; }
+.page.active { display:block; }
+
+/* LAYOUTS */
+.two-col { display:grid; grid-template-columns:1fr 310px; gap:1.5rem; }
+@media(max-width:900px){ .two-col{grid-template-columns:1fr;} .page{padding:1rem 1rem 3rem;} header{padding:0.75rem 1rem;} .nav-tabs{padding:0 1rem;} }
+
+/* SECTION TITLE */
+.sec-t { font-family:'DM Mono',monospace; font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.6rem; }
+.sec-t::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* CARD */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.15rem; }
+
+/* FORM */
+.fg-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; }
+.fg-full { grid-column:1/-1; }
+.fg { display:flex; flex-direction:column; gap:0.28rem; }
+label.lbl { font-family:'DM Mono',monospace; font-size:0.57rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--muted); }
+input[type=text], input[type=number], input[type=date], select { background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.87rem; padding:0.52rem 0.75rem; width:100%; outline:none; transition:border-color 0.18s; color-scheme:dark; -webkit-appearance:none; }
+input:focus, select:focus { border-color:var(--gold); }
+select option { background:var(--surface2); }
+.btn-gold { width:100%; margin-top:0.8rem; background:var(--gold); color:#0b0d11; border:none; border-radius:7px; padding:0.62rem 1.2rem; font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:500; cursor:pointer; transition:background 0.18s, transform 0.1s; }
+.btn-gold:hover { background:var(--gold-light); }
+.btn-gold:active { transform:scale(0.98); }
+
+/* BOOK CARD */
+.book-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1rem 1.15rem; position:relative; overflow:hidden; margin-bottom:0.8rem; animation:fadeUp 0.25s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.book-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--gold); border-radius:3px 0 0 3px; }
+.book-card.st-done::before { background:var(--blue); }
+.book-card.st-behind::before { background:var(--danger); }
+.book-card.st-ok::before { background:var(--green); }
+.bk-header { display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; }
+.bk-title { font-family:'Playfair Display',serif; font-size:0.98rem; font-weight:700; flex:1; }
+.bk-del { background:none; border:1px solid var(--border); border-radius:5px; color:var(--muted); cursor:pointer; padding:0.22rem 0.45rem; font-size:0.72rem; transition:all 0.15s; }
+.bk-del:hover { border-color:var(--danger); color:var(--danger); }
+.bk-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.55rem; margin-top:0.8rem; }
+.bs { display:flex; flex-direction:column; gap:0.12rem; }
+.bs-lbl { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+.bs-val { font-size:0.88rem; font-weight:500; }
+.c-gold { color:var(--gold); font-family:'DM Mono',monospace; }
+.c-danger { color:var(--danger); }
+.c-green { color:var(--green); }
+.c-blue { color:var(--blue); }
+.bk-progress { margin-top:0.8rem; display:flex; flex-direction:column; gap:0.28rem; }
+.bk-pi { display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:0.58rem; color:var(--muted); }
+.prog-bar { height:4px; background:var(--border); border-radius:3px; overflow:hidden; }
+.prog-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--gold-dim),var(--gold)); transition:width 0.4s ease; }
+.prog-fill.done { background:linear-gradient(90deg,#2d6349,var(--green)); }
+.bk-log { display:flex; align-items:center; gap:0.45rem; margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--border); }
+.bk-log label { font-family:'DM Mono',monospace; font-size:0.56rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); flex:1; }
+.bk-log input { width:62px; text-align:center; padding:0.28rem 0.4rem; font-size:0.8rem; }
+.log-btn { background:var(--surface2); border:1px solid var(--border); border-radius:5px; color:var(--text2); font-family:'DM Mono',monospace; font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.28rem 0.55rem; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.log-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+/* STATS */
+.stat-row { display:grid; grid-template-columns:repeat(2,1fr); gap:0.7rem; margin-bottom:1.1rem; }
+.stat-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0.85rem; text-align:center; }
+.stat-box .sv { font-family:'Playfair Display',serif; font-size:1.45rem; font-weight:700; color:var(--gold); line-height:1; }
+.stat-box .sl { font-family:'DM Mono',monospace; font-size:0.56rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-top:0.22rem; }
+
+/* TOPICS */
+.topic-row { display:flex; align-items:center; gap:0.6rem; padding:0.48rem 0; border-bottom:1px solid var(--border); }
+.topic-row:last-child { border-bottom:none; }
+.t-check { width:15px; height:15px; border:1px solid var(--border); border-radius:3px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; font-size:0.62rem; }
+.t-check.on { background:var(--green); border-color:var(--green); color:#fff; }
+.t-name { flex:1; font-size:0.78rem; }
+.t-name.done { text-decoration:line-through; color:var(--muted); }
+.t-bar { width:42px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.t-fill { height:100%; background:var(--gold); border-radius:2px; }
+.t-pct { font-family:'DM Mono',monospace; font-size:0.63rem; color:var(--muted); width:26px; text-align:right; }
+
+/* EMPTY */
+.empty { text-align:center; padding:2.25rem 1rem; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.73rem; letter-spacing:0.1em; border:1px dashed var(--border); border-radius:var(--radius); }
+.empty .ei { font-size:1.75rem; margin-bottom:0.55rem; opacity:0.35; }
+
+/* CALENDAR */
+.month-sep { font-family:'Playfair Display',serif; font-size:0.92rem; font-weight:700; color:var(--text2); margin:1.2rem 0 0.7rem; padding-bottom:0.38rem; border-bottom:1px solid var(--border); }
+.month-sep span { color:var(--gold); }
+.day-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:0.45rem; margin-bottom:1.25rem; }
+.day-head { font-family:'DM Mono',monospace; font-size:0.55rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); text-align:center; padding-bottom:0.3rem; }
+.day-cell { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:0.45rem 0.35rem; min-height:58px; cursor:pointer; transition:all 0.18s; display:flex; flex-direction:column; gap:0.25rem; }
+.day-cell:hover { border-color:var(--border2); background:var(--surface2); }
+.day-cell.today { border-color:var(--gold); background:rgba(201,151,58,0.06); }
+.day-cell.has-log { border-color:var(--green); }
+.day-cell.past { opacity:0.55; }
+.day-cell.empty-cell { background:none; border-color:transparent; cursor:default; }
+.day-cell.future-locked { opacity:0.35; cursor:default; pointer-events:none; }
+.day-num { font-family:'DM Mono',monospace; font-size:0.67rem; color:var(--muted); font-weight:500; }
+.day-cell.today .day-num { color:var(--gold); font-weight:600; }
+.day-dots { display:flex; flex-wrap:wrap; gap:2px; margin-top:auto; }
+.day-dot { width:5px; height:5px; border-radius:50%; background:var(--muted); }
+.day-dot.read { background:var(--green); }
+.day-dot.s0 { background:var(--gold); }
+.day-dot.s1 { background:var(--blue); }
+.day-dot.s2 { background:var(--purple); }
+.day-dot.s3 { background:var(--teal); }
+.day-dot.s4 { background:var(--danger); }
+.day-dot.s5 { background:#c46aa0; }
+.day-dot.s6 { background:var(--gold-dim); }
+
+/* STREAK */
+.streak-bar { display:flex; gap:0.6rem; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0.8rem 1rem; margin-bottom:1.1rem; }
+.streak-fire { font-size:1.35rem; }
+.streak-num { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; color:var(--gold); line-height:1; }
+.streak-lbl { font-family:'DM Mono',monospace; font-size:0.56rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); }
+
+/* LEGEND */
+.cal-legend { display:flex; flex-wrap:wrap; gap:0.65rem; margin-bottom:1.1rem; }
+.leg-item { display:flex; align-items:center; gap:0.3rem; font-family:'DM Mono',monospace; font-size:0.57rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; }
+.leg-dot { width:7px; height:7px; border-radius:50%; }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.72); backdrop-filter:blur(5px); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:var(--surface); border:1px solid var(--border2); border-radius:14px; padding:1.4rem; width:100%; max-width:450px; transform:translateY(12px); transition:transform 0.2s; max-height:90vh; overflow-y:auto; }
+.modal-overlay.open .modal { transform:translateY(0); }
+.modal-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center; }
+.modal-close { background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.1rem; line-height:1; transition:color 0.15s; }
+.modal-close:hover { color:var(--text); }
+
+.chk-group { display:flex; flex-direction:column; gap:0.48rem; margin-bottom:1rem; }
+.chk-row { display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.8rem; background:var(--surface2); border:1px solid var(--border); border-radius:7px; cursor:pointer; transition:all 0.15s; }
+.chk-row:hover { border-color:var(--border2); }
+.chk-row.on { border-color:var(--green); background:rgba(78,168,126,0.07); }
+.chk-row.gold-row.on { border-color:var(--gold); background:rgba(201,151,58,0.07); }
+.chk-box { width:17px; height:17px; border:1px solid var(--border2); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.72rem; transition:all 0.15s; }
+.chk-row.on .chk-box { background:var(--green); border-color:var(--green); color:#fff; }
+.chk-row.gold-row.on .chk-box { background:var(--gold); border-color:var(--gold); color:#000; }
+.chk-label { font-size:0.8rem; font-weight:500; flex:1; }
+.chk-badge { font-family:'DM Mono',monospace; font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.12rem 0.4rem; border-radius:3px; background:var(--surface3); color:var(--muted); }
+.modal-save { width:100%; background:var(--gold); color:#0b0d11; border:none; border-radius:7px; padding:0.62rem; font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; font-weight:500; transition:background 0.18s; margin-top:0.7rem; }
+.modal-save:hover { background:var(--gold-light); }
+
+/* STRATEGIES */
+.strategy-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:0.8rem; transition:border-color 0.18s; }
+.strategy-card:hover { border-color:var(--border2); }
+.strat-hdr { display:flex; align-items:center; gap:0.7rem; padding:0.95rem 1.1rem; cursor:pointer; }
+.strat-icon { font-size:1.15rem; flex-shrink:0; }
+.strat-info { flex:1; }
+.strat-name { font-size:0.88rem; font-weight:600; margin-bottom:0.18rem; }
+.strat-tagline { font-size:0.72rem; color:var(--text2); }
+.strat-badges { display:flex; gap:0.35rem; flex-wrap:wrap; margin-top:0.3rem; }
+.sbadge { font-family:'DM Mono',monospace; font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.1rem 0.38rem; border-radius:3px; }
+.sb-gold { background:rgba(201,151,58,0.15); color:var(--gold); border:1px solid rgba(201,151,58,0.3); }
+.sb-blue { background:rgba(90,143,196,0.15); color:var(--blue); border:1px solid rgba(90,143,196,0.3); }
+.sb-green { background:rgba(78,168,126,0.15); color:var(--green); border:1px solid rgba(78,168,126,0.3); }
+.sb-purple { background:rgba(138,111,196,0.15); color:var(--purple); border:1px solid rgba(138,111,196,0.3); }
+.sb-teal { background:rgba(74,172,176,0.15); color:var(--teal); border:1px solid rgba(74,172,176,0.3); }
+.strat-chevron { color:var(--muted); font-size:0.68rem; transition:transform 0.2s; flex-shrink:0; }
+.strategy-card.open .strat-chevron { transform:rotate(180deg); }
+.strat-body { display:none; padding:0 1.1rem 1rem; border-top:1px solid var(--border); }
+.strategy-card.open .strat-body { display:block; }
+.strat-desc { font-size:0.78rem; color:var(--text2); line-height:1.7; padding-top:0.85rem; margin-bottom:0.8rem; }
+.strat-steps { list-style:none; display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.85rem; }
+.strat-steps li { display:flex; gap:0.55rem; font-size:0.76rem; color:var(--text2); line-height:1.5; }
+.step-n { background:var(--surface3); border:1px solid var(--border2); border-radius:4px; width:19px; height:19px; display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace; font-size:0.57rem; color:var(--gold); flex-shrink:0; margin-top:0.13rem; }
+.strat-links { display:flex; flex-direction:column; gap:0.38rem; }
+.strat-link { display:inline-flex; align-items:center; gap:0.35rem; font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--blue); text-decoration:none; padding:0.28rem 0.55rem; background:rgba(90,143,196,0.08); border:1px solid rgba(90,143,196,0.22); border-radius:5px; transition:all 0.15s; }
+.strat-link:hover { background:rgba(90,143,196,0.16); border-color:rgba(90,143,196,0.45); }
+
+/* TOAST */
+.toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--surface2); border:1px solid var(--gold-dim); border-radius:8px; padding:0.7rem 1rem; font-family:'DM Mono',monospace; font-size:0.73rem; color:var(--text); z-index:300; transform:translateY(80px); opacity:0; transition:all 0.28s ease; max-width:250px; }
+.toast.show { transform:translateY(0); opacity:1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>Study <em>Command</em></h1>
+    <p>Multi-Subject Learning Tracker</p>
+  </div>
+  <div class="subject-tabs" id="subjectTabs"></div>
+  <button class="add-sub-btn" onclick="openNewSub()">＋ New Subject</button>
+  <div class="cd-pill" id="cdPill" style="display:none">
+    <div class="n" id="daysLeft">—</div>
+    <div class="l" id="cdLabel">days to exam</div>
+  </div>
+</header>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchPage('books',this)">📚 Materials</div>
+  <div class="nav-tab" onclick="switchPage('calendar',this)">📅 Daily Calendar</div>
+  <div class="nav-tab" onclick="switchPage('strategies',this)">🧠 Strategies</div>
+</div>
+
+<!-- ═══ BOOKS ═══ -->
+<div class="page active" id="page-books">
+  <div class="two-col">
+    <div>
+      <div class="sec-t">Add Study Material</div>
+      <div class="card" style="margin-bottom:1.4rem">
+        <div class="fg-grid">
+          <div class="fg fg-full"><label class="lbl">Title / Material Name</label><input type="text" id="bTitle" placeholder="e.g. PHR Study Guide, SQL Pocket Reference…"></div>
+          <div class="fg"><label class="lbl">Total Pages</label><input type="number" id="bTotal" placeholder="320" min="1"></div>
+          <div class="fg"><label class="lbl">Pages Read So Far</label><input type="number" id="bRead" placeholder="0" min="0"></div>
+          <div class="fg"><label class="lbl">Start Date</label><input type="date" id="bStart"></div>
+          <div class="fg"><label class="lbl">Goal End Date</label><input type="date" id="bEnd"></div>
+        </div>
+        <button class="btn-gold" onclick="addBook()">＋ Add to <span id="subNameBtn">Subject</span></button>
+      </div>
+      <div class="sec-t">Materials</div>
+      <div id="booksList"></div>
+    </div>
+    <div>
+      <div class="sec-t">Overview</div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="sv" id="stBooks">0</div><div class="sl">Materials</div></div>
+        <div class="stat-box"><div class="sv" id="stLeft">0</div><div class="sl">Pages Left</div></div>
+        <div class="stat-box"><div class="sv" id="stDaily">0</div><div class="sl">Pgs/Day Needed</div></div>
+        <div class="stat-box"><div class="sv" id="stPct">0%</div><div class="sl">Complete</div></div>
+      </div>
+      <div id="phrSection" style="display:none">
+        <div class="sec-t">PHR Exam Domains</div>
+        <div class="card" id="topicsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CALENDAR ═══ -->
+<div class="page" id="page-calendar">
+  <div class="two-col">
+    <div>
+      <div class="sec-t">Study Calendar — Click Any Past or Present Day</div>
+      <div class="streak-bar">
+        <div class="streak-fire">🔥</div>
+        <div style="flex:1">
+          <div class="streak-num" id="streakNum">0</div>
+          <div class="streak-lbl">Day Streak</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'DM Mono',monospace;font-size:0.63rem;color:var(--gold)" id="totalDays">0 days logged</div>
+          <div style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--muted)">total</div>
+        </div>
+      </div>
+      <div class="cal-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Read</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Active Recall</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div>Spaced Rep</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>Feynman</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Practice Exam</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--danger)"></div>Pomodoro</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#c46aa0"></div>Mind Map</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--gold-dim)"></div>Application</div>
+      </div>
+      <div id="calGrid"></div>
+    </div>
+    <div>
+      <div class="sec-t">This Week</div>
+      <div class="card" id="weekSummary" style="margin-bottom:1.2rem;font-size:0.78rem"></div>
+      <div class="sec-t">Forecast</div>
+      <div class="card" id="forecastBox" style="font-size:0.78rem;color:var(--text2);line-height:1.7"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STRATEGIES ═══ -->
+<div class="page" id="page-strategies">
+  <div style="max-width:700px">
+    <div class="sec-t">Proven Study Methods — Expand for Steps &amp; Source Links</div>
+    <div id="stratContainer"></div>
+  </div>
+</div>
+
+<!-- DAY MODAL -->
+<div class="modal-overlay" id="dayModal">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modalDateTitle">May 19</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="sec-t" style="margin-bottom:0.55rem">Reading</div>
+    <div class="chk-group">
+      <div class="chk-row gold-row" id="row-read" onclick="toggleCR('row-read','chk-read')">
+        <div class="chk-box" id="chk-read"></div>
+        <span class="chk-label">📖 Completed reading today</span>
+      </div>
+    </div>
+    <div class="sec-t" style="margin-bottom:0.55rem">Strategies Used Today</div>
+    <div class="chk-group" id="stratChks"></div>
+    <div style="margin-bottom:0.8rem">
+      <label class="lbl" style="display:block;margin-bottom:0.3rem">Notes (optional)</label>
+      <input type="text" id="modalNotes" placeholder="Topics covered, breakthroughs, struggles…">
+    </div>
+    <button class="modal-save" onclick="saveDay()">Save Day Log</button>
+  </div>
+</div>
+
+<!-- NEW SUBJECT MODAL -->
+<div class="modal-overlay" id="newSubModal">
+  <div class="modal">
+    <div class="modal-title">
+      <span>Add New Subject</span>
+      <button class="modal-close" onclick="closeSub()">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.7rem">
+      <div class="fg"><label class="lbl">Subject Name</label><input type="text" id="nsName" placeholder="Bookkeeping, SQL Coding, Data Analysis…"></div>
+      <div class="fg"><label class="lbl">Icon / Emoji</label><input type="text" id="nsEmoji" placeholder="📊" maxlength="4"></div>
+      <div class="fg"><label class="lbl">Goal / Exam Date (optional)</label><input type="date" id="nsDate"></div>
+      <div class="fg">
+        <label class="lbl">Accent Color</label>
+        <select id="nsColor">
+          <option value="gold">Gold</option><option value="blue">Blue</option>
+          <option value="green">Green</option><option value="purple">Purple</option>
+          <option value="teal">Teal</option><option value="danger">Red</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-gold" onclick="addSubject()">Create Subject</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════ DATA ══════════════
+const STRATEGIES = [
+  { id:'s0', icon:'🎯', name:'Active Recall', tagline:'Test yourself instead of re-reading',
+    badges:[{l:'★ Highest ROI',c:'sb-gold'},{l:'Memory',c:'sb-green'}],
+    desc:'After studying a section, close the book and retrieve everything from memory — on paper or out loud. Retrieval (not review) is what builds durable memories. For PHR: quiz yourself on legal thresholds, FMLA rules, FLSA exemptions, and key percentages.',
+    steps:['Read a section once, actively (highlight sparingly)','Close the book. Write every key point you remember','Open the book. Mark what you missed — those are your real gaps','Review gaps only, then recall again the next day'],
+    links:[{l:'Learning Scientists — Retrieval Practice',u:'https://www.learningscientists.org/retrieval-practice'},{l:'Ali Abdaal — Active Recall Guide',u:'https://aliabdaal.com/activerecallstudytechnique/'}]
+  },
+  { id:'s1', icon:'🔁', name:'Spaced Repetition', tagline:'Review at widening intervals before you forget',
+    badges:[{l:'Science-Backed',c:'sb-blue'},{l:'Long-Term Retention',c:'sb-green'}],
+    desc:'Review material right before you would naturally forget it — the spacing effect. Intervals grow: 1 day → 3 days → 1 week → 2 weeks. Use Anki to automate scheduling. For PHR, create flashcards for every statute, percentage threshold, and legal deadline.',
+    steps:['Install Anki (free) or use Quizlet with a spaced schedule','Create 1 card per atomic fact (single Q&A, not paragraphs)','Review due cards every morning before new material','Flag hard cards — they will appear more frequently automatically'],
+    links:[{l:'Ncase — How to Remember Anything Forever',u:'https://ncase.me/remember/'},{l:'Gwern — Spaced Repetition Deep Dive',u:'https://gwern.net/spaced-repetition'},{l:'Anki App (free)',u:'https://apps.ankiweb.net/'}]
+  },
+  { id:'s2', icon:'🧩', name:'Feynman Technique', tagline:'Teach it simply — gaps reveal themselves',
+    badges:[{l:'Deep Understanding',c:'sb-purple'},{l:'Exam Reasoning',c:'sb-gold'}],
+    desc:'Explain every concept as if teaching someone with no background in your subject. Where you stumble or reach for jargon, that is your knowledge gap. Return to the source, fill the gap, then re-explain until it flows naturally.',
+    steps:['Pick one concept (e.g., "How does FMLA intermittent leave work?")','Explain it out loud or on paper — no notes allowed','Notice where you hesitate, get vague, or use undefined terms','Study only those gaps, then re-explain from scratch'],
+    links:[{l:'Farnam Street — The Feynman Technique',u:'https://fs.blog/feynman-technique/'},{l:'Cal Newport — How to Study Smart',u:'https://calnewport.com/blog/2008/02/18/how-to-become-a-straight-a-student/'}]
+  },
+  { id:'s3', icon:'📝', name:'Practice Exams First', tagline:'Fail fast to learn what matters',
+    badges:[{l:'Diagnostic',c:'sb-teal'},{l:'PHR-Specific',c:'sb-gold'}],
+    desc:'Take a full practice exam on Day 1 — even if you fail it. This "generation effect" primes your brain to notice relevant information while studying. PHR tests scenario-based "best answer" thinking, so early exposure to question style is critical.',
+    steps:['Take an HRCI or Mometrix PHR practice exam cold on Day 1','Note every question type you struggled with — that is your roadmap','Target 75%+ on practice exams before your actual exam date','Retake different practice sets in the final 2 weeks'],
+    links:[{l:'HRCI Official PHR Exam Page',u:'https://www.hrci.org/certifications/phr-certifications-info/phr'},{l:'Mometrix PHR Practice Tests',u:'https://www.mometrix.com/academy/phr-practice-test/'},{l:'360training PHR Study Tools',u:'https://www.360training.com/hr-training/phr-study-guide'}]
+  },
+  { id:'s4', icon:'⏱️', name:'Pomodoro Technique', tagline:'25-min sprints with intentional breaks',
+    badges:[{l:'Execution',c:'sb-green'},{l:'Anti-Fatigue',c:'sb-blue'}],
+    desc:'Work in 25-min focused blocks (phone away, no extra tabs), then take a 5-min break. After 4 blocks, take a 20-min break. Use breaks for Anki reviews, water, or a walk — not social media. Aim for 4–6 pomodoros per day on an aggressive study schedule.',
+    steps:['Set a timer for 25 minutes — one task only, no distractions','When the timer rings, mark one pomodoro complete','Take a 5-min break (stand, breathe, hydrate)','After 4 pomodoros, take a 20-min break before the next round'],
+    links:[{l:'Official Pomodoro Technique Site',u:'https://francescocirillo.com/pages/pomodoro-technique'},{l:'Pomofocus — Free Web Timer',u:'https://pomofocus.io/'}]
+  },
+  { id:'s5', icon:'🗺️', name:'Mind Mapping', tagline:'Visualize entire domains as connected webs',
+    badges:[{l:'Visual',c:'sb-purple'},{l:'Big-Picture',c:'sb-teal'}],
+    desc:'Draw a central concept, branch out to related ideas, laws, exceptions, and connections. The physical act of drawing deepens encoding. For PHR, map how domains connect — e.g., how FLSA links to compensation strategy and job classification exemptions.',
+    steps:['Write a domain name in the center (e.g., "Total Rewards")','Branch out: major subtopics (comp, benefits, equity, pay equity)','Sub-branch: key laws, thresholds, formulas, exceptions','Connect cross-domain branches with dotted lines'],
+    links:[{l:'Tony Buzan — Mind Mapping Guide',u:'https://www.tonybuzan.edu.sg/about/mind-mapping/'},{l:'MindMeister (free online tool)',u:'https://www.mindmeister.com/'},{l:'Coggle (simple free mind maps)',u:'https://coggle.it/'}]
+  },
+  { id:'s6', icon:'⚡', name:'Application Practice', tagline:'PHR tests "best answer" — practice choosing',
+    badges:[{l:'PHR-Specific',c:'sb-gold'},{l:'Scenario-Based',c:'sb-blue'}],
+    desc:'PHR questions are never simple definitions — they present realistic HR scenarios with 4 plausible answers. Practice distinguishing "good" from "best." After learning a concept, write or find 3 scenario questions around it and practice selecting the most strategic HR response.',
+    steps:['After studying any topic, write 3 scenario-based questions','Include 4 answer choices — 2 wrong, 2 "right-ish"','Justify why one answer is best from a strategic HR perspective','Focus on what a proactive, senior HR professional would prioritize'],
+    links:[{l:'HRCI PHR Exam Content Outline (free PDF)',u:'https://www.hrci.org/docs/default-source/web-files/phr-phri-exam-content-outline.pdf'},{l:'SHRM Learning System (scenario practice)',u:'https://www.shrm.org/certification/learning-system/'}]
+  },
+];
+
+const PHR_TOPICS = [
+  {name:'Business Management',weight:20},
+  {name:'Talent Planning & Acquisition',weight:16},
+  {name:'Learning & Development',weight:10},
+  {name:'Total Rewards',weight:15},
+  {name:'Employee & Labor Relations',weight:39},
+];
+
+// ══════════════ STATE ══════════════
+let subjects   = [];
+let activeId   = null;
+let calLog     = {};
+let modalDate  = null;
+
+// ══════════════ STORAGE ══════════════
+async function persist() {
+  try {
+    await window.storage.set('scc2_subs',   JSON.stringify(subjects));
+    await window.storage.set('scc2_active', activeId||'');
+    await window.storage.set('scc2_cal',    JSON.stringify(calLog));
+  } catch(e){}
+}
+async function hydrate() {
+  try {
+    const a = await window.storage.get('scc2_subs');   if(a) subjects = JSON.parse(a.value);
+    const b = await window.storage.get('scc2_active'); if(b) activeId = b.value||null;
+    const c = await window.storage.get('scc2_cal');    if(c) calLog   = JSON.parse(c.value);
+  } catch(e){}
+}
+
+// ══════════════ HELPERS ══════════════
+const todayStr = () => new Date().toISOString().split('T')[0];
+const fmtDate  = s => new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const daysUntil= s => Math.max(0, Math.ceil((new Date(s+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000));
+const activeSub= () => subjects.find(s=>s.id===activeId)||null;
+
+// ══════════════ SUBJECTS ══════════════
+function openNewSub() {
+  ['nsName','nsEmoji','nsDate'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('newSubModal').classList.add('open');
+}
+function closeSub() { document.getElementById('newSubModal').classList.remove('open'); }
+
+function addSubject() {
+  const name  = document.getElementById('nsName').value.trim();
+  const emoji = document.getElementById('nsEmoji').value.trim()||'📖';
+  const date  = document.getElementById('nsDate').value;
+  const color = document.getElementById('nsColor').value;
+  if (!name) { showToast('Enter a subject name'); return; }
+  subjects.push({ id:'sub_'+Date.now(), name, emoji, color, examDate:date||null, books:[], checkedTopics:{}, isPHR:false });
+  activeId = subjects[subjects.length-1].id;
+  closeSub();
+  persist();
+  renderAll();
+  showToast(`${emoji} ${name} created!`);
+}
+
+function switchSubject(id) { activeId=id; persist(); renderAll(); }
+function deleteSubject(id,e) {
+  e.stopPropagation();
+  if(subjects.length<=1){showToast('Need at least one subject');return;}
+  subjects=subjects.filter(s=>s.id!==id);
+  if(activeId===id) activeId=subjects[0].id;
+  persist(); renderAll();
+}
+
+function renderSubjectTabs() {
+  document.getElementById('subjectTabs').innerHTML = subjects.map(s=>`
+    <div class="subject-tab ${s.id===activeId?'active':''}" onclick="switchSubject('${s.id}')">
+      <span>${s.emoji}</span><span>${s.name}</span>
+      ${subjects.length>1?`<span class="del-x" onclick="deleteSubject('${s.id}',event)">✕</span>`:''}
+    </div>`).join('');
+
+  const sub = activeSub();
+  const pill = document.getElementById('cdPill');
+  if(sub&&sub.examDate) {
+    document.getElementById('daysLeft').textContent = daysUntil(sub.examDate);
+    document.getElementById('cdLabel').textContent  = `days · ${fmtDate(sub.examDate)}`;
+    pill.style.display='block';
+  } else { pill.style.display='none'; }
+
+  if(sub) document.getElementById('subNameBtn').textContent=sub.name;
+}
+
+// ══════════════ BOOKS ══════════════
+function addBook() {
+  const sub=activeSub(); if(!sub) return;
+  const title=document.getElementById('bTitle').value.trim();
+  const total=parseInt(document.getElementById('bTotal').value)||0;
+  const read=parseInt(document.getElementById('bRead').value)||0;
+  const start=document.getElementById('bStart').value;
+  const end=document.getElementById('bEnd').value;
+  if(!title){showToast('Enter a title');return;}
+  if(!total){showToast('Enter total pages');return;}
+  if(!end){showToast('Set a goal end date');return;}
+  sub.books.push({id:'bk_'+Date.now(),title,total,read:Math.min(read,total),start:start||todayStr(),end});
+  ['bTitle','bTotal','bRead'].forEach(id=>document.getElementById(id).value='');
+  persist(); renderBooks(); updateStats(); showToast('📚 Added!');
+}
+
+function deleteBook(bid) {
+  const sub=activeSub(); if(!sub) return;
+  sub.books=sub.books.filter(b=>b.id!==bid);
+  persist(); renderBooks(); updateStats();
+}
+
+function logProgress(bid) {
+  const sub=activeSub(); if(!sub) return;
+  const inp=document.getElementById('log-'+bid);
+  const pages=parseInt(inp.value)||0;
+  if(!pages){showToast('Enter pages read');return;}
+  const b=sub.books.find(x=>x.id===bid); if(!b) return;
+  b.read=Math.min(b.read+pages,b.total);
+  persist(); renderBooks(); updateStats();
+  showToast(`+${pages} pages logged!`);
+  inp.value='';
+}
+
+function renderBooks() {
+  const sub=activeSub();
+  const el=document.getElementById('booksList');
+  if(!sub||!sub.books.length){ el.innerHTML=`<div class="empty"><div class="ei">📚</div>No materials yet — add one above</div>`; return; }
+  el.innerHTML=sub.books.map(b=>{
+    const left=b.total-b.read, pct=Math.round(b.read/b.total*100);
+    const dLeft=daysUntil(b.end), ppd=dLeft>0?Math.ceil(left/dLeft):left;
+    const done=pct>=100, behind=!done&&ppd>40;
+    const sc=done?'st-done':behind?'st-behind':'st-ok';
+    const vc=done?'c-blue':behind?'c-danger':'c-gold';
+    return `
+    <div class="book-card ${sc}">
+      <div class="bk-header">
+        <div class="bk-title">${b.title}</div>
+        <button class="bk-del" onclick="deleteBook('${b.id}')">✕</button>
+      </div>
+      <div class="bk-stats">
+        <div class="bs"><span class="bs-lbl">Pgs/Day Needed</span><span class="bs-val ${vc}">${done?'✓ Done':ppd}</span></div>
+        <div class="bs"><span class="bs-lbl">Remaining</span><span class="bs-val">${left} / ${b.total}</span></div>
+        <div class="bs"><span class="bs-lbl">Deadline</span><span class="bs-val">${fmtDate(b.end)} <span style="color:var(--muted);font-size:0.72em">(${dLeft}d)</span></span></div>
+      </div>
+      <div class="bk-progress">
+        <div class="bk-pi"><span>${b.read} read</span><span>${pct}%</span></div>
+        <div class="prog-bar"><div class="prog-fill ${done?'done':''}" style="width:${pct}%"></div></div>
+      </div>
+      <div class="bk-log">
+        <label>Log today's pages</label>
+        <input type="number" id="log-${b.id}" placeholder="0" min="0">
+        <button class="log-btn" onclick="logProgress('${b.id}')">Update</button>
+      </div>
+    </div>`; }).join('');
+}
+
+function updateStats() {
+  const sub=activeSub();
+  if(!sub||!sub.books.length){
+    ['stBooks','stLeft','stDaily','stPct'].forEach(id=>document.getElementById(id).textContent=id==='stPct'?'0%':'0');
+    return;
+  }
+  const total=sub.books.reduce((s,b)=>s+b.total,0);
+  const read=sub.books.reduce((s,b)=>s+b.read,0);
+  const daily=sub.books.reduce((s,b)=>{const l=b.total-b.read;if(l<=0)return s;const d=daysUntil(b.end);return s+(d>0?Math.ceil(l/d):l);},0);
+  document.getElementById('stBooks').textContent=sub.books.length;
+  document.getElementById('stLeft').textContent=total-read;
+  document.getElementById('stDaily').textContent=daily;
+  document.getElementById('stPct').textContent=Math.round(read/total*100)+'%';
+}
+
+function renderTopics() {
+  const sub=activeSub();
+  const sec=document.getElementById('phrSection');
+  if(!sub||!sub.isPHR){sec.style.display='none';return;}
+  sec.style.display='block';
+  document.getElementById('topicsList').innerHTML=PHR_TOPICS.map((t,i)=>{
+    const on=sub.checkedTopics[i];
+    return `<div class="topic-row">
+      <div class="t-check ${on?'on':''}" onclick="toggleTopic(${i})">${on?'✓':''}</div>
+      <span class="t-name ${on?'done':''}">${t.name}</span>
+      <div class="t-bar"><div class="t-fill" style="width:${t.weight/39*100}%"></div></div>
+      <span class="t-pct">${t.weight}%</span>
+    </div>`; }).join('');
+}
+
+function toggleTopic(i) {
+  const sub=activeSub(); if(!sub) return;
+  sub.checkedTopics[i]=!sub.checkedTopics[i];
+  persist(); renderTopics();
+}
+
+// ══════════════ CALENDAR ══════════════
+function buildCalendar() {
+  const today=todayStr();
+  const start=new Date(); start.setDate(start.getDate()-14); start.setHours(0,0,0,0);
+  const end=new Date(); end.setDate(end.getDate()+60); end.setHours(0,0,0,0);
+
+  const months={};
+  const cur=new Date(start);
+  while(cur<=end){
+    const mk=cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0');
+    if(!months[mk]) months[mk]={y:cur.getFullYear(),m:cur.getMonth(),days:[]};
+    months[mk].days.push(new Date(cur));
+    cur.setDate(cur.getDate()+1);
+  }
+
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html='';
+  Object.values(months).forEach(mo=>{
+    const mn=new Date(mo.y,mo.m,1).toLocaleDateString('en-US',{month:'long'});
+    html+=`<div class="month-sep">${mn} <span>${mo.y}</span></div>`;
+    html+=`<div class="day-grid">${days.map(d=>`<div class="day-head">${d}</div>`).join('')}`;
+    const fdow=mo.days[0].getDay();
+    for(let i=0;i<fdow;i++) html+=`<div class="day-cell empty-cell"></div>`;
+    mo.days.forEach(d=>{
+      const ds=d.toISOString().split('T')[0];
+      const log=calLog[ds]||{};
+      const isPast=ds<today, isToday=ds===today, isFuture=ds>today;
+      const hasLog=log.read||(log.strategies&&log.strategies.length);
+      let cls=isToday?'today':isPast&&hasLog?'has-log':isPast?'past':isFuture?'future-locked':'';
+      let dots='';
+      if(log.read) dots+=`<div class="day-dot read"></div>`;
+      (log.strategies||[]).forEach(sid=>{const i=STRATEGIES.findIndex(s=>s.id===sid);if(i>=0)dots+=`<div class="day-dot s${i}"></div>`;});
+      const clickable=isToday||isPast;
+      html+=`<div class="day-cell ${cls}" ${clickable?`onclick="openDayModal('${ds}')"`:''}>${`<span class="day-num">${d.getDate()}</span><div class="day-dots">${dots}</div>`}</div>`;
+    });
+    const ldow=mo.days[mo.days.length-1].getDay();
+    for(let i=ldow+1;i<7;i++) html+=`<div class="day-cell empty-cell"></div>`;
+    html+=`</div>`;
+  });
+  document.getElementById('calGrid').innerHTML=html;
+  updateStreak();
+  renderWeek();
+  renderForecast();
+}
+
+function updateStreak() {
+  let streak=0;
+  const cur=new Date(); cur.setHours(0,0,0,0);
+  while(true){
+    const ds=cur.toISOString().split('T')[0];
+    if(calLog[ds]&&calLog[ds].read){streak++;cur.setDate(cur.getDate()-1);}
+    else break;
+  }
+  document.getElementById('streakNum').textContent=streak;
+  document.getElementById('totalDays').textContent=Object.values(calLog).filter(l=>l.read).length+' days logged';
+}
+
+function renderWeek() {
+  const week=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);week.push({ds:d.toISOString().split('T')[0],d});}
+  document.getElementById('weekSummary').innerHTML=week.map(({ds,d})=>{
+    const log=calLog[ds]||{};
+    const strats=(log.strategies||[]).map(sid=>STRATEGIES.find(s=>s.id===sid)?.name).filter(Boolean);
+    const isToday=ds===todayStr();
+    return `<div style="display:flex;gap:0.55rem;align-items:flex-start;padding:0.45rem 0;border-bottom:1px solid var(--border)">
+      <div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:${isToday?'var(--gold)':'var(--muted)'};width:66px;flex-shrink:0;padding-top:0.13rem">${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>
+      <div style="flex:1">
+        ${log.read?`<span style="font-size:0.72rem;color:var(--green)">✓ Read</span>`:`<span style="font-size:0.72rem;color:var(--muted)">—</span>`}
+        ${strats.length?`<div style="font-size:0.66rem;color:var(--text2);margin-top:0.18rem">${strats.join(', ')}</div>`:''}
+        ${log.notes?`<div style="font-size:0.65rem;color:var(--muted);font-style:italic;margin-top:0.13rem">"${log.notes}"</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderForecast() {
+  const sub=activeSub();
+  const el=document.getElementById('forecastBox');
+  if(!sub||!sub.books.length){el.innerHTML='<span style="color:var(--muted)">Add study materials to see your forecast.</span>';return;}
+  const readDays=Object.values(calLog).filter(l=>l.read).length;
+  const totalRead=sub.books.reduce((s,b)=>s+b.read,0);
+  const avgPpd=readDays>0?(totalRead/readDays).toFixed(1):0;
+  const totalLeft=sub.books.reduce((s,b)=>s+Math.max(0,b.total-b.read),0);
+  const urgent=sub.books.filter(b=>b.read<b.total).sort((a,b)=>daysUntil(a.end)-daysUntil(b.end))[0];
+  let html='';
+  if(avgPpd>0){const days=Math.ceil(totalLeft/avgPpd);const fd=new Date();fd.setDate(fd.getDate()+days);html+=`<div style="margin-bottom:0.6rem">At your pace (<strong style="color:var(--gold)">${avgPpd} pgs/day</strong>), all materials finish in <strong style="color:var(--text)">${days} days</strong> (~${fd.toLocaleDateString('en-US',{month:'short',day:'numeric'})}).</div>`;}
+  if(urgent){const d=daysUntil(urgent.end);const l=urgent.total-urgent.read;const need=d>0?Math.ceil(l/d):l;html+=`<div style="padding:0.6rem 0.75rem;background:rgba(201,151,58,0.07);border:1px solid rgba(201,151,58,0.2);border-radius:7px;font-size:0.76rem">🎯 Most urgent: <strong style="color:var(--gold)">${urgent.title}</strong> — needs <strong>${need} pgs/day</strong> to finish by ${fmtDate(urgent.end)} (${d}d left)</div>`;}
+  if(!html) html='<span style="color:var(--muted)">Keep logging daily progress to unlock forecast.</span>';
+  el.innerHTML=html;
+}
+
+// ══════════════ DAY MODAL ══════════════
+function openDayModal(ds) {
+  modalDate=ds;
+  const log=calLog[ds]||{};
+  const d=new Date(ds+'T00:00:00');
+  document.getElementById('modalDateTitle').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+
+  // read
+  const rrow=document.getElementById('row-read'), rchk=document.getElementById('chk-read');
+  if(log.read){rrow.classList.add('on');rchk.textContent='✓';}
+  else{rrow.classList.remove('on');rchk.textContent='';}
+
+  // strategies
+  document.getElementById('stratChks').innerHTML=STRATEGIES.map(s=>{
+    const on=(log.strategies||[]).includes(s.id);
+    return `<div class="chk-row ${on?'on':''}" id="srow-${s.id}" onclick="toggleSC('${s.id}')">
+      <div class="chk-box" id="schk-${s.id}">${on?'✓':''}</div>
+      <span class="chk-label">${s.icon} ${s.name}</span>
+      <span class="chk-badge">${s.badges[0].l}</span>
+    </div>`; }).join('');
+
+  document.getElementById('modalNotes').value=log.notes||'';
+  document.getElementById('dayModal').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('dayModal').classList.remove('open'); modalDate=null; }
+
+function toggleCR(rowId, chkId) {
+  const row=document.getElementById(rowId), chk=document.getElementById(chkId);
+  const on=row.classList.toggle('on'); chk.textContent=on?'✓':'';
+}
+
+function toggleSC(sid) {
+  const row=document.getElementById('srow-'+sid), chk=document.getElementById('schk-'+sid);
+  const on=row.classList.toggle('on'); chk.textContent=on?'✓':'';
+}
+
+function saveDay() {
+  if(!modalDate) return;
+  const read=document.getElementById('row-read').classList.contains('on');
+  const strategies=STRATEGIES.filter(s=>document.getElementById('srow-'+s.id)?.classList.contains('on')).map(s=>s.id);
+  const notes=document.getElementById('modalNotes').value.trim();
+  calLog[modalDate]={read,strategies,notes};
+  persist(); closeModal(); buildCalendar(); showToast('Day logged ✓');
+}
+
+// ══════════════ STRATEGIES ══════════════
+function renderStrategies() {
+  document.getElementById('stratContainer').innerHTML=STRATEGIES.map(s=>`
+  <div class="strategy-card" id="sc-${s.id}">
+    <div class="strat-hdr" onclick="toggleStrat('${s.id}')">
+      <div class="strat-icon">${s.icon}</div>
+      <div class="strat-info">
+        <div class="strat-name">${s.name}</div>
+        <div class="strat-tagline">${s.tagline}</div>
+        <div class="strat-badges">${s.badges.map(b=>`<span class="sbadge ${b.c}">${b.l}</span>`).join('')}</div>
+      </div>
+      <div class="strat-chevron">▼</div>
+    </div>
+    <div class="strat-body">
+      <p class="strat-desc">${s.desc}</p>
+      <ul class="strat-steps">${s.steps.map((st,i)=>`<li><div class="step-n">${i+1}</div><span>${st}</span></li>`).join('')}</ul>
+      <div class="sec-t" style="margin-bottom:0.45rem">Source Material &amp; Tools</div>
+      <div class="strat-links">${s.links.map(l=>`<a class="strat-link" href="${l.u}" target="_blank" rel="noopener">↗ ${l.l}</a>`).join('')}</div>
+    </div>
+  </div>`).join('');
+}
+
+function toggleStrat(id){ document.getElementById('sc-'+id).classList.toggle('open'); }
+
+// ══════════════ NAV ══════════════
+function switchPage(name,el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='calendar') buildCalendar();
+}
+
+// ══════════════ TOAST ══════════════
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ══════════════ MODAL CLOSE ON OVERLAY ══════════════
+document.getElementById('dayModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('newSubModal').addEventListener('click',function(e){if(e.target===this)closeSub();});
+
+// ══════════════ RENDER ALL ══════════════
+function renderAll() {
+  renderSubjectTabs();
+  renderBooks();
+  updateStats();
+  renderTopics();
+  renderStrategies();
+  const today=todayStr();
+  document.getElementById('bStart').value=today;
+  const sub=activeSub();
+  if(sub&&sub.examDate) document.getElementById('bEnd').value=sub.examDate;
+}
+
+// ══════════════ INIT ══════════════
+(async()=>{
+  await hydrate();
+  if(!subjects.length){
+    subjects=[{id:'sub_phr',name:'PHR Exam',emoji:'🏅',color:'gold',examDate:'2026-06-18',books:[],checkedTopics:{},isPHR:true}];
+    activeId='sub_phr';
+    await persist();
+  }
+  if(!activeId||!subjects.find(s=>s.id===activeId)) activeId=subjects[0].id;
+  renderAll();
+})();
+</script>
+</body>
+</html>
