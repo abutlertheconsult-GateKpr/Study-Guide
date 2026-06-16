@@ -3,12 +3,12 @@
 // Caches all app files for full offline use after first load
 // ============================================================
 
-const CACHE_NAME = 'ascension-v2';
+const CACHE_NAME = 'studyguide-v1';
 
 // Files to cache on install
 const ASSETS = [
-  '/ascension-method/index.html',
-  '/ascension-method/manifest.json'
+  '/Study-Guide/index.html',
+  '/Study-Guide/manifest.json'
 ];
 
 // INSTALL — cache core files
