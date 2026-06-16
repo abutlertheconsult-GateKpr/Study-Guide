@@ -4,8 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Study Command Center</title>
+
+  <!-- PWA --> 
+<link rel="manifest" href="/ascension-method/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ascension">
+<meta name="theme-color" content="#111110">
+<link rel="apple-touch-icon" href="/ascension-method/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  
 :root{
   --bg:#08090e;--bg1:#0d0f18;--sf0:#111420;--sf1:#161b2c;--sf2:#1c2138;--sf3:#232844;
   --inner:inset 0 0 0 1px rgba(255,255,255,.055);--inner2:inset 0 0 0 1px rgba(255,255,255,.03);
@@ -391,6 +403,9 @@ body.compact .card,.compact .card-sm{padding:.9rem}
 </head>
 <body>
 <header>
+  <div class="sigil">
+  <img src="icons/icon-192.png" alt="Ascension Logo" width="36" height="36" style="display: block; object-fit: contain;">
+  </div>
   <div class="brand"><h1>Study <em>Command</em></h1><div class="brand-sub" id="headerSub">Learning Tracker</div></div>
   <div class="cd-pill" id="cdPill" style="display:none"><div class="n" id="daysLeft">-</div><div class="l" id="cdLbl">days left</div></div>
 </header>
