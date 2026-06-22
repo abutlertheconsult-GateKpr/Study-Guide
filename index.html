@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Study Command Center</title>
-
-  <!-- PWA --> 
+<!-- PWA -->
 <link rel="manifest" href="/Study-Guide/manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,7 +16,6 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  
 :root{
   --bg:#08090e;--bg1:#0d0f18;--sf0:#111420;--sf1:#161b2c;--sf2:#1c2138;--sf3:#232844;
   --inner:inset 0 0 0 1px rgba(255,255,255,.055);--inner2:inset 0 0 0 1px rgba(255,255,255,.03);
@@ -399,13 +397,47 @@ body.compact .card,.compact .card-sm{padding:.9rem}
 .dom-ind-msg{flex:1;font-size:.78rem;color:var(--tx2);line-height:1.5}
 .auto-bal-btn{background:var(--sf2);border:none;border-radius:var(--r3);color:var(--tx2);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.06em;padding:.3rem .6rem;cursor:pointer;transition:all .15s;white-space:nowrap;touch-action:manipulation;box-shadow:var(--inner2)}
 .auto-bal-btn:hover{color:var(--accent)}
+
+/* ── FOCUS TIMER ── */
+.page-actions-bar{margin-bottom:1.4rem}
+.focus-timer-btn{display:inline-flex;align-items:center;gap:.55rem;background:var(--sf1);color:var(--accent);border:none;border-radius:var(--r2);padding:.68rem 1.15rem;font-family:'DM Mono',monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:var(--inner),var(--shadow);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.focus-timer-btn:hover{box-shadow:inset 0 0 0 1.5px var(--accent-ring),var(--shadow)}
+.focus-timer-btn:active{transform:scale(.97)}
+.timer-display-wrap{text-align:center;padding:1.7rem 1rem;background:var(--sf2);border-radius:var(--r);margin-bottom:1.1rem;box-shadow:var(--inner2)}
+.timer-display-big{font-family:'Playfair Display',serif;font-size:3.6rem;font-weight:900;color:var(--accent);line-height:1;letter-spacing:.02em}
+.timer-display-lbl{font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-top:.55rem}
+.timer-presets{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;margin-bottom:1.1rem}
+.timer-preset-btn{background:var(--sf2);border:none;border-radius:var(--r2);color:var(--tx2);font-family:'DM Mono',monospace;font-size:.7rem;font-weight:700;padding:.62rem .2rem;cursor:pointer;transition:all .15s;box-shadow:var(--inner2);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.timer-preset-btn:hover{color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent-ring)}
+.timer-preset-btn:active{transform:scale(.94)}
+.timer-controls-row{display:flex;gap:.6rem;margin-bottom:.5rem}
+.timer-controls-row .btn-a,.timer-controls-row .btn-b,.timer-controls-row .btn-danger{flex:1;width:auto;min-height:48px}
+.timer-session-row{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;background:var(--sf2);border-radius:var(--r2);margin-bottom:.4rem;box-shadow:var(--inner2)}
+.timer-session-info{flex:1;min-width:0}
+.timer-session-title{font-size:.84rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.timer-session-meta{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--tx3);margin-top:.12rem}
+.timer-session-mins{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:700;color:var(--accent);flex-shrink:0}
+select:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── BOOK LINK ── */
+.bk-link-icon{background:none;border:none;color:var(--ink);cursor:pointer;padding:.28rem .42rem;border-radius:var(--r3);transition:all .15s;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.bk-link-icon:hover{background:var(--ink-bg)}
+
+/* ── NOTES ── */
+.notes-add-row{display:flex;gap:.5rem;margin-bottom:.65rem;align-items:flex-start}
+.notes-add-row textarea{flex:1;min-height:44px;resize:vertical;font-size:16px}
+.notes-add-btn{background:var(--accent);color:#0a0b10;border:none;border-radius:var(--r2);padding:0 1rem;font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;cursor:pointer;flex-shrink:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;align-self:stretch;min-width:64px}
+.notes-add-btn:hover{background:var(--accent-br)}
+.note-item{display:flex;gap:.6rem;padding:.58rem .7rem;background:var(--sf2);border-radius:var(--r2);margin-bottom:.4rem;box-shadow:var(--inner2)}
+.note-item-body{flex:1;min-width:0}
+.note-item-date{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--tx3);margin-bottom:.2rem;letter-spacing:.04em}
+.note-item-text{font-size:.84rem;color:var(--tx2);line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.note-del-btn{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.75rem;padding:.12rem .28rem;flex-shrink:0;transition:color .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.note-del-btn:hover{color:var(--red)}
 </style>
 </head>
 <body>
 <header>
-  <div class="sigil">
-  <img src="icons/icon-192.png" alt="Study-Guide Logo" width="36" height="36" style="display: block; object-fit: contain;">
-  </div>
   <div class="brand"><h1>Study <em>Command</em></h1><div class="brand-sub" id="headerSub">Learning Tracker</div></div>
   <div class="cd-pill" id="cdPill" style="display:none"><div class="n" id="daysLeft">-</div><div class="l" id="cdLbl">days left</div></div>
 </header>
@@ -420,6 +452,9 @@ body.compact .card,.compact .card-sm{padding:.9rem}
 <!-- MATERIALS -->
 <div class="pg on" id="pg-books">
   <div id="subjectSwitcherWrap"></div>
+  <div class="page-actions-bar">
+    <button class="focus-timer-btn" onclick="openFocusTimer()">&#9201; Focus Timer</button>
+  </div>
   <div class="two">
     <div>
       <div id="booksListWrap"></div>
@@ -591,6 +626,7 @@ body.compact .card,.compact .card-sm{padding:.9rem}
     <div class="mt2"><span id="bookModalTitle">Add Study Material</span><button class="mc" onclick="closeBookModal()">&#x2715;</button></div>
     <div class="fg2">
       <div class="fg full"><label class="fl">Title</label><input type="text" id="bTitle" placeholder="The Lean Startup, SQL Pocket Reference..."></div>
+      <div class="fg full"><label class="fl">Link <span style="color:var(--tx3);font-size:.58rem;font-weight:400">(optional — article, PDF, course page...)</span></label><input type="text" id="bLink" placeholder="https://..."></div>
       <div class="fg"><label class="fl">Daily Page Goal</label><input type="number" id="bGoal" placeholder="20" min="1"></div>
       <div class="fg"><label class="fl">Start Date</label><input type="date" id="bStart"></div>
       <div class="fg full"><label class="fl">Goal End Date</label><input type="date" id="bEnd"></div>
@@ -675,6 +711,36 @@ body.compact .card,.compact .card-sm{padding:.9rem}
       <input type="file" id="fileIn" accept=".json" style="display:none" onchange="loadFile(event)">
       <button class="btn-b" onclick="doImport()">&#8595; Import &amp; Apply</button>
     </div>
+  </div>
+</div>
+<!-- MODAL: FOCUS TIMER -->
+<div class="mo" id="timerModal">
+  <div class="md">
+    <div class="md-pull"></div>
+    <div class="mt2"><span>Focus Timer</span><button class="mc" onclick="closeFocusTimer()">&#x2715;</button></div>
+    <div class="fg2" style="margin-bottom:1.1rem">
+      <div class="fg"><label class="fl">Subject</label><select id="timerSubjectSelect" onchange="onTimerSubjectChange()"></select></div>
+      <div class="fg"><label class="fl">Material</label><select id="timerBookSelect"></select></div>
+    </div>
+    <div class="timer-display-wrap">
+      <div class="timer-display-big" id="timerDisplay">00:00</div>
+      <div class="timer-display-lbl" id="timerStatusLbl">Ready</div>
+    </div>
+    <div class="timer-presets">
+      <button class="timer-preset-btn" onclick="addPresetTime(1)">+1m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(5)">+5m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(10)">+10m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(15)">+15m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(20)">+20m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(30)">+30m</button>
+    </div>
+    <div class="timer-controls-row">
+      <button class="btn-a" id="timerStartBtn" style="margin-top:0" onclick="startTimer()">&#9654; Start</button>
+      <button class="btn-b" id="timerPauseBtn" style="margin-top:0;display:none" onclick="pauseTimer()">&#9208; Pause</button>
+      <button class="btn-danger" id="timerStopBtn" style="display:none" onclick="stopTimer()">&#9632; Stop</button>
+    </div>
+    <div class="sl" style="margin-top:1.3rem">Recent Sessions</div>
+    <div id="timerRecentSessions"></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -836,6 +902,8 @@ const SPEED_CATS=[
 // ══ STATE ══
 let subs=[],active=null,cal={},mDate=null,speedHistory=[],selectedBookId=null;
 let editingBookId=null;
+let focusSessions=[];
+let timer={running:false,intervalId:null,totalSeconds:0,remainingSeconds:0,elapsedSeconds:0,subjectId:null,bookId:null,sessionId:null};
 let settings={name:'',dailyHours:0,sessionMins:45,defaultGoal:0,showBaseline:true,compact:false,accentIndex:0};
 let stPhase='idle',stType=null,stStart=null,stElapsed=0,stTimerID=null,stCdID=null,stCdVal=3,stAnswers={},stPassageIdx=0;
 let lastPassIdx={general:-1,phr:-1};
@@ -849,6 +917,7 @@ function save(){
     localStorage.setItem('scc_cal',JSON.stringify(cal));
     localStorage.setItem('scc_speed',JSON.stringify(speedHistory));
     localStorage.setItem('scc_settings',JSON.stringify(settings));
+    localStorage.setItem('scc_focus',JSON.stringify(focusSessions));
     const el=document.getElementById('settingsLastSave');
     if(el) el.textContent='All data saved · '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   }catch(e){console.warn(e);}
@@ -861,6 +930,7 @@ function load(){
     const c=localStorage.getItem('scc_cal');if(c)cal=JSON.parse(c);
     const sp=localStorage.getItem('scc_speed');if(sp)speedHistory=JSON.parse(sp);
     const st=localStorage.getItem('scc_settings');if(st)settings={...settings,...JSON.parse(st)};
+    const fc=localStorage.getItem('scc_focus');if(fc)focusSessions=JSON.parse(fc);
   }catch(e){console.warn(e);}
 }
 function applySettings(){
@@ -878,7 +948,7 @@ function applySettings(){
 }
 
 // ══ EXPORT/IMPORT ══
-function buildExport(){return JSON.stringify({subs,active,cal,speedHistory,settings,v:5},null,2);}
+function buildExport(){return JSON.stringify({subs,active,cal,speedHistory,settings,focusSessions,v:6},null,2);}
 function openSync(tab){switchSyncTab(tab);document.getElementById('syncModal').classList.add('open');}
 function closeSync(){document.getElementById('syncModal').classList.remove('open');}
 function switchSyncTab(tab){
@@ -889,658 +959,4 @@ function selAll(){const el=document.getElementById('exportBox');const r=document
 function copyExport(){const d=buildExport();if(navigator.clipboard){navigator.clipboard.writeText(d).then(()=>showToast('Copied!')).catch(()=>fbCopy(d));}else fbCopy(d);}
 function fbCopy(t){const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');showToast('Copied!');}catch(e){}document.body.removeChild(ta);}
 function dlBackup(){const blob=new Blob([buildExport()],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='study-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url);showToast('Downloaded!');}
-function loadFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{document.getElementById('importArea').value=ev.target.result;showToast('File loaded — click Import');};r.readAsText(f);}
-function doImport(){
-  const raw=document.getElementById('importArea').value.trim();if(!raw){showToast('Nothing to import');return;}
-  try{const d=JSON.parse(raw);if(!d.subs||!Array.isArray(d.subs))throw new Error('bad');
-    subs=d.subs;active=d.active||(d.subs[0]&&d.subs[0].id)||null;cal=d.cal||{};speedHistory=d.speedHistory||[];
-    if(d.settings)settings={...settings,...d.settings};
-    save();closeSync();renderAll();showToast('Imported!');}
-  catch(e){showToast('Invalid data — check paste');}
-}
-
-// ══ DATA MANAGEMENT ══
-function clearSpeedHistory(){if(!confirm('Clear all speed test history?'))return;speedHistory=[];save();renderSpeedHistory();showToast('Speed history cleared');}
-function confirmReset(){document.getElementById('resetConfirm').style.display='block';}
-function doReset(){
-  subs=[];active=null;cal={};speedHistory=[];selectedBookId=null;
-  settings={name:'',dailyHours:0,sessionMins:45,defaultGoal:0,showBaseline:true,compact:false,accentIndex:0};
-  localStorage.clear();document.getElementById('resetConfirm').style.display='none';
-  init();showToast('All data reset');
-}
-
-// ══ HELPERS ══
-const today=()=>new Date().toISOString().split('T')[0];
-const fmtDate=s=>new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-const dLeft=s=>Math.max(0,Math.ceil((new Date(s+'T00:00:00')-new Date(today()+'T00:00:00'))/86400000));
-const getSub=()=>subs.find(s=>s.id===active)||null;
-function bTotal(b){return b.sections&&b.sections.length?b.sections.reduce((s,x)=>s+(x.pages||0),0):(b.total||0);}
-function bRead(b){return b.sections&&b.sections.length?b.sections.filter(x=>x.done).reduce((s,x)=>s+(x.pages||0),0):(b.read||0);}
-function get7DayAvg(bookId){
-  let tot=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);const ds=d.toISOString().split('T')[0];const bp=(cal[ds]||{}).bookPages||{};tot+=bookId?(bp[bookId]||0):Object.values(bp).reduce((s,v)=>s+v,0);}return tot/7;
-}
-function getDaysLogged(){return Object.values(cal).filter(l=>l.read||(l.bookPages&&Object.values(l.bookPages).some(v=>v>0))).length;}
-function getSpeedCat(wpm){return SPEED_CATS.find(c=>wpm<=c.max)||SPEED_CATS[SPEED_CATS.length-1];}
-function paceLabel(ratio,days){
-  if(days<3)return{label:'Building baseline',cls:'pb-n',icon:'...'};
-  if(ratio<=0.80)return{label:'Comfortable',cls:'pb-c',icon:'✓'};
-  if(ratio<=1.10)return{label:'On Track',cls:'pb-o',icon:'→'};
-  if(ratio<=1.40)return{label:'Aggressive',cls:'pb-a',icon:'!'};
-  return{label:'At Risk',cls:'pb-r',icon:'⚠'};
-}
-
-// ══ SUBJECTS ══
-function openNewSub(){['nsName','nsEmoji','nsDate'].forEach(id=>document.getElementById(id).value='');document.getElementById('newSubModal').classList.add('open');}
-function closeNewSub(){document.getElementById('newSubModal').classList.remove('open');}
-function addSubject(){
-  const name=document.getElementById('nsName').value.trim(),emoji=document.getElementById('nsEmoji').value.trim()||'📖',date=document.getElementById('nsDate').value;
-  if(!name){showToast('Enter a subject name');return;}
-  subs.push({id:'sub_'+Date.now(),name,emoji,date:date||null,books:[]});
-  active=subs[subs.length-1].id;closeNewSub();save();renderAll();showToast(emoji+' '+name+' created!');
-}
-function switchSub(id){active=id;selectedBookId=null;save();renderAll();}
-function delSub(id,e){
-  e.stopPropagation();if(subs.length<=1){showToast('Need at least one subject');return;}
-  subs=subs.filter(s=>s.id!==id);if(active===id)active=subs[0].id;selectedBookId=null;save();renderAll();
-}
-function renderSubTabs(){
-  const wrap=document.getElementById('subjectSwitcherWrap');
-  const sub=getSub();
-  // Update countdown pill in header
-  const pill=document.getElementById('cdPill');
-  if(sub&&sub.date){document.getElementById('daysLeft').textContent=dLeft(sub.date);document.getElementById('cdLbl').textContent='days · '+fmtDate(sub.date);pill.style.display='block';}
-  else pill.style.display='none';
-  if(!wrap)return;
-  if(!subs.length){wrap.innerHTML='';return;}
-  const deadlineBadge=sub&&sub.date?`<div class="sub-deadline-badge"><div class="sub-dl-n">${dLeft(sub.date)}</div><div class="sub-dl-l">days left</div></div>`:'';
-  wrap.innerHTML=`<div class="sub-switcher">
-    <select class="sub-select" onchange="switchSub(this.value)">
-      ${subs.map(s=>`<option value="${s.id}" ${s.id===active?'selected':''}>${s.emoji} ${s.name}</option>`).join('')}
-    </select>
-    <button class="add-sub-inline" onclick="openNewSub()">+ New Subject</button>
-    ${deadlineBadge}
-  </div>`;
-}
-
-// ══ BUILDER (sections + domains) ══
-function addRow(containerId,type,initVal){
-  rowCounters[type]++;
-  const id=type+'row'+rowCounters[type];
-  const container=document.getElementById(containerId);
-  const ph=container.querySelector('.builder-placeholder');if(ph)ph.remove();
-  const row=document.createElement('div');row.id=id;
-  if(type==='sec'){
-    row.className='brow';
-    row.innerHTML=`<input type="text" placeholder="Section name" oninput="recalcBuilder('sec')">
-      <input type="number" placeholder="Pages" min="1" oninput="recalcBuilder('sec')" style="width:72px">
-      <input type="date" style="width:115px">
-      <button class="rm-btn" onclick="rmRow('${id}','sec')">✕</button>`;
-  } else {
-    row.className='brow dom-row';
-    const pct=initVal||0;
-    row.innerHTML=`<input type="text" placeholder="Domain name" class="dom-name-inp">
-      <div class="slider-group">
-        <input type="range" min="0" max="100" value="${pct}" class="dom-slider" oninput="onDomSlider(this,'${id}')">
-        <span class="slider-pct" id="spct-${id}">${pct}%</span>
-      </div>
-      <button class="rm-btn" onclick="rmRow('${id}','dom')">✕</button>`;
-  }
-  container.appendChild(row);
-  recalcBuilder(type);
-}
-function rmRow(id,type){
-  document.getElementById(id)?.remove();
-  recalcBuilder(type);
-  const container=document.getElementById(type+'Rows');
-  if(container&&!container.querySelector('.brow')){
-    container.innerHTML='<div class="builder-placeholder">No '+(type==='sec'?'sections':'domains')+' added</div>';
-  }
-}
-function recalcBuilder(type){
-  const container=document.getElementById(type+'Rows');if(!container)return;
-  const rows=container.querySelectorAll('.brow');
-  if(type==='sec'){
-    let total=0;
-    rows.forEach(r=>{const inputs=r.querySelectorAll('input[type=number]');total+=(parseInt(inputs[0]?.value)||0);});
-    const totEl=document.getElementById('secTotal'),totVal=document.getElementById('secTotalVal');
-    if(rows.length>0&&totEl&&totVal){totEl.style.display='block';totVal.textContent=total;const mi=document.getElementById('bTotal');if(mi){mi.value=total;mi.readOnly=true;mi.style.opacity='.5';}}
-    else{if(totEl)totEl.style.display='none';const mi=document.getElementById('bTotal');if(mi){mi.readOnly=false;mi.style.opacity='1';}}
-  } else {
-    // Domain: sum sliders and update indicator
-    let total=0;
-    rows.forEach(r=>{const sl=r.querySelector('.dom-slider');total+=(parseInt(sl?.value)||0);});
-    const ind=document.getElementById('domIndicator');
-    const indNum=document.getElementById('domIndNum');
-    const indMsg=document.getElementById('domIndMsg');
-    if(!ind)return;
-    if(rows.length===0){ind.style.display='none';return;}
-    ind.style.display='flex';
-    ind.className='dom-indicator '+(total===100?'exact':total>100?'over':'under');
-    if(indNum){indNum.textContent=total+'%';indNum.className='dom-ind-num '+(total===100?'exact':total>100?'over':'under');}
-    if(indMsg){
-      if(total===100)indMsg.textContent='✓ Perfect — all domains add up to 100%';
-      else if(total>100)indMsg.textContent='Over by '+(total-100)+'% — reduce some domains';
-      else indMsg.textContent='Under by '+(100-total)+'% — '+(rows.length===1?'set to 100%':'distribute the remaining percentage');
-    }
-  }
-}
-function onDomSlider(slider,rowId){
-  const pctEl=document.getElementById('spct-'+rowId);
-  if(pctEl)pctEl.textContent=(parseInt(slider.value)||0)+'%';
-  recalcBuilder('dom');
-}
-function autoBalance(){
-  const container=document.getElementById('domRows');if(!container)return;
-  const rows=[...container.querySelectorAll('.brow')];
-  if(!rows.length)return;
-  const each=Math.floor(100/rows.length);
-  const remainder=100-(each*rows.length);
-  rows.forEach((r,i)=>{
-    const sl=r.querySelector('.dom-slider');
-    const val=each+(i===0?remainder:0);
-    if(sl){sl.value=val;const id=r.id;const pctEl=document.getElementById('spct-'+id);if(pctEl)pctEl.textContent=val+'%';}
-  });
-  recalcBuilder('dom');
-}
-function getBuilderData(type){
-  const container=document.getElementById(type+'Rows');if(!container)return[];
-  const rows=container.querySelectorAll('.brow');const result=[];
-  rows.forEach(r=>{
-    const inputs=r.querySelectorAll('input');
-    if(type==='sec'){
-      const name=inputs[0]?.value.trim(),pages=parseInt(inputs[1]?.value)||0,due=inputs[2]?.value||'';
-      if(name||pages) result.push({id:'sec_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:name||'Untitled',pages,due,done:false});
-    } else {
-      const sl=r.querySelector('.dom-slider');
-      const name=inputs[0]?.value.trim(),weight=parseInt(sl?.value)||0;
-      if(name||weight) result.push({id:'dom_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:name||'Untitled',weight});
-    }
-  });
-  return result;
-}
-function clearBuilder(type){
-  const container=document.getElementById(type+'Rows');if(!container)return;
-  container.innerHTML='<div class="builder-placeholder">No '+(type==='sec'?'sections':'domains')+' added</div>';
-  const totEl=document.getElementById(type+'Total');if(totEl)totEl.style.display='none';
-  if(type==='sec'){const mi=document.getElementById('bTotal');if(mi){mi.value='';mi.readOnly=false;mi.style.opacity='1';}}
-}
-function populateBuilder(type,items){
-  clearBuilder(type);
-  items.forEach(item=>{
-    rowCounters[type]++;
-    const id=type+'row'+rowCounters[type];
-    const container=document.getElementById(type+'Rows');
-    const ph=container.querySelector('.builder-placeholder');if(ph)ph.remove();
-    const row=document.createElement('div');row.className='brow';row.id=id;
-    if(type==='sec'){
-      row.className='brow';
-      row.innerHTML=`<input type="text" value="${item.name||''}" placeholder="Section name" oninput="recalcBuilder('sec')">
-        <input type="number" value="${item.pages||''}" placeholder="Pages" min="1" oninput="recalcBuilder('sec')" style="width:72px">
-        <input type="date" value="${item.due||''}" style="width:115px">
-        <button class="rm-btn" onclick="rmRow('${id}','sec')">✕</button>`;
-    } else {
-      row.className='brow dom-row';
-      const pct=item.weight||0;
-      row.innerHTML=`<input type="text" value="${item.name||''}" placeholder="Domain name" class="dom-name-inp">
-        <div class="slider-group">
-          <input type="range" min="0" max="100" value="${pct}" class="dom-slider" oninput="onDomSlider(this,'${id}')">
-          <span class="slider-pct" id="spct-${id}">${pct}%</span>
-        </div>
-        <button class="rm-btn" onclick="rmRow('${id}','dom')">✕</button>`;
-    }
-    container.appendChild(row);
-  });
-  recalcBuilder(type);
-}
-
-// ══ ADD/EDIT BOOK MODAL ══
-function openAddBook(){
-  editingBookId=null;
-  document.getElementById('bookModalTitle').textContent='Add Study Material';
-  document.getElementById('bookModalSaveBtn').textContent='Add Material';
-  ['bTitle','bTotal'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('bGoal').value=settings.defaultGoal||'';
-  document.getElementById('bStart').value=today();
-  const sub=getSub();
-  document.getElementById('bEnd').value=(sub&&sub.date)?sub.date:'';
-  clearBuilder('sec');clearBuilder('dom');
-  rowCounters={sec:0,dom:0};
-  document.getElementById('bookModal').classList.add('open');
-}
-function openEditBook(bid,e){
-  if(e)e.stopPropagation();
-  const sub=getSub();if(!sub)return;
-  const book=sub.books.find(b=>b.id===bid);if(!book)return;
-  editingBookId=bid;
-  document.getElementById('bookModalTitle').textContent='Edit Material';
-  document.getElementById('bookModalSaveBtn').textContent='Save Changes';
-  document.getElementById('bTitle').value=book.title||'';
-  document.getElementById('bGoal').value=book.dailyGoal||'';
-  document.getElementById('bStart').value=book.start||today();
-  document.getElementById('bEnd').value=book.end||'';
-  const hasSecs=book.sections&&book.sections.length;
-  document.getElementById('bTotal').value=hasSecs?'':book.total||'';
-  clearBuilder('sec');clearBuilder('dom');rowCounters={sec:0,dom:0};
-  if(hasSecs) populateBuilder('sec',book.sections);
-  if(book.domains&&book.domains.length) populateBuilder('dom',book.domains);
-  document.getElementById('bookModal').classList.add('open');
-}
-function closeBookModal(){document.getElementById('bookModal').classList.remove('open');editingBookId=null;}
-function saveBook(){
-  const sub=getSub();if(!sub)return;
-  const title=document.getElementById('bTitle').value.trim();
-  const goalV=parseInt(document.getElementById('bGoal').value)||0;
-  const totalV=parseInt(document.getElementById('bTotal').value)||0;
-  const start=document.getElementById('bStart').value;
-  const end=document.getElementById('bEnd').value;
-  const sections=getBuilderData('sec');
-  const domains=getBuilderData('dom');
-  if(!title){showToast('Enter a title');return;}
-  if(!end){showToast('Set a goal end date');return;}
-  if(!sections.length&&!totalV){showToast('Enter total pages or add sections');return;}
-  if(domains.length>0){
-    const domTotal=domains.reduce((s,d)=>s+d.weight,0);
-    if(domTotal!==100){showToast('Domain weights must total 100% (currently '+domTotal+'%)');return;}
-  }
-
-  if(editingBookId){
-    const book=sub.books.find(b=>b.id===editingBookId);if(!book)return;
-    const hadSecs=book.sections&&book.sections.length;
-    // Preserve done state for existing sections by id
-    const existingDone={};if(hadSecs)book.sections.forEach(s=>existingDone[s.id]=s.done);
-    sections.forEach(s=>{if(existingDone[s.id]!==undefined)s.done=existingDone[s.id];});
-    book.title=title;book.dailyGoal=goalV;book.start=start||today();book.end=end;
-    book.sections=sections;book.domains=domains;
-    if(!sections.length){book.total=totalV;}
-    closeBookModal();save();renderBooks();updateStats();renderPaceAnalysis();showToast('Material updated!');
-  } else {
-    sub.books.push({id:'bk_'+Date.now(),title,total:totalV,read:0,start:start||today(),end,dailyGoal:goalV,sections,domains,showSecs:true});
-    closeBookModal();save();renderBooks();updateStats();renderPaceAnalysis();showToast('Material added!');
-  }
-}
-
-// ══ BOOKS ══
-function selectBook(bid){
-  selectedBookId=(selectedBookId===bid)?null:bid;
-  renderBooks();
-}
-function delBook(bid,e){
-  if(e)e.stopPropagation();
-  const sub=getSub();if(!sub)return;
-  if(!confirm('Remove this material?'))return;
-  sub.books=sub.books.filter(b=>b.id!==bid);
-  if(selectedBookId===bid)selectedBookId=null;
-  save();renderBooks();updateStats();renderPaceAnalysis();
-}
-function toggleSection(bookId,secId,e){
-  if(e)e.stopPropagation();
-  const sub=getSub();if(!sub)return;
-  const book=sub.books.find(b=>b.id===bookId);if(!book)return;
-  const sec=book.sections.find(s=>s.id===secId);if(!sec)return;
-  sec.done=!sec.done;
-  const ds=today();if(!cal[ds])cal[ds]={read:false,strats:[],notes:'',bookPages:{}};if(!cal[ds].bookPages)cal[ds].bookPages={};
-  cal[ds].bookPages[bookId]=Math.max(0,(cal[ds].bookPages[bookId]||0)+(sec.done?sec.pages:-sec.pages));cal[ds].read=true;
-  save();renderBooks();updateStats();renderPaceAnalysis();showToast(sec.done?'✓ '+sec.name+' (+'+sec.pages+' pgs)':'Unmarked: '+sec.name);
-}
-function toggleSecList(bookId,e){if(e)e.stopPropagation();const sub=getSub();if(!sub)return;const b=sub.books.find(b=>b.id===bookId);if(!b)return;b.showSecs=!b.showSecs;save();renderBooks();}
-
-function renderBooks(){
-  const sub=getSub();
-  const wrap=document.getElementById('booksListWrap');
-
-  if(!subs.length){
-    wrap.innerHTML=`<div class="first-launch">
-      <h2>Welcome to Study Command</h2>
-      <p>Create your first subject to start tracking your reading progress, pace, and study habits.</p>
-      <button class="btn-a" style="margin-top:0" onclick="openNewSub()">+ Create Your First Subject</button>
-    </div>`;
-    return;
-  }
-
-  if(!sub||!sub.books.length){
-    wrap.innerHTML=`<div class="page-hdr"><span class="page-hdr-title">Materials</span><button class="add-mat-btn" onclick="openAddBook()">+ Add Material</button></div>
-      <div class="empty"><div class="ei">📚</div>No materials yet — add your first one</div>`;
-    return;
-  }
-
-  const days=getDaysLogged();
-  let html=`<div class="page-hdr"><span class="page-hdr-title">Materials</span><button class="add-mat-btn" onclick="openAddBook()">+ Add Material</button></div>`;
-
-  html+=sub.books.map(b=>{
-    const tot=bTotal(b),rd=bRead(b),left=tot-rd,pct=tot>0?Math.round(rd/tot*100):0;
-    const dl=dLeft(b.end),need=dl>0?Math.ceil(left/dl):left;
-    const avg7=get7DayAvg(b.id),ratio=avg7>0?need/avg7:(need>0?999:0);
-    const done=pct>=100,behind=!done&&ratio>1.4,warn=!done&&ratio>1.1&&ratio<=1.4;
-    const pl=paceLabel(ratio,days);
-    const isSel=selectedBookId===b.id;
-
-    // Collapsed header
-    let card=`<div class="bkcard ${isSel?'selected':''}" id="bkcard-${b.id}">
-      <div class="bk-collapsed" onclick="selectBook('${b.id}')">
-        <div class="bk-collapsed-left">
-          <div class="bk-title">${b.title}</div>
-          <div class="bk-mini-progress">
-            <div class="bk-mini-bar"><div class="bk-mini-fill ${done?'done':''}" style="width:${pct}%"></div></div>
-            <span class="bk-mini-pct">${rd}/${tot} pgs · ${pct}%</span>
-            <span class="pace-badge ${pl.cls}">${pl.icon} ${pl.label}</span>
-          </div>
-        </div>
-        <div class="bk-collapsed-right">
-          <div class="bk-actions" onclick="event.stopPropagation()">
-            <button class="bk-edit-btn" onclick="openEditBook('${b.id}',event)" title="Edit">✎</button>
-            <button class="bk-del-btn" onclick="delBook('${b.id}',event)" title="Remove">✕</button>
-          </div>
-        </div>
-      </div>`;
-
-    if(isSel){
-      const vc=done?'ci':behind?'cr':warn?'ca':'cg';
-      card+=`<div class="bk-expanded">
-        <div class="bkstats">
-          <div class="bs"><span class="bsl">Pgs/Day Needed</span><span class="bsv ${vc}">${done?'Done':need}</span></div>
-          <div class="bs"><span class="bsl">Remaining</span><span class="bsv">${left} / ${tot}</span></div>
-          <div class="bs"><span class="bsl">Deadline</span><span class="bsv">${fmtDate(b.end)} <span style="color:var(--tx3);font-size:.72em">(${dl}d)</span></span></div>
-        </div>
-        <div class="avg-row">
-          <div class="avg-item"><div class="avg-lbl">7-Day Avg</div><div class="avg-val" style="color:${avg7>0?'var(--grn)':'var(--tx3)'}">${avg7>0?avg7.toFixed(1)+'/d':'—'}</div></div>
-          <div class="avg-sep"></div>
-          <div class="avg-item"><div class="avg-lbl">Your Goal</div><div class="avg-val" style="color:${b.dailyGoal?'var(--accent)':'var(--tx3)'}">${b.dailyGoal?b.dailyGoal+'/d':'—'}</div></div>
-          <div class="avg-sep"></div>
-          <div class="avg-item"><div class="avg-lbl">App Suggests</div><div class="avg-val" style="color:var(--ink)">${avg7>0?Math.round(avg7)+'/d':'—'}</div></div>
-        </div>
-        <div class="bk-prog">
-          <div class="bk-prog-info"><span>${rd} pages read</span><span>${pct}%</span></div>
-          <div class="pbar"><div class="pfill ${done?'done':''}" style="width:${pct}%"></div></div>
-        </div>`;
-
-      // Sections
-      if(b.sections&&b.sections.length){
-        const shown=b.showSecs!==false,dc=b.sections.filter(s=>s.done).length;
-        card+=`<div class="exp-section">
-          <div class="exp-section-hdr">
-            <span class="exp-section-lbl">Sections (${dc}/${b.sections.length} done)</span>
-            <button class="toggle-btn" onclick="toggleSecList('${b.id}',event)">${shown?'Hide':'Show'}</button>
-          </div>`;
-        if(shown){
-          card+=b.sections.map(s=>`<div class="sec-item ${s.done?'si-done':''}" onclick="toggleSection('${b.id}','${s.id}',event)">
-            <div class="sec-chk">${s.done?'✓':''}</div>
-            <span class="sec-name">${s.name}</span>
-            <span class="sec-pgs">${s.pages} pgs</span>
-            ${s.due?`<span class="sec-due-lbl">${fmtDate(s.due)}</span>`:''}
-          </div>`).join('');
-        }
-        card+=`</div>`;
-      }
-
-      // Domains
-      if(b.domains&&b.domains.length){
-        const totalW=b.domains.reduce((s,d)=>s+d.weight,0)||100;
-        card+=`<div class="exp-section">
-          <div class="exp-section-hdr"><span class="exp-section-lbl">Study Domains</span></div>
-          ${b.domains.map(d=>`<div class="dom-item">
-            <span class="dom-name">${d.name}</span>
-            <div class="dom-bar-wrap"><div class="dom-bar-fill" style="width:${Math.min(100,d.weight/totalW*100)}%"></div></div>
-            <span class="dom-weight">${d.weight}%</span>
-          </div>`).join('')}
-        </div>`;
-      }
-
-      card+=`</div>`; // close bk-expanded
-    }
-
-    card+=`</div>`;
-    return card;
-  }).join('');
-
-  wrap.innerHTML=html;
-}
-
-function updateStats(){
-  const sub=getSub();
-  if(!sub||!sub.books.length){['st0','st1','st2','st3'].forEach(id=>document.getElementById(id).textContent=id==='st3'?'0%':'0');return;}
-  const tot=sub.books.reduce((s,b)=>s+bTotal(b),0),rd=sub.books.reduce((s,b)=>s+bRead(b),0);
-  const daily=sub.books.reduce((s,b)=>{const l=bTotal(b)-bRead(b);if(!l)return s;const d=dLeft(b.end);return s+(d>0?Math.ceil(l/d):l);},0);
-  document.getElementById('st0').textContent=sub.books.length;
-  document.getElementById('st1').textContent=tot-rd;
-  document.getElementById('st2').textContent=daily;
-  document.getElementById('st3').textContent=tot>0?Math.round(rd/tot*100)+'%':'0%';
-}
-
-// ══ PACE ANALYSIS ══
-function renderPaceAnalysis(){
-  const sub=getSub(),el=document.getElementById('paceBody');
-  if(!sub||!sub.books.length){
-    el.innerHTML='<span style="font-size:.82rem;color:var(--tx3)">Add materials to unlock pace analysis.</span>';
-    renderPaceBaseline(el);return;
-  }
-  const days=getDaysLogged(),avg7=get7DayAvg();
-  const totalNeed=sub.books.reduce((s,b)=>{const l=bTotal(b)-bRead(b);if(!l)return s;const d=dLeft(b.end);return s+(d>0?Math.ceil(l/d):l);},0);
-  const ratio=avg7>0?totalNeed/avg7:(totalNeed>0?999:0);
-  const pace=paceLabel(ratio,days);
-  const bookRows=sub.books.filter(b=>bTotal(b)-bRead(b)>0).map(b=>{
-    const l=bTotal(b)-bRead(b),d=dLeft(b.end),need=d>0?Math.ceil(l/d):l,avg=get7DayAvg(b.id),r=avg>0?need/avg:(need>0?999:0),pl=paceLabel(r,days);
-    return `<div class="pbook-row"><span class="pbook-name">${b.title}</span><span style="font-family:'DM Mono',monospace;font-size:.7rem">${need} pgs/d</span><span class="pace-badge ${pl.cls}" style="margin-top:0;margin-left:.35rem;padding:.1rem .35rem;font-size:.54rem">${pl.icon}</span></div>`;
-  }).join('');
-  const userGoals=sub.books.map(b=>b.dailyGoal||0).filter(g=>g>0);
-  const avgGoal=userGoals.length?Math.round(userGoals.reduce((s,g)=>s+g,0)/userGoals.length):null;
-  let honest='';
-  if(days>=3&&avg7>0){
-    if(totalNeed<=avg7)honest=`At your 7-day average of <strong style="color:var(--grn)">${avg7.toFixed(1)} pgs/day</strong>, you can comfortably meet all your deadlines.`;
-    else{const atRisk=sub.books.filter(b=>{const l=bTotal(b)-bRead(b);if(!l)return false;const d=dLeft(b.end);const need=d>0?Math.ceil(l/d):l;const a=get7DayAvg(b.id);return a>0&&need>a*1.1;});
-      honest=`Combined need is <strong style="color:var(--red)">${totalNeed} pgs/day</strong> vs your average of <strong>${avg7.toFixed(1)}</strong>. `;
-      if(atRisk.length>1)honest+=`Hitting all ${atRisk.length} deadlines simultaneously will be difficult at your current pace.`;
-      else if(atRisk.length)honest+=`Most at risk: <strong style="color:var(--accent)">${atRisk.map(b=>b.title).join(', ')}</strong>.`;
-    }
-    if(avgGoal&&avg7<avgGoal*0.7)honest+=` Your actual average (${Math.round(avg7)}) is well below your stated goal of ${avgGoal} pgs/day.`;
-  }else if(days<3)honest=`Log at least 3 reading days for a personalized assessment. (${days}/3 so far)`;
-  el.innerHTML=`
-    <div class="pace-row"><span class="pace-lbl">7-Day Average</span><span class="pace-val" style="color:${avg7>0?'var(--grn)':'var(--tx3)'}">${avg7>0?avg7.toFixed(1)+' pgs/day':'—'}</span></div>
-    ${avgGoal?`<div class="pace-row"><span class="pace-lbl">Your Daily Goal</span><span class="pace-val">${avgGoal} pgs/day</span></div>`:''}
-    <div class="pace-row"><span class="pace-lbl">Total Daily Need</span><span class="pace-val">${totalNeed} pgs/day</span></div>
-    <div class="pace-sep"></div>
-    <div class="pace-row"><span class="pace-lbl">Overall Status</span><span class="pace-badge ${pace.cls}" style="margin-top:0">${pace.icon} ${pace.label}</span></div>
-    ${bookRows?`<div style="margin-top:.15rem">${bookRows}</div>`:''}
-    ${honest?`<div class="pace-sep"></div><div class="honest-box"><span style="font-family:'DM Mono',monospace;font-size:.54rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)">Honest Assessment</span><p style="margin-top:.4rem;font-size:.8rem;color:var(--tx2);line-height:1.75">${honest}</p></div>`:''}`;
-  renderPaceBaseline(el);
-}
-function renderPaceBaseline(parentEl){
-  if(settings.showBaseline===false)return;
-  const latest=speedHistory[0]||null;
-  const div=document.createElement('div');
-  if(latest){
-    const hrs=settings.dailyHours,dailyEst=hrs>0?Math.round(latest.studyWPM*hrs*60/250):null;
-    div.innerHTML=`<div class="pace-sep"></div><div style="padding:.7rem 0"><div style="font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:.5rem">⚡ Measured Baseline · ${latest.date}</div><div class="bl-grid"><div class="bl-box"><div class="bl-val" style="color:var(--accent)">${latest.wpm}</div><div class="bl-lbl">WPM</div></div><div class="bl-box"><div class="bl-val" style="color:var(--grn)">${latest.pph}</div><div class="bl-lbl">Pgs/Hr</div></div><div class="bl-box"><div class="bl-val" style="color:var(--ink)">${latest.pp45}</div><div class="bl-lbl">Pgs/45m</div></div></div>${dailyEst?`<div style="margin-top:.48rem;font-family:'DM Mono',monospace;font-size:.58rem;color:var(--tx2);text-align:center">At ${hrs}h/day → ~<strong style="color:var(--accent)">${dailyEst} pages/day</strong> capacity</div>`:''}<div style="margin-top:.42rem;text-align:center"><span style="font-family:'DM Mono',monospace;font-size:.54rem;color:var(--accent);cursor:pointer" onclick="gotoPage('speedtest',document.querySelectorAll('.nt')[3])">⚡ Retake to update</span></div></div>`;
-  } else {
-    div.innerHTML=`<div class="pace-sep"></div><div style="text-align:center;padding:.55rem 0"><span style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--accent);cursor:pointer" onclick="gotoPage('speedtest',document.querySelectorAll('.nt')[3])">⚡ Take reading speed test to add measured baseline</span></div>`;
-  }
-  parentEl.appendChild(div);
-}
-
-// ══ CALENDAR ══
-function buildCal(){
-  const td=today();
-  const start=new Date();start.setDate(start.getDate()-14);start.setHours(0,0,0,0);
-  const end=new Date();end.setDate(end.getDate()+60);end.setHours(0,0,0,0);
-  const months={};const cur=new Date(start);
-  while(cur<=end){const mk=cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0');if(!months[mk])months[mk]={y:cur.getFullYear(),m:cur.getMonth(),days:[]};months[mk].days.push(new Date(cur));cur.setDate(cur.getDate()+1);}
-  const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];let html='';
-  Object.values(months).forEach(mo=>{
-    const mn=new Date(mo.y,mo.m,1).toLocaleDateString('en-US',{month:'long'});
-    html+=`<div class="msep">${mn} <span>${mo.y}</span></div><div class="dgrid">${DAYS.map(d=>`<div class="dh">${d}</div>`).join('')}`;
-    const fdow=mo.days[0].getDay();for(let i=0;i<fdow;i++)html+=`<div class="dc ec"></div>`;
-    mo.days.forEach(d=>{
-      const ds=d.toISOString().split('T')[0],log=cal[ds]||{};
-      const past=ds<td,isT=ds===td,fut=ds>td;
-      const hasLog=log.read||(log.bookPages&&Object.values(log.bookPages).some(v=>v>0));
-      const cls=isT?'today':past&&hasLog?'hlog':past?'past':fut?'fl':'';
-      let dots='';if(log.read)dots+=`<div class="dot rd"></div>`;
-      (log.strats||[]).forEach(sid=>{const i=STRATS.findIndex(s=>s.id===sid);if(i>=0)dots+=`<div class="dot s${i}"></div>`;});
-      const click=(isT||past)?`onclick="openDay('${ds}')"`:'';
-      html+=`<div class="dc ${cls}" ${click}><span class="dnum">${d.getDate()}</span><div class="ddots">${dots}</div></div>`;
-    });
-    const ldow=mo.days[mo.days.length-1].getDay();for(let i=ldow+1;i<7;i++)html+=`<div class="dc ec"></div>`;
-    html+=`</div>`;
-  });
-  document.getElementById('calGrid').innerHTML=html;updateStreak();renderWeek();renderForecast();
-}
-function updateStreak(){
-  let s=0;const cur=new Date();cur.setHours(0,0,0,0);
-  while(true){const ds=cur.toISOString().split('T')[0];if(cal[ds]&&cal[ds].read){s++;cur.setDate(cur.getDate()-1);}else break;}
-  document.getElementById('streakNum').textContent=s;
-  document.getElementById('totalDays').textContent=Object.values(cal).filter(l=>l.read).length+' days logged';
-}
-function renderWeek(){
-  const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);rows.push(d);}
-  document.getElementById('weekBox').innerHTML=rows.map(d=>{
-    const ds=d.toISOString().split('T')[0],log=cal[ds]||{};
-    const strs=(log.strats||[]).map(sid=>STRATS.find(s=>s.id===sid)?.name).filter(Boolean);
-    const totalPgs=Object.values(log.bookPages||{}).reduce((s,v)=>s+v,0),isTd=ds===today();
-    return `<div style="display:flex;gap:.5rem;align-items:flex-start;padding:.42rem 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="font-family:'DM Mono',monospace;font-size:.58rem;color:${isTd?'var(--accent)':'var(--tx3)'};width:66px;flex-shrink:0;padding-top:.1rem">${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div><div style="flex:1">${log.read?`<span style="font-size:.76rem;color:var(--grn)">✓${totalPgs>0?' '+totalPgs+' pgs':''}</span>`:`<span style="font-size:.76rem;color:var(--tx3)">—</span>`}${strs.length?`<div style="font-size:.68rem;color:var(--tx2);margin-top:.14rem">${strs.join(', ')}</div>`:''}${log.notes?`<div style="font-size:.65rem;color:var(--tx3);font-style:italic;margin-top:.1rem">"${log.notes}"</div>`:''}</div></div>`;
-  }).join('');
-}
-function renderForecast(){
-  const sub=getSub(),el=document.getElementById('forecastBox');
-  if(!sub||!sub.books.length){el.innerHTML='<span style="color:var(--tx3)">Add materials to see your forecast.</span>';return;}
-  const avg7=get7DayAvg(),days=getDaysLogged(),totalLeft=sub.books.reduce((s,b)=>s+Math.max(0,bTotal(b)-bRead(b)),0);
-  const urgent=sub.books.filter(b=>bTotal(b)-bRead(b)>0).sort((a,b)=>dLeft(a.end)-dLeft(b.end))[0];
-  let html='';
-  if(avg7>0&&days>=3){const d=Math.ceil(totalLeft/avg7);const fd=new Date();fd.setDate(fd.getDate()+d);html+=`<div style="margin-bottom:.6rem">At <strong style="color:var(--accent)">${avg7.toFixed(1)} pgs/day</strong>, all materials finish in <strong>${d} days</strong> (~${fd.toLocaleDateString('en-US',{month:'short',day:'numeric'})}).</div>`;}
-  else if(days<3)html+=`<div style="margin-bottom:.6rem;color:var(--tx3)">Log at least 3 days to see your forecast. (${days}/3)</div>`;
-  if(urgent){const dl=dLeft(urgent.end),lft=bTotal(urgent)-bRead(urgent),need=dl>0?Math.ceil(lft/dl):lft;html+=`<div style="padding:.6rem .75rem;background:var(--accent-bg);border-radius:var(--r2);box-shadow:inset 0 0 0 1px var(--accent-ring)">🎯 <strong style="color:var(--accent)">${urgent.title}</strong> — ${need} pgs/day by ${fmtDate(urgent.end)} (${dl}d)</div>`;}
-  if(!html)html='<span style="color:var(--tx3)">Keep logging daily to unlock forecast.</span>';
-  el.innerHTML=html;
-}
-
-// ══ DAY MODAL ══
-function openDay(ds){
-  mDate=ds;const log=cal[ds]||{};
-  document.getElementById('mdTitle').textContent=new Date(ds+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  const sub=getSub(),bkEl=document.getElementById('mdBooks');
-  if(!sub||!sub.books.length){bkEl.innerHTML='<div class="blog-empty" style="font-family:\'DM Mono\',monospace;font-size:.68rem;color:var(--tx3);text-align:center;padding:.7rem;background:var(--sf2);border-radius:var(--r2);margin-bottom:.85rem">No materials yet.</div>';}
-  else{
-    const prev=log.bookPages||{};
-    bkEl.innerHTML=sub.books.map(b=>{
-      const tot=bTotal(b),rd=bRead(b),left=tot-rd,dl=dLeft(b.end),target=dl>0?Math.ceil(left/dl):0,prevV=prev[b.id]||0;
-      return `<div class="blog-row ${prevV>0?'has-v':''}" id="blrow-${b.id}"><div class="blog-info"><div class="blog-title">${b.title}</div><div class="blog-meta">${rd}/${tot} read · target ~${target} pgs/day</div></div><input class="blog-inp" type="number" id="blpg-${b.id}" min="0" max="${tot}" placeholder="0" value="${prevV||''}" oninput="updBRow('${b.id}')"><span class="blog-unit">pgs</span></div>`;
-    }).join('');
-  }
-  document.getElementById('stratChks').innerHTML=STRATS.map(s=>{const on=(log.strats||[]).includes(s.id);return `<div class="cr2 ${on?'on':''}" id="sr-${s.id}" onclick="toggleSR('${s.id}')"><div class="cb2" id="sc-${s.id}">${on?'✓':''}</div><span class="clbl">${s.icon} ${s.name}</span><span class="cbdg">${s.badges[0].l}</span></div>`;}).join('');
-  document.getElementById('mdNotes').value=log.notes||'';
-  document.getElementById('dayModal').classList.add('open');
-}
-function closeDay(){document.getElementById('dayModal').classList.remove('open');mDate=null;}
-function updBRow(bid){const i=document.getElementById('blpg-'+bid),r=document.getElementById('blrow-'+bid);r.classList.toggle('has-v',(parseInt(i.value)||0)>0);}
-function toggleSR(sid){const row=document.getElementById('sr-'+sid),chk=document.getElementById('sc-'+sid);const on=row.classList.toggle('on');chk.textContent=on?'✓':'';}
-function saveDay(){
-  if(!mDate)return;const sub=getSub();
-  const strats=STRATS.filter(s=>document.getElementById('sr-'+s.id)?.classList.contains('on')).map(s=>s.id);
-  const notes=document.getElementById('mdNotes').value.trim();
-  const newPages={};let totalPgs=0;
-  if(sub&&sub.books.length){sub.books.forEach(b=>{const i=document.getElementById('blpg-'+b.id);const v=i?Math.max(0,parseInt(i.value)||0):0;if(v>0)newPages[b.id]=v;totalPgs+=v;});}
-  const prev=(cal[mDate]||{}).bookPages||{};
-  if(sub&&sub.books.length){sub.books.forEach(b=>{if(b.sections&&b.sections.length)return;const oldV=prev[b.id]||0,newV=newPages[b.id]||0,delta=newV-oldV;if(delta)b.read=Math.min(bTotal(b),Math.max(0,(b.read||0)+delta));});}
-  cal[mDate]={read:totalPgs>0||strats.length>0,strats,notes,bookPages:newPages};
-  save();closeDay();buildCal();renderBooks();updateStats();renderPaceAnalysis();showToast(totalPgs>0?'+'+totalPgs+' pgs logged ✓':'Day logged ✓');
-}
-
-// ══ STRATEGIES ══
-function renderStrats(){
-  document.getElementById('stratList').innerHTML=STRATS.map(s=>`<div class="stcard" id="sc2-${s.id}"><div class="sthdr" onclick="toggleStrat('${s.id}')"><div class="sti">${s.icon}</div><div style="flex:1"><div class="stn">${s.name}</div><div class="sttag">${s.tag}</div><div class="stbdgs">${s.badges.map(b=>`<span class="sbg ${b.c}">${b.l}</span>`).join('')}</div></div><div class="stchv">▼</div></div><div class="stbody"><p class="stdesc">${s.desc}</p><ul class="ststeps">${s.steps.map((st,i)=>`<li><div class="stepn">${i+1}</div><span>${st}</span></li>`).join('')}</ul><div class="sl" style="margin-bottom:.4rem">Source Material</div><div class="stlinks">${s.links.map(l=>`<a class="stlnk" href="${l.u}" target="_blank" rel="noopener">↗ ${l.l}</a>`).join('')}</div></div></div>`).join('');
-}
-function toggleStrat(id){document.getElementById('sc2-'+id).classList.toggle('open');}
-
-// ══ SPEED TEST ══
-function showSTPhase(name){document.querySelectorAll('.st-phase').forEach(el=>el.classList.remove('on'));document.getElementById('stp-'+name)?.classList.add('on');stPhase=name;}
-function startSpeedTest(type){
-  stType=type;stAnswers={};stCdVal=3;
-  const arr=PASSAGES[type];let idx;
-  if(arr.length===1){idx=0;}else{do{idx=Math.floor(Math.random()*arr.length);}while(idx===lastPassIdx[type]);}
-  lastPassIdx[type]=idx;stPassageIdx=idx;
-  showSTPhase('countdown');document.getElementById('stCountNum').textContent='3';
-  stCdID=setInterval(()=>{stCdVal--;if(stCdVal>0){document.getElementById('stCountNum').textContent=stCdVal;}else{clearInterval(stCdID);beginReading();}},1000);
-}
-function beginReading(){
-  const p=PASSAGES[stType][stPassageIdx];
-  document.getElementById('stPassageLbl').textContent=p.label;
-  document.getElementById('stPassageText').textContent=p.text;
-  showSTPhase('reading');stStart=Date.now();stElapsed=0;
-  stTimerID=setInterval(()=>{stElapsed=Math.floor((Date.now()-stStart)/1000);const m=Math.floor(stElapsed/60),s=stElapsed%60;document.getElementById('stLiveTimer').textContent=m+':'+(s<10?'0':'')+s;},500);
-}
-function stopReading(){
-  clearInterval(stTimerID);stElapsed=Math.max(1,Math.floor((Date.now()-stStart)/1000));
-  showSTPhase('comprehension');
-  const p=PASSAGES[stType][stPassageIdx];
-  document.getElementById('stQuestions').innerHTML=p.questions.map((q,qi)=>`<div class="comp-q"><div class="comp-q-text">Q${qi+1}: ${q.q}</div><div class="comp-opts">${q.opts.map((opt,oi)=>`<div class="comp-opt" id="opt-${qi}-${oi}" onclick="selOpt(${qi},${oi})"><div class="comp-radio"></div>${opt}</div>`).join('')}</div></div>`).join('');
-}
-function selOpt(qi,oi){
-  stAnswers[qi]=oi;
-  const p=PASSAGES[stType][stPassageIdx];
-  for(let i=0;i<p.questions[qi].opts.length;i++)document.getElementById('opt-'+qi+'-'+i)?.classList.remove('sel');
-  document.getElementById('opt-'+qi+'-'+oi)?.classList.add('sel');
-}
-function submitComp(){
-  const p=PASSAGES[stType][stPassageIdx];let correct=0;
-  p.questions.forEach((q,qi)=>{const ua=stAnswers[qi];q.opts.forEach((_,oi)=>{const el=document.getElementById('opt-'+qi+'-'+oi);if(!el)return;if(oi===q.ans)el.classList.add('correct');else if(oi===ua&&ua!==q.ans)el.classList.add('wrong');});if(ua===q.ans)correct++;});
-  const passed=correct>=Math.ceil(p.questions.length*0.5),wordCount=p.text.trim().split(/\s+/).length,wpm=Math.round((wordCount/stElapsed)*60);
-  setTimeout(()=>showSpeedResults(wpm,passed),1100);
-}
-function showSpeedResults(wpm,passed){
-  const cat=getSpeedCat(wpm),sm=settings.sessionMins||45,studyWPM=Math.round(wpm*.70),pph=Math.round((studyWPM*60)/250),pps=Math.round((studyWPM*sm)/250);
-  document.getElementById('resWPM').textContent=wpm;
-  document.getElementById('resCat').textContent=cat.label;document.getElementById('resCat').style.color=cat.color;
-  document.getElementById('resDesc').textContent=cat.desc;
-  document.getElementById('resStudyWPM').textContent=studyWPM;
-  document.getElementById('resPPH').textContent=pph;
-  document.getElementById('resPP45').textContent=pps;
-  document.getElementById('resPP45Lbl').textContent='Pages / '+sm+' min';
-  const cs=document.getElementById('resComp');cs.textContent=passed?'✓ Comprehension passed':'✗ Review your comprehension';cs.className='cscore '+(passed?'cs-p':'cs-f');
-  document.getElementById('tipsHdr').textContent=cat.label+' — How to Improve';
-  document.getElementById('tipsList').innerHTML=cat.tips.map((t,i)=>`<div class="tip-item"><div class="tip-n">${i+1}</div><div><strong style="color:var(--tx)">${t.t}</strong> — ${t.d}${t.u?`<br><a class="tip-lnk" href="${t.u}" target="_blank" rel="noopener">↗ ${t.u}</a>`:''}</div></div>`).join('');
-  const entry={date:today(),wpm,studyWPM,pph,pp45:pps,type:stType,passed,cat:cat.label};
-  speedHistory.unshift(entry);if(speedHistory.length>10)speedHistory=speedHistory.slice(0,10);
-  save();renderSpeedHistory();renderPaceAnalysis();showSTPhase('results');
-}
-function resetTest(){clearInterval(stTimerID);beginReading();}
-function backToMenu(){showSTPhase('idle');renderSpeedHistory();}
-function renderSpeedHistory(){
-  const el=document.getElementById('speedHistBox');if(!el)return;
-  if(!speedHistory.length){el.innerHTML='<div class="empty"><div class="ei">⚡</div>No tests taken yet</div>';return;}
-  el.innerHTML='<div class="speed-hist"><div class="sh-hdr">Recent Tests</div>'+speedHistory.slice(0,6).map(h=>{const cat=getSpeedCat(h.wpm);return `<div class="sh-row"><span class="sh-date">${h.date}</span><span class="sh-type">${h.type==='general'?'General':'Dense'}</span><span class="sh-wpm">${h.wpm} WPM</span><span class="sh-cat" style="color:${cat.color}">${h.cat}</span><span class="sh-pass" style="color:${h.passed?'var(--grn)':'var(--red)'}">${h.passed?'✓':''}</span></div>`;}).join('')+'</div>';
-}
-
-// ══ NAV ══
-function gotoPage(name,el){
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.nt').forEach(t=>t.classList.remove('on'));
-  document.getElementById('pg-'+name)?.classList.add('on');
-  if(el)el.classList.add('on');
-  if(name==='calendar')buildCal();
-  if(name==='speedtest')renderSpeedHistory();
-}
-
-// ══ TOAST ══
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
-
-// ══ MODAL CLOSE ON OVERLAY ══
-['dayModal','newSubModal','syncModal','bookModal'].forEach(id=>{
-  document.getElementById(id)?.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');if(id==='dayModal')mDate=null;if(id==='bookModal')editingBookId=null;}});
-});
-
-// ══ RENDER ALL ══
-function renderAll(){
-  renderSubTabs();renderBooks();updateStats();renderPaceAnalysis();renderStrats();renderSpeedHistory();applySettings();
-  const sub=getSub();
-  const bStart=document.getElementById('bStart');if(bStart)bStart.value=today();
-  const bEnd=document.getElementById('bEnd');if(bEnd&&sub&&sub.date)bEnd.value=sub.date;
-}
-
-// ══ INIT ══
-function init(){
-  load();
-  if(!active||!subs.find(s=>s.id===active))active=subs.length?subs[0].id:null;
-  renderAll();
-}
-init();
-</script>
-</body>
-</html>
+function loadFile(e){const f=e.target.files[0];if(!f)r
