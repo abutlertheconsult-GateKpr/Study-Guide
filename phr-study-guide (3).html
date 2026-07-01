@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Command Center</title>
+<!-- PWA -->
+<link rel="manifest" href="/Study-Guide/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Study-Guide">
+<meta name="theme-color" content="#111110">
+<link rel="apple-touch-icon" href="/Study-Guide/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08090e;--bg1:#0d0f18;--sf0:#111420;--sf1:#161b2c;--sf2:#1c2138;--sf3:#232844;
+  --inner:inset 0 0 0 1px rgba(255,255,255,.055);--inner2:inset 0 0 0 1px rgba(255,255,255,.03);
+  --shadow:0 2px 16px rgba(0,0,0,.45);
+  --tx:#f5f2eb;--tx2:#c0bdd0;--tx3:#8082a0;
+  --accent:#d4a843;--accent-br:#f0c060;--accent-bg:rgba(212,168,67,.10);--accent-ring:rgba(212,168,67,.22);
+  --ink:#7c8dff;--ink-bg:rgba(124,141,255,.10);
+  --grn:#52b788;--grn-bg:rgba(82,183,136,.10);
+  --red:#e05c5c;--red-bg:rgba(224,92,92,.10);
+  --r:16px;--r2:10px;--r3:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-weight:400;min-height:100vh;font-size:16px;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+header{display:flex;align-items:center;gap:.9rem;padding:.8rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.045);position:sticky;top:0;background:rgba(8,9,14,.95);backdrop-filter:blur(20px) saturate(1.4);z-index:100;flex-wrap:wrap}
+.brand h1{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;letter-spacing:-.02em;color:var(--tx)}
+.brand h1 em{color:var(--accent);font-style:normal}
+.brand-sub{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--tx2);margin-top:.1rem}
+.sub-tabs{display:flex;gap:.3rem;flex:1;flex-wrap:wrap;align-items:center}
+.stab{display:flex;align-items:center;gap:.32rem;background:var(--sf0);border-radius:var(--r2);padding:.38rem .75rem;cursor:pointer;transition:all .18s;font-size:.78rem;font-weight:500;color:var(--tx2);white-space:nowrap;box-shadow:var(--inner2);min-height:36px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+.stab:hover{background:var(--sf1);color:var(--tx)}.stab.on{background:var(--accent-bg);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent-ring)}
+.stab .dx{font-size:.6rem;color:var(--tx3);margin-left:.18rem}.stab .dx:hover{color:var(--red)}
+.add-sub{background:none;border:1px dashed rgba(255,255,255,.12);border-radius:var(--r2);padding:.35rem .65rem;color:var(--tx3);cursor:pointer;font-size:.72rem;font-family:'DM Mono',monospace;letter-spacing:.05em;transition:all .18s;white-space:nowrap;touch-action:manipulation}
+.add-sub:hover{border-color:var(--accent);color:var(--accent)}
+.cd-pill{background:var(--accent-bg);border-radius:var(--r2);padding:.4rem .85rem;text-align:center;flex-shrink:0;box-shadow:inset 0 0 0 1px var(--accent-ring)}
+.cd-pill .n{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--accent);line-height:1}
+.cd-pill .l{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3)}
+
+/* NAV */
+.nav{display:flex;border-bottom:1px solid rgba(255,255,255,.045);padding:0 1.5rem;background:var(--bg1);overflow-x:auto;gap:0;-webkit-overflow-scrolling:touch}
+.nt{padding:.72rem 1.05rem;font-size:.72rem;font-family:'DM Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap;min-height:44px;display:flex;align-items:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+.nt:hover{color:var(--tx)}.nt.on{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* PAGES */
+.pg{display:none;padding:1.5rem 1.5rem 4rem;max-width:1200px;margin:0 auto}.pg.on{display:block}
+.two{display:grid;grid-template-columns:1fr 310px;gap:1.5rem}
+@media(max-width:900px){.two{grid-template-columns:1fr}.pg{padding:1.2rem 1rem 3.5rem}.nav{padding:0 1rem}header{padding:.7rem 1rem}}
+
+/* SECTION LABEL */
+.sl{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem;font-weight:600}
+.sl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
+
+/* CARDS */
+.card{background:var(--sf1);border-radius:var(--r);padding:1.4rem;box-shadow:var(--inner),var(--shadow)}
+.card-sm{background:var(--sf1);border-radius:var(--r);padding:1.1rem;box-shadow:var(--inner),var(--shadow)}
+
+/* FORM */
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}.full{grid-column:1/-1}
+.fg{display:flex;flex-direction:column;gap:.3rem}
+.fl{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);font-weight:600}
+input[type=text],input[type=number],input[type=date],select,textarea{
+  background:var(--sf2);border:none;border-radius:var(--r2);color:var(--tx) !important;
+  font-family:'Inter',sans-serif;font-size:16px;padding:.58rem .85rem;width:100%;
+  outline:none;transition:box-shadow .18s;box-shadow:var(--inner2);
+  color-scheme:dark;-webkit-appearance:none;-webkit-text-fill-color:var(--tx);touch-action:manipulation}
+input::placeholder,textarea::placeholder{color:var(--tx3);-webkit-text-fill-color:var(--tx3)}
+input:focus,select:focus,textarea:focus{box-shadow:inset 0 0 0 1.5px var(--accent),0 0 0 3px var(--accent-ring)}
+select option{background:var(--sf2);color:var(--tx)}
+.btn-a{width:100%;margin-top:.85rem;background:var(--accent);color:#0a0b10;border:none;border-radius:var(--r2);padding:.72rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:0 2px 12px rgba(212,168,67,.25);min-height:48px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn-a:hover{background:var(--accent-br)}.btn-a:active{opacity:.85;transform:scale(.97)}
+.btn-b{width:100%;margin-top:.65rem;background:var(--ink-bg);color:var(--ink);border:none;border-radius:var(--r2);padding:.68rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .18s;box-shadow:inset 0 0 0 1px rgba(124,141,255,.22);min-height:48px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn-b:hover{background:rgba(124,141,255,.18)}
+.btn-ghost{background:var(--sf0);color:var(--tx2);border:none;border-radius:var(--r2);padding:.58rem 1rem;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .18s;box-shadow:var(--inner2);width:100%;margin-bottom:.5rem;text-align:left;touch-action:manipulation}
+.btn-ghost:hover{background:var(--sf1);color:var(--tx)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:none;border-radius:var(--r2);padding:.58rem 1rem;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .18s;box-shadow:inset 0 0 0 1px rgba(224,92,92,.2);width:100%;touch-action:manipulation}
+.btn-danger:hover{background:rgba(224,92,92,.2)}
+
+/* SECTION / DOMAIN BUILDER */
+.builder{background:var(--sf2);border-radius:var(--r2);overflow:hidden;margin-top:.6rem;box-shadow:var(--inner2)}
+.builder-hdr{display:flex;justify-content:space-between;align-items:center;padding:.55rem .8rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.builder-hdr span{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3)}
+.builder-add-btn{background:var(--accent-bg);border:none;border-radius:var(--r3);color:var(--accent);font-family:'DM Mono',monospace;font-size:.58rem;padding:.24rem .55rem;cursor:pointer;transition:all .15s;touch-action:manipulation}
+.builder-add-btn:hover{background:rgba(212,168,67,.18)}
+.builder-rows{padding:.52rem .62rem;display:flex;flex-direction:column;gap:.42rem}
+.builder-placeholder{padding:.42rem;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tx3);text-align:center}
+.brow{display:flex;align-items:center;gap:.4rem}
+.brow input[type=text]{flex:1}.brow input[type=number]{width:72px;flex-shrink:0}.brow input[type=date]{width:115px;flex-shrink:0}
+.rm-btn{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.85rem;padding:.08rem .2rem;transition:color .15s;flex-shrink:0;touch-action:manipulation}.rm-btn:hover{color:var(--red)}
+.builder-total{padding:.42rem .8rem;background:var(--accent-bg);font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tx2);border-top:1px solid rgba(255,255,255,.04)}
+.builder-total span{color:var(--accent)}
+
+/* BOOK CARDS */
+.bkcard{background:var(--sf1);border-radius:var(--r);overflow:hidden;margin-bottom:.85rem;box-shadow:var(--inner),var(--shadow);cursor:pointer;transition:box-shadow .2s}
+.bkcard:hover{box-shadow:var(--inner),0 4px 24px rgba(0,0,0,.5)}
+.bkcard.selected{box-shadow:inset 0 0 0 1.5px var(--accent),0 4px 24px rgba(0,0,0,.5)}
+.bk-collapsed{display:flex;align-items:center;gap:.75rem;padding:.9rem 1.1rem}
+.bk-collapsed-left{flex:1;min-width:0}
+.bk-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--tx);line-height:1.3}
+.bk-mini-progress{margin-top:.4rem;display:flex;align-items:center;gap:.55rem}
+.bk-mini-pct{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tx3);white-space:nowrap}
+.bk-mini-bar{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+.bk-mini-fill{height:100%;border-radius:100px;background:var(--accent);transition:width .4s}
+.bk-mini-fill.done{background:var(--grn)}
+.bk-collapsed-right{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.bk-actions{display:flex;gap:.35rem}
+.bk-edit-btn,.bk-del-btn{background:none;border:none;color:var(--tx3);cursor:pointer;padding:.28rem .42rem;border-radius:var(--r3);transition:all .15s;font-size:.78rem;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.bk-edit-btn:hover{background:var(--ink-bg);color:var(--ink)}
+.bk-del-btn:hover{background:var(--red-bg);color:var(--red)}
+
+/* EXPANDED BOOK */
+.bk-expanded{border-top:1px solid rgba(255,255,255,.06);padding:1.1rem 1.1rem .85rem}
+.bkstats{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:.85rem}
+.bs{display:flex;flex-direction:column;gap:.12rem}
+.bsl{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)}
+.bsv{font-size:1rem;font-weight:600;color:var(--tx)}.bsv.ca{color:var(--accent)}.bsv.cr{color:var(--red)}.bsv.cg{color:var(--grn)}.bsv.ci{color:var(--ink)}
+.avg-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.85rem;padding:.62rem .75rem;background:var(--sf2);border-radius:var(--r2);box-shadow:var(--inner2)}
+.avg-item{flex:1;display:flex;flex-direction:column;gap:.1rem}
+.avg-lbl{font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2)}
+.avg-val{font-family:'DM Mono',monospace;font-size:.9rem;font-weight:600}
+.avg-sep{width:1px;background:rgba(255,255,255,.06);align-self:stretch}
+.bk-prog{display:flex;flex-direction:column;gap:.28rem;margin-bottom:.85rem}
+.bk-prog-info{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tx3)}
+.pbar{height:5px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+.pfill{height:100%;border-radius:100px;background:linear-gradient(90deg,rgba(212,168,67,.5),var(--accent));transition:width .5s}
+.pfill.done{background:linear-gradient(90deg,rgba(82,183,136,.5),var(--grn))}
+
+/* PACE BADGE */
+.pace-badge{display:inline-flex;align-items:center;gap:.25rem;font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;padding:.15rem .45rem;border-radius:100px;font-weight:600}
+.pb-c{background:var(--grn-bg);color:var(--grn);box-shadow:inset 0 0 0 1px rgba(82,183,136,.25)}
+.pb-o{background:var(--ink-bg);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(124,141,255,.25)}
+.pb-a{background:rgba(232,160,48,.1);color:#e8a030;box-shadow:inset 0 0 0 1px rgba(232,160,48,.25)}
+.pb-r{background:var(--red-bg);color:var(--red);box-shadow:inset 0 0 0 1px rgba(224,92,92,.25)}
+.pb-n{background:var(--sf2);color:var(--tx3);box-shadow:var(--inner2)}
+
+/* SECTIONS IN EXPANDED */
+.exp-section{margin-top:.75rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.05)}
+.exp-section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem}
+.exp-section-lbl{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tx2);font-weight:600}
+.toggle-btn{background:none;border:none;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent);cursor:pointer;touch-action:manipulation}
+.sec-item{display:flex;align-items:center;gap:.52rem;padding:.44rem .55rem;border-radius:var(--r2);transition:background .15s;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.sec-item:hover{background:var(--sf2)}.sec-item.si-done{opacity:.5}
+.sec-chk{width:16px;height:16px;border-radius:4px;background:var(--sf2);box-shadow:var(--inner2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.65rem;transition:all .15s}
+.sec-item.si-done .sec-chk{background:var(--grn);color:#fff}
+.sec-name{flex:1;font-size:.88rem}.sec-item.si-done .sec-name{text-decoration:line-through;color:var(--tx3)}
+.sec-pgs{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tx3)}
+.sec-due-lbl{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--ink)}
+
+/* DOMAINS IN EXPANDED */
+.dom-item{display:flex;align-items:center;gap:.6rem;padding:.42rem .55rem;border-radius:var(--r2)}
+.dom-name{flex:1;font-size:.84rem;font-weight:500}
+.dom-weight{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--accent);font-weight:600;width:36px;text-align:right}
+.dom-bar-wrap{width:70px;height:4px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+.dom-bar-fill{height:100%;border-radius:100px;background:var(--accent);opacity:.8}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:.72rem;margin-bottom:1rem}
+.stat-box{background:var(--sf1);border-radius:var(--r);padding:.85rem 1rem;text-align:center;box-shadow:var(--inner),var(--shadow)}
+.sv{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--accent);line-height:1}
+.sl2{font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tx2);margin-top:.2rem}
+
+/* PACE PANEL */
+.pace-panel{background:var(--sf1);border-radius:var(--r);overflow:hidden;margin-bottom:1rem;box-shadow:var(--inner),var(--shadow)}
+.pace-hdr{padding:.8rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.05);font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+.pace-body{padding:.9rem 1.1rem;display:flex;flex-direction:column;gap:.62rem}
+.pace-row{display:flex;justify-content:space-between;align-items:center;font-size:.84rem}
+.pace-lbl{color:var(--tx2)}.pace-val{font-family:'DM Mono',monospace;font-size:.84rem;font-weight:600}
+.pace-sep{height:1px;background:rgba(255,255,255,.05)}
+.pbook-row{display:flex;align-items:center;gap:.5rem;padding:.3rem 0;font-size:.78rem}
+.pbook-name{flex:1;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.honest-box{padding:.7rem .85rem;border-radius:var(--r2);font-size:.82rem;line-height:1.75;background:rgba(212,168,67,.05);box-shadow:inset 0 0 0 1px rgba(212,168,67,.12)}
+.bl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.5rem}
+.bl-box{text-align:center;padding:.55rem .4rem;background:var(--sf2);border-radius:var(--r2);box-shadow:var(--inner2)}
+.bl-val{font-family:'DM Mono',monospace;font-size:.92rem;font-weight:600;line-height:1}
+.bl-lbl{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tx3);margin-top:.12rem}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--tx3);font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;background:var(--sf1);border-radius:var(--r);box-shadow:var(--inner),var(--shadow)}
+.empty .ei{font-size:1.8rem;margin-bottom:.55rem;opacity:.3}
+
+/* FIRST-LAUNCH EMPTY */
+.first-launch{text-align:center;padding:3rem 1.5rem;max-width:380px;margin:0 auto}
+.first-launch h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:.6rem}
+.first-launch p{font-size:.88rem;color:var(--tx2);line-height:1.7;margin-bottom:1.5rem}
+
+/* ADD MATERIAL HEADER ROW */
+.page-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.page-hdr-title{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.add-mat-btn{display:flex;align-items:center;gap:.4rem;background:var(--accent);color:#0a0b10;border:none;border-radius:var(--r2);padding:.45rem .9rem;font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:0 2px 10px rgba(212,168,67,.25);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.add-mat-btn:hover{background:var(--accent-br)}.add-mat-btn:active{transform:scale(.97)}
+
+/* CALENDAR */
+.msep{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--tx2);margin:1.1rem 0 .65rem;padding-bottom:.35rem;border-bottom:1px solid rgba(255,255,255,.05)}
+.msep span{color:var(--accent)}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;margin-bottom:1.1rem}
+.dh{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);text-align:center;padding-bottom:.28rem}
+.dc{background:var(--sf1);border-radius:var(--r2);padding:.42rem .32rem;min-height:55px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:.2rem;box-shadow:var(--inner2);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.dc:hover{background:var(--sf2)}.dc.today{background:var(--accent-bg);box-shadow:inset 0 0 0 1.5px var(--accent-ring)}
+.dc.hlog{box-shadow:inset 0 0 0 1.5px rgba(82,183,136,.35);background:rgba(82,183,136,.05)}
+.dc.past{opacity:.52}.dc.ec{background:none;box-shadow:none;cursor:default}.dc.fl{opacity:.28;cursor:default;pointer-events:none}
+.dnum{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--tx2);font-weight:600}.dc.today .dnum{color:var(--accent);font-weight:700}
+.ddots{display:flex;flex-wrap:wrap;gap:2px;margin-top:auto}
+.dot{width:5px;height:5px;border-radius:50%}
+.dot.rd{background:var(--grn)}.dot.s0{background:var(--accent)}.dot.s1{background:var(--ink)}.dot.s2{background:#b87fff}.dot.s3{background:#4bbfc0}.dot.s4{background:var(--red)}.dot.s5{background:#f06b9a}.dot.s6{background:rgba(212,168,67,.5)}
+.streak{display:flex;align-items:center;gap:.55rem;background:var(--sf1);border-radius:var(--r);padding:.75rem 1rem;margin-bottom:1rem;box-shadow:var(--inner),var(--shadow)}
+.snum{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--accent);line-height:1}
+.s-lbl{font-family:'DM Mono',monospace;font-size:.54rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tx3)}
+.legend{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.li{display:flex;align-items:center;gap:.28rem;font-family:'DM Mono',monospace;font-size:.54rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em}
+.ld{width:6px;height:6px;border-radius:50%}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0;opacity:0;pointer-events:none;transition:opacity .22s}
+.mo.open{opacity:1;pointer-events:all}
+.md{background:var(--sf1);border-radius:20px 20px 0 0;padding:1.5rem 1.4rem 2rem;width:100%;max-width:560px;transform:translateY(100%);transition:transform .28s cubic-bezier(.34,1.16,.64,1);max-height:92vh;overflow-y:auto;box-shadow:var(--inner),0 -8px 40px rgba(0,0,0,.6)}
+.mo.open .md{transform:translateY(0)}
+.md-pull{width:40px;height:4px;background:rgba(255,255,255,.15);border-radius:100px;margin:0 auto .9rem}
+.mt2{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
+.mc{background:var(--sf2);border:none;color:var(--tx2);cursor:pointer;width:28px;height:28px;border-radius:100px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:.9rem;touch-action:manipulation}
+.mc:hover{background:var(--sf3);color:var(--tx)}
+.blog-row{display:flex;align-items:center;gap:.55rem;padding:.55rem .72rem;background:var(--sf2);border-radius:var(--r2);margin-bottom:.42rem;box-shadow:var(--inner2);transition:all .18s}
+.blog-row.has-v{background:rgba(82,183,136,.07);box-shadow:inset 0 0 0 1.5px rgba(82,183,136,.3)}
+.blog-info{flex:1;min-width:0}
+.blog-title{font-size:.9rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.blog-meta{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--tx2);margin-top:.08rem}
+.blog-inp{width:60px;text-align:center;padding:.28rem .38rem;font-size:.9rem;flex-shrink:0}
+.blog-unit{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--tx3)}
+.cg2{display:flex;flex-direction:column;gap:.42rem;margin-bottom:.9rem}
+.cr2{display:flex;align-items:center;gap:.55rem;padding:.55rem .75rem;background:var(--sf2);border-radius:var(--r2);cursor:pointer;transition:all .15s;box-shadow:var(--inner2);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.cr2:hover{background:var(--sf3)}.cr2.on{background:rgba(82,183,136,.07);box-shadow:inset 0 0 0 1.5px rgba(82,183,136,.3)}
+.cb2{width:17px;height:17px;background:var(--sf3);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.7rem;transition:all .15s;box-shadow:var(--inner2)}
+.cr2.on .cb2{background:var(--grn);color:#fff}
+.clbl{font-size:.88rem;font-weight:500;flex:1}
+.cbdg{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .36rem;border-radius:100px;background:var(--sf3);color:var(--tx3)}
+
+/* STRATEGIES */
+.stcard{background:var(--sf1);border-radius:var(--r);overflow:hidden;margin-bottom:.75rem;box-shadow:var(--inner),var(--shadow)}
+.sthdr{display:flex;align-items:center;gap:.65rem;padding:.92rem 1.1rem;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.sti{font-size:1.1rem;flex-shrink:0}.stn{font-size:.9rem;font-weight:600;margin-bottom:.15rem}.sttag{font-size:.72rem;color:var(--tx2)}
+.stbdgs{display:flex;gap:.32rem;flex-wrap:wrap;margin-top:.28rem}
+.sbg{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .38rem;border-radius:100px;font-weight:600}
+.sbg.go{background:var(--accent-bg);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent-ring)}
+.sbg.bl{background:var(--ink-bg);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(124,141,255,.25)}
+.sbg.gr{background:var(--grn-bg);color:var(--grn);box-shadow:inset 0 0 0 1px rgba(82,183,136,.25)}
+.sbg.pu{background:rgba(184,127,255,.1);color:#b87fff;box-shadow:inset 0 0 0 1px rgba(184,127,255,.25)}
+.sbg.te{background:rgba(75,191,192,.1);color:#4bbfc0;box-shadow:inset 0 0 0 1px rgba(75,191,192,.25)}
+.stchv{color:var(--tx3);font-size:.7rem;transition:transform .22s;flex-shrink:0;margin-left:auto}
+.stcard.open .stchv{transform:rotate(180deg)}
+.stbody{display:none;padding:0 1.1rem .95rem;border-top:1px solid rgba(255,255,255,.05)}.stcard.open .stbody{display:block}
+.stdesc{font-size:.86rem;color:var(--tx2);line-height:1.8;padding-top:.85rem;margin-bottom:.75rem}
+.ststeps{list-style:none;display:flex;flex-direction:column;gap:.38rem;margin-bottom:.8rem}
+.ststeps li{display:flex;gap:.5rem;font-size:.83rem;color:var(--tx2);line-height:1.6}
+.stepn{background:var(--accent-bg);border-radius:var(--r3);width:19px;height:19px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.56rem;color:var(--accent);flex-shrink:0;margin-top:.13rem}
+.stlinks{display:flex;flex-direction:column;gap:.35rem}
+.stlnk{display:inline-flex;align-items:center;gap:.3rem;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--ink);text-decoration:none;padding:.26rem .55rem;background:var(--ink-bg);border-radius:var(--r3);transition:all .15s}
+.stlnk:hover{background:rgba(124,141,255,.18)}
+
+/* SPEED TEST */
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+@media(max-width:560px){.test-grid{grid-template-columns:1fr}}
+.tcard{background:var(--sf1);border-radius:var(--r);padding:1.25rem;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;box-shadow:var(--inner),var(--shadow);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.tcard:hover{transform:translateY(-3px);box-shadow:var(--inner),0 12px 32px rgba(0,0,0,.5)}
+.tcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.tcard.phr::before{background:var(--ink)}
+.tci{font-size:1.5rem;margin-bottom:.5rem}.tcn{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:.28rem}
+.tcs{font-size:.78rem;color:var(--tx2);line-height:1.6}
+.tctag{display:inline-block;margin-top:.5rem;font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:.14rem .44rem;border-radius:100px;background:var(--accent-bg);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent-ring)}
+.tcard.phr .tctag{background:var(--ink-bg);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(124,141,255,.25)}
+.st-phase{display:none}.st-phase.on{display:block}
+.cd-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:1rem}
+.cd-num{font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:900;color:var(--accent);line-height:1;animation:pulse .9s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.88)}}
+.cd-lbl{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tx3)}
+.reading-wrap{max-width:700px}
+.reading-hdr{display:flex;align-items:center;gap:1rem;padding:.8rem 1.1rem;background:var(--sf1);border-radius:var(--r);margin-bottom:1.1rem;box-shadow:var(--inner),var(--shadow)}
+.live-timer{font-family:'DM Mono',monospace;font-size:1.55rem;font-weight:500;color:var(--accent);line-height:1;flex-shrink:0}
+.lt-lbl{font-family:'DM Mono',monospace;font-size:.52rem;text-transform:uppercase;letter-spacing:.14em;color:var(--tx3)}
+.done-btn{background:var(--accent);color:#0a0b10;border:none;border-radius:var(--r2);padding:.58rem 1.1rem;font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0;min-height:48px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.done-btn:hover{background:var(--accent-br)}
+.passage-box{background:var(--sf1);border-radius:var(--r);padding:1.75rem 1.85rem;box-shadow:var(--inner),var(--shadow)}
+.passage-hint{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:.8rem}
+#stPassageText{font-size:1rem;line-height:2.0;color:var(--tx);white-space:pre-wrap}
+.comp-wrap{max-width:580px}
+.comp-q{margin-bottom:1.1rem}.comp-q-text{font-size:1rem;font-weight:600;margin-bottom:.7rem;line-height:1.6}
+.comp-opts{display:flex;flex-direction:column;gap:.42rem}
+.comp-opt{display:flex;align-items:center;gap:.58rem;padding:.68rem .88rem;background:var(--sf1);border-radius:var(--r2);cursor:pointer;transition:background .15s;font-size:.92rem;box-shadow:var(--inner2);min-height:56px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;color:var(--tx)}
+.comp-opt:hover{background:var(--sf2)}.comp-opt:active{background:var(--sf3)}
+.comp-opt.sel{background:var(--accent-bg);box-shadow:inset 0 0 0 1.5px var(--accent-ring);color:var(--accent)}
+.comp-opt.correct{background:var(--grn-bg);box-shadow:inset 0 0 0 1.5px rgba(82,183,136,.35);color:var(--grn)}
+.comp-opt.wrong{background:var(--red-bg);box-shadow:inset 0 0 0 1.5px rgba(224,92,92,.35);color:var(--red)}
+.comp-radio{width:16px;height:16px;border-radius:50%;background:var(--sf3);flex-shrink:0;transition:all .15s;box-shadow:var(--inner2)}
+.comp-opt.sel .comp-radio{background:var(--accent)}
+.results-wrap{max-width:660px}
+.wpm-hero{display:flex;flex-direction:column;align-items:center;padding:1.75rem;background:var(--sf1);border-radius:var(--r);margin-bottom:1.1rem;text-align:center;box-shadow:var(--inner),var(--shadow)}
+.wpm-num{font-family:'Playfair Display',serif;font-size:4.2rem;font-weight:900;color:var(--accent);line-height:1}
+.wpm-unit{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-top:.2rem}
+.wpm-cat{margin-top:.7rem;font-size:.95rem;font-weight:700}
+.wpm-desc{font-size:.88rem;color:var(--tx2);line-height:1.75;margin-top:.42rem;max-width:440px}
+.cscore{display:inline-flex;align-items:center;gap:.35rem;margin-top:.65rem;font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.24rem .58rem;border-radius:100px;font-weight:600}
+.cs-p{background:var(--grn-bg);color:var(--grn);box-shadow:inset 0 0 0 1px rgba(82,183,136,.3)}
+.cs-f{background:var(--red-bg);color:var(--red);box-shadow:inset 0 0 0 1px rgba(224,92,92,.3)}
+.est-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.1rem}
+.est-box{background:var(--sf1);border-radius:var(--r);padding:.9rem;text-align:center;box-shadow:var(--inner),var(--shadow)}
+.ev{font-family:'Playfair Display',serif;font-size:1.55rem;font-weight:700;color:var(--accent);line-height:1}
+.el2{font-family:'DM Mono',monospace;font-size:.52rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tx3);margin-top:.2rem}
+.en{font-family:'DM Mono',monospace;font-size:.54rem;color:var(--ink);margin-top:.1rem}
+.tips-card{background:var(--sf1);border-radius:var(--r);overflow:hidden;margin-bottom:1.1rem;box-shadow:var(--inner),var(--shadow)}
+.tips-hdr{padding:.8rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.05);font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+.tip-item{display:flex;gap:.62rem;padding:.75rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem;color:var(--tx2);line-height:1.7}.tip-item:last-child{border-bottom:none}
+.tip-n{background:var(--accent-bg);border-radius:var(--r3);width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.58rem;color:var(--accent);flex-shrink:0;margin-top:.1rem}
+.tip-lnk{color:var(--ink);text-decoration:none;font-family:'DM Mono',monospace;font-size:.6rem}.tip-lnk:hover{text-decoration:underline}
+.speed-hist{background:var(--sf1);border-radius:var(--r);overflow:hidden;box-shadow:var(--inner),var(--shadow)}
+.sh-hdr{padding:.65rem 1rem;border-bottom:1px solid rgba(255,255,255,.05);font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3)}
+.sh-row{display:flex;align-items:center;gap:.6rem;padding:.5rem 1rem;border-bottom:1px solid rgba(255,255,255,.04)}.sh-row:last-child{border-bottom:none}
+.sh-date{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tx3);width:74px;flex-shrink:0}
+.sh-type{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--ink);width:54px;flex-shrink:0}
+.sh-wpm{font-family:'DM Mono',monospace;font-size:.85rem;font-weight:600;color:var(--accent);width:64px}
+.sh-cat{font-size:.7rem;flex:1}.sh-pass{font-family:'DM Mono',monospace;font-size:.58rem}
+.speed-btns{display:flex;gap:.75rem;margin-top:.6rem}.speed-btns .btn-a{margin-top:0}.speed-btns .btn-b{margin-top:0}
+
+/* SETTINGS */
+.settings-section{margin-bottom:2rem}
+.settings-hdr{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:1rem}
+.settings-card{background:var(--sf1);border-radius:var(--r);overflow:hidden;box-shadow:var(--inner),var(--shadow)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:1rem 1.3rem;border-bottom:1px solid rgba(255,255,255,.045)}.setting-row:last-child{border-bottom:none}
+.setting-info{flex:1;min-width:0}
+.setting-label{font-size:.95rem;font-weight:600;margin-bottom:.22rem}
+.setting-desc{font-size:.8rem;color:var(--tx2);line-height:1.6}
+.setting-input{background:var(--sf2);border:none;border-radius:var(--r2);color:var(--tx) !important;-webkit-text-fill-color:var(--tx);font-family:'Inter',sans-serif;font-size:16px;padding:.5rem .75rem;outline:none;transition:box-shadow .18s;box-shadow:var(--inner2);width:150px;-webkit-appearance:none;color-scheme:dark;touch-action:manipulation}
+.setting-input:focus{box-shadow:inset 0 0 0 1.5px var(--accent),0 0 0 3px var(--accent-ring)}
+.toggle{position:relative;width:44px;height:25px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(--sf3);border-radius:100px;cursor:pointer;transition:background .2s;box-shadow:var(--inner2);touch-action:manipulation}
+.toggle input:checked + .toggle-track{background:var(--accent)}
+.toggle-thumb{position:absolute;left:3px;top:3px;width:19px;height:19px;background:#fff;border-radius:50%;transition:transform .2s;pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.toggle input:checked + .toggle-track + .toggle-thumb{transform:translateX(19px)}
+.accent-swatches{display:flex;gap:.6rem;flex-wrap:wrap}
+.swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;transition:all .18s;position:relative;touch-action:manipulation}
+.swatch:hover{transform:scale(1.15)}
+.swatch.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#000}
+.data-btns{padding:1rem 1.3rem;display:flex;flex-direction:column}
+
+/* SYNC MODAL */
+.syntabs{display:flex;gap:0;margin-bottom:.95rem;background:var(--sf2);border-radius:var(--r2);padding:.22rem;box-shadow:var(--inner2)}
+.syntab{flex:1;background:none;border:none;color:var(--tx3);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:.44rem;cursor:pointer;transition:all .18s;border-radius:var(--r3);touch-action:manipulation}
+.syntab.on{background:var(--sf3);color:var(--tx);box-shadow:var(--inner2)}
+.synpanel{display:none}.synpanel.on{display:block}
+.codebox{background:var(--sf2);border-radius:var(--r2);padding:.7rem .85rem;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tx2);word-break:break-all;line-height:1.5;max-height:92px;overflow-y:auto;margin-bottom:.65rem;cursor:pointer;user-select:all;box-shadow:var(--inner2)}
+.imptxt{width:100%;background:var(--sf2);border:none;border-radius:var(--r2);color:var(--tx) !important;-webkit-text-fill-color:var(--tx);font-family:'DM Mono',monospace;font-size:15px;padding:.6rem .78rem;resize:vertical;min-height:85px;outline:none;box-shadow:var(--inner2)}
+.imptxt:focus{box-shadow:inset 0 0 0 1.5px var(--ink),0 0 0 3px rgba(124,141,255,.15)}
+.filelbl{display:block;margin-top:.55rem;text-align:center;padding:.52rem;background:var(--sf2);border-radius:var(--r2);color:var(--tx3);font-family:'DM Mono',monospace;font-size:.6rem;cursor:pointer;transition:all .18s;box-shadow:var(--inner2);touch-action:manipulation}
+.filelbl:hover{color:var(--ink)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--sf2);border-radius:var(--r2);padding:.72rem 1rem;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--tx);z-index:500;transform:translateY(90px);opacity:0;transition:all .28s cubic-bezier(.34,1.56,.64,1);max-width:240px;box-shadow:var(--inner),0 8px 24px rgba(0,0,0,.5)}
+.toast.show{transform:translateY(0);opacity:1}
+body.compact .pg{padding:1rem 1rem 3rem}
+body.compact .card,.compact .card-sm{padding:.9rem}
+
+/* ── SUBJECT SWITCHER ── */
+.sub-switcher{display:flex;align-items:center;gap:.75rem;margin-bottom:1.4rem;flex-wrap:wrap}
+.sub-select{background:var(--sf1);border:none;border-radius:var(--r2);color:var(--tx);font-family:'Inter',sans-serif;font-size:1rem;font-weight:600;padding:.55rem .9rem;outline:none;box-shadow:var(--inner),var(--shadow);cursor:pointer;flex:1;min-width:160px;max-width:320px;-webkit-appearance:none;color-scheme:dark;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238082a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.2rem;touch-action:manipulation}
+.sub-select:focus{box-shadow:inset 0 0 0 1.5px var(--accent),0 0 0 3px var(--accent-ring)}
+.sub-select option{background:var(--sf2);color:var(--tx)}
+.add-sub-inline{background:none;border:1px dashed rgba(255,255,255,.15);border-radius:var(--r2);padding:.5rem .9rem;color:var(--tx2);cursor:pointer;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.06em;white-space:nowrap;transition:all .18s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.add-sub-inline:hover{border-color:var(--accent);color:var(--accent)}
+.sub-deadline-badge{display:flex;flex-direction:column;align-items:center;background:var(--accent-bg);border-radius:var(--r2);padding:.42rem .8rem;box-shadow:inset 0 0 0 1px var(--accent-ring)}
+.sub-dl-n{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--accent);line-height:1}
+.sub-dl-l{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.12em;color:var(--tx3)}
+
+/* ── DOMAIN SLIDERS ── */
+.dom-row{flex-wrap:wrap;align-items:center;gap:.5rem;padding:.6rem}
+.dom-name-inp{flex:1;min-width:120px}
+.slider-group{display:flex;align-items:center;gap:.6rem;flex:1;min-width:140px}
+.dom-slider{flex:1;-webkit-appearance:none;height:5px;border-radius:100px;background:var(--sf3);outline:none;cursor:pointer;touch-action:pan-y}
+.dom-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .15s}
+.dom-slider::-webkit-slider-thumb:active{transform:scale(1.2)}
+.dom-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:none;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.slider-pct{font-family:'DM Mono',monospace;font-size:.78rem;font-weight:700;color:var(--accent);width:38px;text-align:right;flex-shrink:0}
+
+/* ── DOMAIN TOTAL INDICATOR ── */
+.dom-indicator{padding:.65rem .85rem;border-radius:var(--r2);margin-top:.5rem;display:flex;align-items:center;gap:.65rem;transition:all .2s}
+.dom-indicator.under{background:rgba(232,160,48,.1);box-shadow:inset 0 0 0 1px rgba(232,160,48,.25)}
+.dom-indicator.exact{background:var(--grn-bg);box-shadow:inset 0 0 0 1px rgba(82,183,136,.3)}
+.dom-indicator.over{background:var(--red-bg);box-shadow:inset 0 0 0 1px rgba(224,92,92,.3)}
+.dom-ind-num{font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:700;flex-shrink:0}
+.dom-ind-num.under{color:#e8a030}.dom-ind-num.exact{color:var(--grn)}.dom-ind-num.over{color:var(--red)}
+.dom-ind-msg{flex:1;font-size:.78rem;color:var(--tx2);line-height:1.5}
+.auto-bal-btn{background:var(--sf2);border:none;border-radius:var(--r3);color:var(--tx2);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.06em;padding:.3rem .6rem;cursor:pointer;transition:all .15s;white-space:nowrap;touch-action:manipulation;box-shadow:var(--inner2)}
+.auto-bal-btn:hover{color:var(--accent)}
+
+/* ── FOCUS TIMER ── */
+.page-actions-bar{margin-bottom:1.4rem}
+.focus-timer-btn{display:inline-flex;align-items:center;gap:.55rem;background:var(--sf1);color:var(--accent);border:none;border-radius:var(--r2);padding:.68rem 1.15rem;font-family:'DM Mono',monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:var(--inner),var(--shadow);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.focus-timer-btn:hover{box-shadow:inset 0 0 0 1.5px var(--accent-ring),var(--shadow)}
+.focus-timer-btn:active{transform:scale(.97)}
+.timer-display-wrap{text-align:center;padding:1.7rem 1rem;background:var(--sf2);border-radius:var(--r);margin-bottom:1.1rem;box-shadow:var(--inner2)}
+.timer-display-big{font-family:'Playfair Display',serif;font-size:3.6rem;font-weight:900;color:var(--accent);line-height:1;letter-spacing:.02em}
+.timer-display-lbl{font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-top:.55rem}
+.timer-presets{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;margin-bottom:1.1rem}
+.timer-preset-btn{background:var(--sf2);border:none;border-radius:var(--r2);color:var(--tx2);font-family:'DM Mono',monospace;font-size:.7rem;font-weight:700;padding:.62rem .2rem;cursor:pointer;transition:all .15s;box-shadow:var(--inner2);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.timer-preset-btn:hover{color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent-ring)}
+.timer-preset-btn:active{transform:scale(.94)}
+.timer-controls-row{display:flex;gap:.6rem;margin-bottom:.5rem}
+.timer-controls-row .btn-a,.timer-controls-row .btn-b,.timer-controls-row .btn-danger{flex:1;width:auto;min-height:48px}
+.timer-session-row{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;background:var(--sf2);border-radius:var(--r2);margin-bottom:.4rem;box-shadow:var(--inner2)}
+.timer-session-info{flex:1;min-width:0}
+.timer-session-title{font-size:.84rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.timer-session-meta{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--tx3);margin-top:.12rem}
+.timer-session-mins{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:700;color:var(--accent);flex-shrink:0}
+select:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── BOOK LINK ── */
+.bk-link-icon{background:none;border:none;color:var(--ink);cursor:pointer;padding:.28rem .42rem;border-radius:var(--r3);transition:all .15s;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.bk-link-icon:hover{background:var(--ink-bg)}
+
+/* ── NOTES ── */
+.notes-add-row{display:flex;gap:.5rem;margin-bottom:.65rem;align-items:flex-start}
+.notes-add-row textarea{flex:1;min-height:44px;resize:vertical;font-size:16px}
+.notes-add-btn{background:var(--accent);color:#0a0b10;border:none;border-radius:var(--r2);padding:0 1rem;font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;cursor:pointer;flex-shrink:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;align-self:stretch;min-width:64px}
+.notes-add-btn:hover{background:var(--accent-br)}
+.note-item{display:flex;gap:.6rem;padding:.58rem .7rem;background:var(--sf2);border-radius:var(--r2);margin-bottom:.4rem;box-shadow:var(--inner2)}
+.note-item-body{flex:1;min-width:0}
+.note-item-date{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--tx3);margin-bottom:.2rem;letter-spacing:.04em}
+.note-item-text{font-size:.84rem;color:var(--tx2);line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.note-del-btn{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.75rem;padding:.12rem .28rem;flex-shrink:0;transition:color .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.note-del-btn:hover{color:var(--red)}
+
+/* ── SCAN TOC ── */
+.scan-toc-btn{background:var(--sf2);color:var(--ink);border:none;border-radius:var(--r2);padding:.52rem .95rem;font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:inset 0 0 0 1px rgba(124,141,255,.25);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.scan-toc-btn:hover{background:var(--ink-bg)}
+.scan-photo-label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.65rem;background:var(--sf2);border-radius:var(--r);padding:2rem 1rem;cursor:pointer;transition:all .2s;box-shadow:inset 0 0 0 2px rgba(124,141,255,.2);margin-bottom:.5rem;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.scan-photo-label:hover{box-shadow:inset 0 0 0 2px var(--ink)}
+.scan-photo-label #scanPhotoIcon{font-size:2.2rem;opacity:.6}
+.scan-photo-label #scanPhotoLbl{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2)}
+.scan-prompt-copied{background:var(--grn-bg);color:var(--grn);box-shadow:inset 0 0 0 1px rgba(82,183,136,.3);border-radius:var(--r2);padding:.6rem .9rem;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.06em;margin-bottom:.85rem;text-align:center}
+.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+.ai-btn{display:flex;align-items:center;gap:.6rem;background:var(--sf2);border:none;border-radius:var(--r2);padding:.72rem .85rem;cursor:pointer;transition:all .18s;box-shadow:var(--inner2);touch-action:manipulation;-webkit-tap-highlight-color:transparent;width:100%}
+.ai-btn:hover{box-shadow:inset 0 0 0 1.5px var(--accent-ring)}
+.ai-btn:active{transform:scale(.97)}
+.ai-btn-icon{font-size:1.3rem;flex-shrink:0}
+.ai-btn-name{font-size:.84rem;font-weight:600;color:var(--tx);text-align:left}
+.ai-btn-sub{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--tx3);text-align:left;margin-top:.08rem}
+.toc-pending-btn{background:var(--ink);color:#fff;border:none;border-radius:100px;padding:.72rem 1.4rem;font-family:'DM Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.08em;cursor:pointer;box-shadow:0 4px 20px rgba(124,141,255,.4);touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:all .18s}
+.toc-pending-btn:hover{background:#9aa8ff;box-shadow:0 6px 24px rgba(124,141,255,.5)}
+
+/* ── SCAN TOC v2 ── */
+.toc-thumb-grid{display:flex;flex-wrap:wrap;gap:.55rem}
+.toc-thumb{position:relative;width:72px;height:72px;border-radius:var(--r2);overflow:hidden;flex-shrink:0;box-shadow:var(--inner2)}
+.toc-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.toc-thumb-rm{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.toc-add-more{width:72px;height:72px;border-radius:var(--r2);background:var(--sf2);box-shadow:var(--inner2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:none;color:var(--tx2);flex-shrink:0}
+.toc-add-more span:first-child{font-size:1.2rem}.toc-add-more span:last-child{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.08em;text-transform:uppercase}
+.scan-copy-btn{width:100%;margin-top:.5rem;background:var(--ink-bg);color:var(--ink);border:none;border-radius:var(--r2);padding:.68rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:inset 0 0 0 1px rgba(124,141,255,.25);min-height:48px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.scan-copy-btn:hover{background:rgba(124,141,255,.2)}.scan-copy-btn:active{transform:scale(.97)}
+
+/* ── SECTION BUILDER TWO-ROW ── */
+.sec-row{flex-direction:column;gap:.38rem;align-items:stretch;padding:.55rem .62rem}
+.sec-name-row{display:flex;align-items:center;gap:.4rem}
+.sec-name-row input{flex:1}
+.sec-detail-row{display:flex;align-items:center;gap:.4rem}
+.sec-field{display:flex;flex-direction:column;gap:.14rem}
+.sec-field label{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3)}
+.sec-field input{width:72px}
+.sec-date-field{display:flex;flex-direction:column;gap:.14rem;flex:1}
+.sec-date-field label{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3)}
+.sec-date-field input{width:100%}
+
+/* ── START READING SESSION BUTTON ── */
+.start-reading-btn{display:flex;align-items:center;justify-content:center;gap:.55rem;width:100%;background:var(--accent-bg);color:var(--accent);border:none;border-radius:var(--r2);padding:.72rem 1rem;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:inset 0 0 0 1px var(--accent-ring);margin-bottom:.85rem;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.start-reading-btn:hover{background:rgba(212,168,67,.18)}
+.start-reading-btn:active{transform:scale(.97)}
+
+/* ── COMPLETION ESTIMATE ── */
+.completion-box{padding:.65rem .8rem;background:var(--sf2);border-radius:var(--r2);box-shadow:var(--inner2);margin-bottom:.85rem;font-size:.8rem;color:var(--tx2);line-height:1.65}
+.completion-box strong{color:var(--accent)}
+
+/* ── DEADLINE IN PACE PANEL ── */
+.pace-deadline-hdr{font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx);font-weight:700;margin-bottom:.38rem}
+.pace-deadline-row{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;padding:.18rem 0}
+.pace-deadline-date{font-family:'DM Mono',monospace;font-size:.8rem;font-weight:600;color:var(--accent)}
+.pace-deadline-days{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--tx3)}
+
+/* ── IMPORT TOC FILE ZONE ── */
+.toc-import-file-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45rem;background:var(--sf2);border-radius:var(--r);padding:1.6rem 1rem;cursor:pointer;transition:all .2s;box-shadow:inset 0 0 0 2px rgba(124,141,255,.2);margin-bottom:.85rem;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.toc-import-file-zone:hover{box-shadow:inset 0 0 0 2px var(--ink)}
+.toc-import-file-zone:active{transform:scale(.98)}
+.tif-icon{font-size:2rem;opacity:.7}
+.tif-title{font-family:'DM Mono',monospace;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx)}
+.tif-sub{font-size:.74rem;color:var(--tx3)}
+.tif-name{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--grn);font-weight:600;margin-top:.15rem}
+
+/* ── DISABLED BUTTON ── */
+.btn-a:disabled{opacity:.38;cursor:not-allowed;transform:none !important;box-shadow:none}
+
+/* ── SCAN PHOTO OPTIONS ── */
+.photo-option-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.75rem}
+.photo-option-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.42rem;background:var(--sf2);border:none;border-radius:var(--r);padding:1.25rem .85rem;cursor:pointer;transition:all .18s;box-shadow:var(--inner2);touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.photo-option-btn:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.photo-option-btn:active{transform:scale(.96)}
+.pob-icon{font-size:1.8rem}
+.pob-label{font-family:'DM Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)}
+.pob-sub{font-size:.7rem;color:var(--tx3);text-align:center;line-height:1.45}
+
+/* ── SHARE PROMPT BUTTON ── */
+.scan-share-btn{width:100%;margin-bottom:.55rem;background:var(--ink);color:#fff;border:none;border-radius:var(--r2);padding:.82rem 1rem;font-family:'DM Mono',monospace;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .18s;box-shadow:0 3px 14px rgba(124,141,255,.35);min-height:54px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:.6rem}
+.scan-share-btn:hover{background:#9aa8ff;box-shadow:0 5px 18px rgba(124,141,255,.45)}
+.scan-share-btn:active{transform:scale(.97)}
+.scan-share-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.scan-copy-secondary{width:100%;margin-bottom:.85rem;background:none;border:1px solid rgba(255,255,255,.12);border-radius:var(--r2);padding:.52rem 1rem;font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);cursor:pointer;transition:all .18s;touch-action:manipulation}
+.scan-copy-secondary:hover{border-color:var(--tx2);color:var(--tx2)}
+.scan-shared-badge{background:var(--grn-bg);color:var(--grn);box-shadow:inset 0 0 0 1px rgba(82,183,136,.3);border-radius:var(--r2);padding:.6rem .9rem;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.06em;margin-bottom:.85rem;text-align:center;display:none}
+
+/* ── TOC PENDING INLINE CARD ── */
+.toc-pending-card{display:flex;align-items:center;gap:.85rem;background:var(--ink-bg);border-radius:var(--r);padding:1rem 1.15rem;margin-bottom:1rem;box-shadow:inset 0 0 0 1.5px rgba(124,141,255,.3);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.toc-pending-card:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.tpc-icon{font-size:1.5rem;flex-shrink:0}
+.tpc-body{flex:1;min-width:0}
+.tpc-title{font-size:.88rem;font-weight:700;color:var(--tx);margin-bottom:.14rem}
+.tpc-sub{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tx2);letter-spacing:.04em}
+.tpc-arrow{font-size:.85rem;color:var(--ink);flex-shrink:0}
+
+/* ── AI GRID LOCK ── */
+.ai-grid-locked .ai-btn{opacity:.3;pointer-events:none;cursor:not-allowed;filter:grayscale(1)}
+.ai-grid-unlock-hint{font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);text-align:center;padding:.5rem 0;margin-bottom:.45rem}
+.ai-grid-unlock-hint.unlocked{color:var(--grn)}
+.photo-option-single{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.42rem;background:var(--sf2);border:none;border-radius:var(--r);padding:1.25rem 1rem;cursor:pointer;transition:all .18s;box-shadow:var(--inner2);touch-action:manipulation;-webkit-tap-highlight-color:transparent;width:100%}
+.photo-option-single:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.photo-option-single:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><h1>Study <em>Command</em></h1><div class="brand-sub" id="headerSub">Learning Tracker</div></div>
+  <div class="cd-pill" id="cdPill" style="display:none"><div class="n" id="daysLeft">-</div><div class="l" id="cdLbl">days left</div></div>
+</header>
+<div class="nav">
+  <div class="nt on" onclick="gotoPage('books',this)">&#128218; Subject</div>
+  <div class="nt" onclick="gotoPage('calendar',this)">&#128197; Calendar</div>
+  <div class="nt" onclick="gotoPage('strategies',this)">&#129504; Strategies</div>
+  <div class="nt" onclick="gotoPage('speedtest',this)">&#9889; Speed Test</div>
+  <div class="nt" onclick="gotoPage('settings',this)">&#9881; Settings</div>
+</div>
+
+<!-- MATERIALS -->
+<div class="pg on" id="pg-books">
+  <div id="subjectSwitcherWrap"></div>
+  <div class="page-actions-bar">
+    <button class="focus-timer-btn" onclick="openFocusTimer()">&#9201; Focus Timer</button>
+  </div>
+  <div class="two">
+    <div>
+      <div id="booksListWrap"></div>
+    </div>
+    <div>
+      <div class="sl">Overview</div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="sv" id="st0">0</div><div class="sl2">Materials</div></div>
+        <div class="stat-box"><div class="sv" id="st1">0</div><div class="sl2">Pages Left</div></div>
+        <div class="stat-box"><div class="sv" id="st2">0</div><div class="sl2">Pgs/Day</div></div>
+        <div class="stat-box"><div class="sv" id="st3">0%</div><div class="sl2">Complete</div></div>
+      </div>
+      <div class="sl">Pace Analysis</div>
+      <div class="pace-panel"><div class="pace-hdr">&#128200; Reading Pace</div><div class="pace-body" id="paceBody"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div class="pg" id="pg-calendar">
+  <div class="two">
+    <div>
+      <div class="sl">Study Calendar — Click Any Day to Log</div>
+      <div class="streak">
+        <div style="font-size:1.3rem">&#128293;</div>
+        <div style="flex:1"><div class="snum" id="streakNum">0</div><div class="s-lbl">Day Streak</div></div>
+        <div style="text-align:right"><div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--accent)" id="totalDays">0 days logged</div><div style="font-family:'DM Mono',monospace;font-size:.52rem;color:var(--tx3)">total</div></div>
+      </div>
+      <div class="legend">
+        <div class="li"><div class="ld" style="background:var(--grn)"></div>Read</div>
+        <div class="li"><div class="ld" style="background:var(--accent)"></div>Recall</div>
+        <div class="li"><div class="ld" style="background:var(--ink)"></div>Spaced Rep</div>
+        <div class="li"><div class="ld" style="background:#b87fff"></div>Feynman</div>
+        <div class="li"><div class="ld" style="background:#4bbfc0"></div>Practice</div>
+        <div class="li"><div class="ld" style="background:var(--red)"></div>Pomodoro</div>
+        <div class="li"><div class="ld" style="background:#f06b9a"></div>Mind Map</div>
+        <div class="li"><div class="ld" style="background:rgba(212,168,67,.5)"></div>Application</div>
+      </div>
+      <div id="calGrid"></div>
+    </div>
+    <div>
+      <div class="sl">This Week</div>
+      <div class="card-sm" id="weekBox" style="margin-bottom:1.1rem;font-size:.8rem"></div>
+      <div class="sl">Forecast</div>
+      <div class="card-sm" id="forecastBox" style="font-size:.8rem;color:var(--tx2);line-height:1.75"></div>
+    </div>
+  </div>
+</div>
+
+<!-- STRATEGIES -->
+<div class="pg" id="pg-strategies">
+  <div style="max-width:700px">
+    <div class="sl">Proven Study Methods</div>
+    <div id="stratList"></div>
+  </div>
+</div>
+
+<!-- SPEED TEST -->
+<div class="pg" id="pg-speedtest">
+  <div style="max-width:720px">
+    <div class="st-phase on" id="stp-idle">
+      <div class="sl">Reading Speed Calibration</div>
+      <p style="font-size:.84rem;color:var(--tx2);line-height:1.75;margin-bottom:1.4rem">Read the passage at your normal study pace. The app calculates your WPM and gives a realistic page-per-session estimate plus personalized improvement tips.</p>
+      <div class="test-grid">
+        <div class="tcard" onclick="startSpeedTest('general')"><div class="tci">&#128218;</div><div class="tcn">General Reading</div><div class="tcs">Plain English prose about learning and memory. Good for establishing your baseline speed.</div><span class="tctag">~280 words</span></div>
+        <div class="tcard phr" onclick="startSpeedTest('phr')"><div class="tci">&#9878;</div><div class="tcn">Dense Study Text</div><div class="tcs">Technical / legal language — the type of text you face in dense study materials.</div><span class="tctag">~270 words</span></div>
+      </div>
+      <div class="sl">Test History</div>
+      <div id="speedHistBox"><div class="empty"><div class="ei">&#9889;</div>No tests taken yet</div></div>
+    </div>
+    <div class="st-phase" id="stp-countdown"><div class="cd-wrap"><div class="cd-num" id="stCountNum">3</div><div class="cd-lbl">Get ready to read...</div></div></div>
+    <div class="st-phase" id="stp-reading">
+      <div class="reading-wrap">
+        <div class="reading-hdr">
+          <div><div class="live-timer" id="stLiveTimer">0:00</div><div class="lt-lbl">Elapsed</div></div>
+          <div style="flex:1;font-family:'DM Mono',monospace;font-size:.64rem;color:var(--tx3);text-align:center">Read at your normal study pace</div>
+          <button class="done-btn" onclick="stopReading()">&#10003; Done</button>
+        </div>
+        <div class="passage-box"><div class="passage-hint" id="stPassageLbl">Passage</div><div id="stPassageText"></div></div>
+      </div>
+    </div>
+    <div class="st-phase" id="stp-comprehension">
+      <div class="comp-wrap">
+        <div class="sl">Comprehension Check</div>
+        <p style="font-size:.82rem;color:var(--tx2);margin-bottom:1.1rem;line-height:1.65">Answer from memory — do not look back.</p>
+        <div id="stQuestions"></div>
+        <button class="btn-a" onclick="submitComp()">Submit Answers</button>
+      </div>
+    </div>
+    <div class="st-phase" id="stp-results">
+      <div class="results-wrap">
+        <div class="sl">Your Results</div>
+        <div class="wpm-hero"><div class="wpm-num" id="resWPM">-</div><div class="wpm-unit">Words Per Minute</div><div class="wpm-cat" id="resCat">-</div><div class="wpm-desc" id="resDesc">-</div><span class="cscore" id="resComp"></span></div>
+        <div class="est-grid">
+          <div class="est-box"><div class="ev" id="resStudyWPM">-</div><div class="el2">Study WPM</div><div class="en">adjusted for retention</div></div>
+          <div class="est-box"><div class="ev" id="resPPH">-</div><div class="el2">Pages / Hour</div><div class="en">~250 words/page</div></div>
+          <div class="est-box"><div class="ev" id="resPP45">-</div><div class="el2" id="resPP45Lbl">Pages / 45 min</div><div class="en">study session</div></div>
+        </div>
+        <div class="sl">How to Improve</div>
+        <div class="tips-card"><div class="tips-hdr" id="tipsHdr">Tips</div><div id="tipsList"></div></div>
+        <div class="speed-btns"><button class="btn-a" onclick="resetTest()">Take Again</button><button class="btn-b" onclick="backToMenu()">Back to Menu</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="pg" id="pg-settings">
+  <div class="two">
+    <div>
+      <div class="settings-section">
+        <div class="settings-hdr">&#128100; Profile</div>
+        <div class="settings-card">
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Display Name</div><div class="setting-desc">Shown as a greeting in the header</div></div><div><input class="setting-input" type="text" id="setName" placeholder="Your name" onchange="saveSetting('name',this.value)"></div></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Daily Study Hours</div><div class="setting-desc">Hours actually available to study each day — excluding sleep, work, and other commitments. Used to calculate realistic completion estimates.</div></div><div><input class="setting-input" type="number" id="setHours" placeholder="1.5" min="0.25" max="12" step="0.25" onchange="saveSetting('dailyHours',parseFloat(this.value)||0)"></div></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Session Length</div><div class="setting-desc">Used in speed test estimates</div></div><div><select class="setting-input" id="setSession" onchange="saveSetting('sessionMins',parseInt(this.value))"><option value="30">30 min</option><option value="45" selected>45 min</option><option value="60">60 min</option><option value="90">90 min</option><option value="120">2 hours</option></select></div></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-hdr">&#128214; Study Defaults</div>
+        <div class="settings-card">
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Default Daily Page Goal</div><div class="setting-desc">Pre-fills goal when adding new books</div></div><div><input class="setting-input" type="number" id="setDefaultGoal" placeholder="20" min="1" onchange="saveSetting('defaultGoal',parseInt(this.value)||0)"></div></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Show Speed Baseline in Pace</div><div class="setting-desc">Display speed test results in pace analysis</div></div><label class="toggle"><input type="checkbox" id="setShowBaseline" checked onchange="saveSetting('showBaseline',this.checked);renderPaceAnalysis()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="settings-section">
+        <div class="settings-hdr">&#127912; Appearance</div>
+        <div class="settings-card">
+          <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:.75rem"><div class="setting-info"><div class="setting-label">Accent Color</div><div class="setting-desc">Changes the primary color throughout the app</div></div><div class="accent-swatches" id="accentSwatches"></div></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Compact Mode</div><div class="setting-desc">Reduces padding for smaller screens</div></div><label class="toggle"><input type="checkbox" id="setCompact" onchange="saveSetting('compact',this.checked);applySettings()"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-hdr">&#128190; Data Management</div>
+        <div class="settings-card">
+          <div class="data-btns">
+            <div style="font-family:'DM Mono',monospace;font-size:.64rem;color:var(--grn);margin-bottom:.5rem;letter-spacing:.06em" id="settingsLastSave"></div>
+            <button class="btn-ghost" onclick="openSync('export')">&#8593; Export / Backup All Data</button>
+            <button class="btn-ghost" onclick="openSync('import')">&#8595; Import / Restore Data</button>
+            <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--tx3);margin-bottom:.75rem;line-height:1.6">Use Export/Import to sync between your phone and PC.</div>
+            <button class="btn-ghost" onclick="clearSpeedHistory()">&#9889; Clear Speed Test History</button>
+            <button class="btn-danger" onclick="confirmReset()">&#9888; Reset All Data</button>
+            <div id="resetConfirm" style="display:none;margin-top:.75rem;padding:.85rem;background:var(--red-bg);border-radius:var(--r2)">
+              <p style="font-size:.8rem;color:var(--red);margin-bottom:.65rem;line-height:1.6">This permanently deletes all data. Cannot be undone.</p>
+              <div style="display:flex;gap:.5rem"><button class="btn-danger" style="width:auto;padding:.5rem .85rem" onclick="doReset()">Yes, Reset</button><button class="btn-ghost" style="width:auto;padding:.5rem .85rem;margin:0" onclick="document.getElementById('resetConfirm').style.display='none'">Cancel</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-hdr">&#8505; About</div>
+        <div class="settings-card">
+          <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+            <div class="setting-label">Study Command Center</div>
+            <div class="setting-desc" style="line-height:1.75">A self-contained multi-subject study planner with pace analysis, reading speed calibration, and cross-device sync. All data is stored locally — no account required, no data sent anywhere.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD / EDIT MATERIAL -->
+<div class="mo" id="bookModal">
+  <div class="md">
+    <div class="md-pull"></div>
+    <div class="mt2"><span id="bookModalTitle">Add Study Material</span><button class="mc" onclick="closeBookModal()">&#x2715;</button></div>
+    <div class="fg2">
+      <div class="fg full"><label class="fl">Title</label><input type="text" id="bTitle" placeholder="The Lean Startup, SQL Pocket Reference..."></div>
+      <div class="fg full"><label class="fl">Link <span style="color:var(--tx3);font-size:.58rem;font-weight:400">(optional — article, PDF, course page...)</span></label><input type="text" id="bLink" placeholder="https://..."></div>
+      <div class="fg"><label class="fl">Daily Page Goal</label><input type="number" id="bGoal" placeholder="20" min="1"></div>
+      <div class="fg"><label class="fl">Start Date</label><input type="date" id="bStart"></div>
+      <div class="fg full"><label class="fl">Goal End Date</label><input type="date" id="bEnd"></div>
+      <div class="fg full"><label class="fl">Total Pages <span id="manNote" style="color:var(--tx3);font-size:.58rem;font-weight:400">(auto-fills from sections)</span></label><input type="number" id="bTotal" placeholder="320" min="1"></div>
+    </div>
+
+    <div style="margin-top:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem">
+        <label class="fl">Sections / Chapters</label>
+        <span style="font-family:'DM Mono',monospace;font-size:.56rem;color:var(--tx3)">optional</span>
+      </div>
+      <div class="builder">
+        <div class="builder-hdr"><span>Name &nbsp;·&nbsp; Start Pg &nbsp;·&nbsp; Pages &nbsp;·&nbsp; Due Date</span><button class="builder-add-btn" onclick="addRow('secRows','sec')">+ Section</button></div>
+        <div class="builder-rows" id="secRows"><div class="builder-placeholder">No sections added</div></div>
+        <div class="builder-total" id="secTotal" style="display:none">From sections: <span id="secTotalVal">0</span> pages</div>
+      </div>
+    </div>
+
+    <div style="margin-top:.75rem;display:flex;justify-content:flex-end">
+      <button type="button" class="scan-toc-btn" onclick="openScanTOC()">&#128247; Scan Table of Contents</button>
+    </div>
+
+    <div style="margin-top:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem">
+        <label class="fl">Study Domains</label>
+        <span style="font-family:'DM Mono',monospace;font-size:.56rem;color:var(--tx3)">optional — e.g. chapters, exam areas</span>
+      </div>
+      <div class="builder">
+        <div class="builder-hdr"><span>Domain Name &nbsp;·&nbsp; Weight %</span><button class="builder-add-btn" onclick="addRow('domRows','dom')">+ Domain</button></div>
+        <div class="builder-rows" id="domRows"><div class="builder-placeholder">No domains added</div></div>
+        <div id="domIndicator" style="display:none" class="dom-indicator under">
+          <span class="dom-ind-num under" id="domIndNum">0%</span>
+          <span class="dom-ind-msg" id="domIndMsg">total — all domains must add up to 100%</span>
+          <button class="auto-bal-btn" onclick="autoBalance()">Auto-balance</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-a" id="bookModalSaveBtn" onclick="saveBook()">Add Material</button>
+  </div>
+</div>
+
+<!-- MODAL: DAY LOG -->
+<div class="mo" id="dayModal">
+  <div class="md">
+    <div class="md-pull"></div>
+    <div class="mt2"><span id="mdTitle">Date</span><button class="mc" onclick="closeDay()">&#x2715;</button></div>
+    <div class="sl" style="margin-bottom:.5rem">Books Read Today</div>
+    <div id="mdBooks"></div>
+    <div class="sl" style="margin-bottom:.5rem">Strategies Used</div>
+    <div class="cg2" id="stratChks"></div>
+    <div style="margin-bottom:.8rem"><label class="fl" style="display:block;margin-bottom:.3rem">Notes (optional)</label><input type="text" id="mdNotes" placeholder="Topics covered, insights..."></div>
+    <button class="btn-a" onclick="saveDay()">Save Day Log</button>
+  </div>
+</div>
+
+<!-- MODAL: NEW SUBJECT -->
+<div class="mo" id="newSubModal">
+  <div class="md">
+    <div class="md-pull"></div>
+    <div class="mt2"><span>New Subject</span><button class="mc" onclick="closeNewSub()">&#x2715;</button></div>
+    <div style="display:flex;flex-direction:column;gap:.72rem">
+      <div class="fg"><label class="fl">Subject Name</label><input type="text" id="nsName" placeholder="Bookkeeping, SQL, Project Management..."></div>
+      <div class="fg"><label class="fl">Emoji / Icon</label><input type="text" id="nsEmoji" placeholder="&#128202;" maxlength="4"></div>
+      <div class="fg"><label class="fl">Goal / Exam Date (optional)</label><input type="date" id="nsDate"></div>
+    </div>
+    <button class="btn-a" onclick="addSubject()">Create Subject</button>
+  </div>
+</div>
+
+<!-- MODAL: SYNC -->
+<div class="mo" id="syncModal">
+  <div class="md">
+    <div class="md-pull"></div>
+    <div class="mt2"><span>Sync Between Devices</span><button class="mc" onclick="closeSync()">&#x2715;</button></div>
+    <div class="syntabs"><button class="syntab on" id="syntab-export" onclick="switchSyncTab('export')">&#8593; Export</button><button class="syntab" id="syntab-import" onclick="switchSyncTab('import')">&#8595; Import</button></div>
+    <div class="synpanel on" id="synp-export">
+      <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.8rem;line-height:1.65">Copy or download your full data, then import on your other device.</p>
+      <div class="codebox" id="exportBox" onclick="selAll()" title="Click to select all">Loading...</div>
+      <div style="display:flex;gap:.45rem"><button class="btn-a" style="margin-top:0" onclick="copyExport()">&#128203; Copy</button><button class="btn-b" style="margin-top:0" onclick="dlBackup()">&#8595; .json</button></div>
+    </div>
+    <div class="synpanel" id="synp-import">
+      <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.8rem;line-height:1.65">Paste exported data or upload a .json file. <strong style="color:var(--red)">Replaces current data.</strong></p>
+      <textarea class="imptxt" id="importArea" placeholder="Paste exported data here..."></textarea>
+      <label class="filelbl" for="fileIn">&#128193; Upload .json backup</label>
+      <input type="file" id="fileIn" accept=".json" style="display:none" onchange="loadFile(event)">
+      <button class="btn-b" onclick="doImport()">&#8595; Import &amp; Apply</button>
+    </div>
+  </div>
+</div>
+<!-- MODAL: FOCUS TIMER -->
+<div class="mo" id="timerModal">
+  <div class="md">
+    <div class="md-pull"></div>
+    <div class="mt2"><span>Focus Timer</span><button class="mc" onclick="closeFocusTimer()">&#x2715;</button></div>
+    <div class="fg2" style="margin-bottom:1.1rem">
+      <div class="fg"><label class="fl">Subject</label><select id="timerSubjectSelect" onchange="onTimerSubjectChange()"></select></div>
+      <div class="fg"><label class="fl">Material</label><select id="timerBookSelect"></select></div>
+    </div>
+    <div class="timer-display-wrap">
+      <div class="timer-display-big" id="timerDisplay">00:00</div>
+      <div class="timer-display-lbl" id="timerStatusLbl">Ready</div>
+    </div>
+    <div class="timer-presets">
+      <button class="timer-preset-btn" onclick="addPresetTime(1)">+1m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(5)">+5m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(10)">+10m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(15)">+15m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(20)">+20m</button>
+      <button class="timer-preset-btn" onclick="addPresetTime(30)">+30m</button>
+    </div>
+    <div class="timer-controls-row">
+      <button class="btn-a" id="timerStartBtn" style="margin-top:0" onclick="startTimer()">&#9654; Start</button>
+      <button class="btn-b" id="timerPauseBtn" style="margin-top:0;display:none" onclick="pauseTimer()">&#9208; Pause</button>
+      <button class="btn-danger" id="timerStopBtn" style="display:none" onclick="stopTimer()">&#9632; Stop</button>
+    </div>
+    <div class="sl" style="margin-top:1.3rem">Recent Sessions</div>
+    <div id="timerRecentSessions"></div>
+  </div>
+</div>
+<!-- MODAL: SCAN TOC -->
+<div class="mo" id="scanTOCModal">
+  <div class="md">
+    <div class="md-pull"></div>
+    <div class="mt2"><span>Scan Table of Contents</span><button class="mc" onclick="closeScanTOC()">&#x2715;</button></div>
+    <!-- Step instructions -->
+    <div id="scanInstructions" style="background:var(--sf2);border-radius:var(--r2);padding:.75rem .9rem;margin-bottom:1rem;font-size:.82rem;color:var(--tx2);line-height:1.7;box-shadow:var(--inner2)">
+      <span id="scanHintText">If you don't have photos of your table of contents, tap <strong style="color:var(--tx)">Take Photo</strong> below. You can take multiple photos for multi-page TOCs.</span>
+    </div>
+
+    <!-- Photos section -->
+    <div style="margin-bottom:1rem">
+      <div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx2);font-weight:600;margin-bottom:.45rem">TOC Photos <span id="tocPhotoCount" style="color:var(--tx3)"></span></div>
+      <div id="tocThumbnails" style="display:none;margin-bottom:.6rem"><div id="tocThumbGrid" class="toc-thumb-grid"></div></div>
+      <button class="photo-option-single" onclick="triggerTOCCamera()">
+        <span style="font-size:1.8rem">&#128247;</span>
+        <span style="font-family:'DM Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx)">Take Photo</span>
+        <span style="font-size:.74rem;color:var(--tx3)">Tap again after each page to add more</span>
+      </button>
+      <input type="file" id="tocPhotoInputCamera" accept="image/*" capture="environment" style="display:none" onchange="onTOCPhotoAdded(this)">
+    </div>
+
+    <!-- Prompt section -->
+    <div style="margin-bottom:.85rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem">
+        <div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tx2);font-weight:600">AI Prompt</div>
+        <span style="font-family:'DM Mono',monospace;font-size:.54rem;color:var(--tx3)">copy &rarr; paste in your AI app</span>
+      </div>
+      <textarea id="tocPromptDisplay" style="background:var(--sf2);border:none;border-radius:var(--r2);color:var(--tx2);font-family:'DM Mono',monospace;font-size:.6rem;line-height:1.6;padding:.75rem .85rem;width:100%;resize:none;height:100px;outline:none;box-shadow:var(--inner2);-webkit-text-fill-color:var(--tx2)" readonly></textarea>
+      <button class="scan-copy-btn" id="scanCopyBtn" onclick="copyTOCPrompt()" style="margin-top:.45rem">&#128203; Copy Prompt</button>
+      <div id="scanCopiedBadge" style="display:none;margin-top:.45rem" class="scan-prompt-copied">&#10003; Copied! Now choose an AI app below, paste the prompt, and attach your photos</div>
+    </div>
+
+    <!-- AI links — locked until prompt copied -->
+    <div class="ai-grid-unlock-hint" id="aiUnlockHint">Copy the prompt above first to unlock AI options</div>
+    <div class="ai-grid ai-grid-locked" id="aiGrid"></div>
+
+    <!-- Import ready block — appears after AI is opened -->
+    <div id="scanImportReadyBlock" style="display:none;margin-top:1.1rem;background:var(--grn-bg);border-radius:var(--r);padding:1rem 1.1rem;box-shadow:inset 0 0 0 1.5px rgba(82,183,136,.3)">
+      <div style="font-size:.84rem;color:var(--tx);font-weight:600;margin-bottom:.3rem">&#10003; Got your toc.json file?</div>
+      <div style="font-size:.78rem;color:var(--tx2);line-height:1.6;margin-bottom:.75rem">Once your AI gives you the downloaded file, tap below to import it.</div>
+      <button class="btn-a" style="margin-top:0" onclick="closeScanTOC();openImportTOC()">&#128193; Import TOC File Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: IMPORT TOC -->
+<div class="mo" id="importTOCModal">
+  <div class="md">
+    <div class="md-pull"></div>
+    <div class="mt2"><span>Import TOC File</span><button class="mc" onclick="closeImportTOC()">&#x2715;</button></div>
+    <p style="font-size:.84rem;color:var(--tx2);line-height:1.7;margin-bottom:.85rem">Attach the <strong style="color:var(--accent)">toc.json</strong> file your AI created — or paste the JSON below if you copied it instead.</p>
+
+    <label class="toc-import-file-zone" for="tocJsonFile">
+      <span class="tif-icon">&#128193;</span>
+      <span class="tif-title">Attach toc.json</span>
+      <span class="tif-sub">Tap to browse your files</span>
+      <span class="tif-name" id="tocFileNameDisplay"></span>
+    </label>
+    <input type="file" id="tocJsonFile" accept=".json,application/json" style="display:none" onchange="onTOCFileAttached(event)">
+
+    <div style="margin-bottom:.85rem">
+      <label class="fl" style="display:block;margin-bottom:.35rem">Or paste JSON here</label>
+      <textarea class="imptxt" id="tocJsonPaste" placeholder='[{"name":"Chapter 1","startPage":1},{"name":"Chapter 2","startPage":24}]' style="min-height:88px" oninput="updateImportBtn()"></textarea>
+    </div>
+
+    <div class="fg2" style="margin-bottom:.85rem">
+      <div class="fg full">
+        <label class="fl">Total Pages in Book <span style="color:var(--tx3);font-size:.56rem;font-weight:400">(for last section length)</span></label>
+        <input type="number" id="tocTotalPages" placeholder="e.g. 420" min="1">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.6rem">
+      <button class="btn-a" id="importTOCSaveBtn" style="margin-top:0" disabled onclick="processTOCImport()">&#10003; Import Sections</button>
+      <button class="btn-b" style="margin-top:0" onclick="closeImportTOC()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="toast" id="toast"></div>
+<script>
+// ══ ACCENT THEMES ══
+const THEMES=[
+  {name:'Gold',  accent:'#d4a843',br:'#f0c060',bg:'rgba(212,168,67,.10)',ring:'rgba(212,168,67,.22)'},
+  {name:'Violet',accent:'#9b7fff',br:'#b89fff',bg:'rgba(155,127,255,.10)',ring:'rgba(155,127,255,.22)'},
+  {name:'Teal',  accent:'#3bbfa0',br:'#5fd4b8',bg:'rgba(59,191,160,.10)',ring:'rgba(59,191,160,.22)'},
+  {name:'Rose',  accent:'#f06b8a',br:'#ff8fab',bg:'rgba(240,107,138,.10)',ring:'rgba(240,107,138,.22)'},
+  {name:'Sky',   accent:'#56b0e8',br:'#78c8f5',bg:'rgba(86,176,232,.10)',ring:'rgba(86,176,232,.22)'},
+];
+function applyTheme(t){
+  const r=document.documentElement.style;
+  r.setProperty('--accent',t.accent);r.setProperty('--accent-br',t.br);
+  r.setProperty('--accent-bg',t.bg);r.setProperty('--accent-ring',t.ring);
+}
+function renderAccentSwatches(){
+  const el=document.getElementById('accentSwatches');if(!el)return;
+  const cur=settings.accentIndex||0;
+  el.innerHTML=THEMES.map((t,i)=>`<div class="swatch ${i===cur?'active':''}" style="background:${t.accent}" title="${t.name}" onclick="setAccent(${i})"></div>`).join('');
+}
+function setAccent(i){settings.accentIndex=i;saveSetting('accentIndex',i);applyTheme(THEMES[i]);renderAccentSwatches();}
+
+// ══ STRATEGY DATA ══
+const STRATS=[
+  {id:'s0',icon:'🎯',name:'Active Recall',tag:'Test yourself instead of re-reading',badges:[{l:'Highest ROI',c:'go'},{l:'Memory',c:'gr'}],desc:'After studying a section, close the book and write everything you remember from scratch. Retrieval — not review — creates durable memories.',steps:['Read a section once, actively','Close the book — write every key point from memory','Open the book and mark what you missed','Study gaps only, then recall again the next day'],links:[{l:'Learning Scientists — Retrieval Practice',u:'https://www.learningscientists.org/retrieval-practice'},{l:'Ali Abdaal — Active Recall Guide',u:'https://aliabdaal.com/activerecallstudytechnique/'}]},
+  {id:'s1',icon:'🔁',name:'Spaced Repetition',tag:'Review at widening intervals before you forget',badges:[{l:'Science-Backed',c:'bl'},{l:'Long-Term',c:'gr'}],desc:'Review material right before you would naturally forget it. Intervals: 1 day → 3 days → 1 week → 2 weeks. One card per statute, threshold, or deadline.',steps:['Install Anki (free) or use Quizlet with spaced mode','Create 1 card per atomic fact — single Q&A','Review due cards every morning before new material','Flag hard cards — they appear more frequently'],links:[{l:'Ncase — How to Remember Anything Forever',u:'https://ncase.me/remember/'},{l:'Anki (free)',u:'https://apps.ankiweb.net/'}]},
+  {id:'s2',icon:'🧩',name:'Feynman Technique',tag:'Teach it simply — gaps reveal themselves',badges:[{l:'Deep Understanding',c:'pu'},{l:'Exam Reasoning',c:'go'}],desc:'Explain every concept as if teaching someone with no background. Where you stumble — that is your gap. Return to the source, fill it, re-explain until it flows.',steps:['Pick one concept and explain it without notes','Notice where you hesitate — those are your gaps','Study only those gaps','Re-explain from scratch'],links:[{l:'Farnam Street — The Feynman Technique',u:'https://fs.blog/feynman-technique/'}]},
+  {id:'s3',icon:'📝',name:'Practice Exams First',tag:'Fail fast to learn what actually matters',badges:[{l:'Diagnostic',c:'te'},{l:'Scenario-Based',c:'go'}],desc:'Take a full practice exam on Day 1 — even if you bomb it. This primes your brain to notice relevant information while studying.',steps:['Take a practice exam cold on Day 1','Note every type you struggled with — that is your roadmap','Target 75%+ before your actual exam','Retake different sets in the final 2 weeks'],links:[{l:'Mometrix PHR Practice Tests',u:'https://www.mometrix.com/academy/phr-practice-test/'},{l:'Pomofocus — Free Web Timer',u:'https://pomofocus.io/'}]},
+  {id:'s4',icon:'⏱️',name:'Pomodoro Technique',tag:'25-min sprints with intentional breaks',badges:[{l:'Execution',c:'gr'},{l:'Anti-Fatigue',c:'bl'}],desc:'Work in 25-min focused blocks, then take a 5-min break. After 4 blocks, take a 20-min break. Aim for 4-6 pomodoros per day.',steps:['Set a timer for 25 minutes — one task only','When it rings, mark one pomodoro done','Take a 5-min break','After 4 pomodoros take a 20-min break'],links:[{l:'Official Pomodoro Technique',u:'https://francescocirillo.com/pages/pomodoro-technique'},{l:'Pomofocus — Free Timer',u:'https://pomofocus.io/'}]},
+  {id:'s5',icon:'🗺️',name:'Mind Mapping',tag:'Visualize entire domains as connected webs',badges:[{l:'Visual',c:'pu'},{l:'Big-Picture',c:'te'}],desc:'Draw a central concept, branch out to related ideas, laws, exceptions, and connections.',steps:['Write the main topic in the center','Branch: major subtopics','Sub-branch: details, laws, formulas','Connect cross-domain branches'],links:[{l:'MindMeister (free)',u:'https://www.mindmeister.com/'},{l:'Coggle (simple free maps)',u:'https://coggle.it/'}]},
+  {id:'s6',icon:'⚡',name:'Application Practice',tag:'Practice choosing the best answer',badges:[{l:'Scenario-Based',c:'go'},{l:'Strategic',c:'bl'}],desc:'After learning any concept, write 3 scenario questions and practice selecting the most strategic response.',steps:['After studying any topic, write 3 scenario questions','Include 4 choices — 2 wrong, 2 plausible','Justify why one is best','Focus on what a strategic professional would do'],links:[{l:'SHRM Learning System',u:'https://www.shrm.org/certification/learning-system/'}]},
+];
+
+// ══ SPEED TEST PASSAGES ══
+const PASSAGES={
+  general:[
+    {label:'General Reading — Learning Science',
+     text:`The way we learn has changed dramatically over the past several decades. Research in cognitive science has revealed that the methods most students rely on are among the least effective strategies for retaining information over the long term.
+
+The most powerful learning technique discovered so far is retrieval practice. Rather than passively reviewing material, retrieval practice requires you to actively pull information from memory. Every time you attempt to recall something, whether you succeed or fail, you strengthen the neural pathways associated with that knowledge. The effort of struggling to remember is not frustration — it is learning itself happening in real time.
+
+Spacing is the second major insight from memory research. When you review material across multiple sessions spread over days or weeks, you retain it far better than if you studied the same total amount of time in a single sitting. This effect occurs because sleep plays a crucial role in memory consolidation. Each night your brain replays the day's learning and transfers it into long-term storage.
+
+A third principle is interleaving — mixing different topics within a single study session rather than focusing exclusively on one subject at a time. While blocked practice feels more comfortable and productive in the moment, interleaved practice produces stronger, more flexible knowledge that transfers better to real-world situations.
+
+Understanding these principles does not make studying easier. The most effective techniques often feel harder than passive review. The discomfort of struggling to recall something is not a sign that learning is failing. It is evidence that your brain is working precisely as it should.`,
+     questions:[
+       {q:'What does research suggest is the most powerful learning technique?',opts:['Highlighting key passages','Re-reading notes multiple times','Retrieval practice — actively recalling from memory','Studying in long single sessions'],ans:2},
+       {q:'What role does sleep play in learning according to the passage?',opts:['It has no measurable effect','It consolidates and transfers memories to long-term storage','It speeds up retrieval practice','It makes interleaving more effective'],ans:1},
+     ,
+       {q:'What does the passage say interleaving means?',opts:['Focusing on one subject for the whole session','Mixing different topics within a single study session','Reading the same material multiple times','Taking breaks between study blocks'],ans:1},
+       {q:'Why does blocked practice feel more productive according to the passage?',opts:['Because it produces better long-term results','Because it leads to faster memorization','Because it is easier and more comfortable','Because it reduces cognitive load permanently'],ans:2},
+       {q:'What is the spacing effect?',opts:['Leaving large gaps between words when reading','Reviewing material across multiple sessions spread over time','Spacing out individual words on a page for clarity','Studying for long uninterrupted sessions'],ans:1},
+       {q:'According to the passage, what happens every time you attempt to recall something?',opts:['You increase the chance of forgetting it later','You strengthen the neural pathways associated with that knowledge','You reduce the need to review it again','You create a permanent memory immediately'],ans:1},
+       {q:'Which study methods does the passage identify as LEAST effective?',opts:['Active recall and interleaving','Spaced review and retrieval practice','Re-reading notes, highlighting, and cramming','Teaching others and self-testing'],ans:2},]},
+    {label:'General Reading — Deep Work',
+     text:`In an era defined by constant connectivity, the ability to focus without distraction has become both increasingly rare and increasingly valuable. The cognitive scientist Cal Newport calls this ability deep work — the practice of concentrating on a cognitively demanding task without interruption for an extended period of time.
+
+The opposite of deep work is shallow work — logistical tasks that can be performed while distracted, that require little cognitive effort, and that create minimal long-term value. Email, routine meetings, and administrative tasks are the primary examples. The problem for most modern knowledge workers is that their days are dominated by shallow work, leaving little time for the focused effort that actually advances their goals.
+
+Research on elite performance supports this framework. Studies of top performers across music, chess, writing, and athletics consistently find that the most successful individuals devote more hours to undistracted, deliberately focused practice than their peers. The quality of a practice session matters more than the raw quantity of hours invested.
+
+Building deep work capacity is not passive — it must be deliberately trained. Newport recommends scheduling specific blocks of time for focused work, treating these blocks as fixed appointments that cannot be disrupted. During these sessions, all notifications are disabled and a single important task is addressed with full cognitive effort.
+
+The benefits extend beyond productivity. People who regularly engage in deep work report higher satisfaction with their output, a stronger sense of meaning in their professional lives, and a greater sense of control over their time and attention.`,
+     questions:[
+       {q:'What term does Cal Newport use for concentrated, cognitively demanding work?',opts:['Flow state','Deep work','Deliberate practice','Peak performance'],ans:1},
+       {q:'What characterizes shallow work according to the passage?',opts:['Highly cognitively demanding','Creates significant long-term value','Can be performed while distracted','Requires extended concentration'],ans:2},
+     ,
+       {q:'What dominates most modern knowledge workers days according to the passage?',opts:['Deep work and focused output','Shallow work with little cognitive effort','Strategic planning sessions','Creative problem solving'],ans:1},
+       {q:'What do studies of elite performers consistently find?',opts:['They work longer total hours than peers','They rely on natural talent more than practice','They devote more hours to undistracted focused practice than peers','They prefer working in groups'],ans:2},
+       {q:'How does Newport recommend treating deep work time blocks?',opts:['As flexible suggestions that can be moved','As fixed appointments that cannot be disrupted','As optional if other work is urgent','As best scheduled in the evening'],ans:1},
+       {q:'What should be disabled during a deep work session?',opts:['Background music','All notifications','Ambient lighting','Time-tracking software'],ans:1},
+       {q:'Beyond productivity, what do people who regularly do deep work report?',opts:['Higher income but lower satisfaction','More stress and less free time','Higher satisfaction, stronger sense of meaning, and greater control over attention','Better relationships but less focus at work'],ans:2},]},
+    {label:'General Reading — Growth Mindset',
+     text:`Psychologist Carol Dweck spent decades studying why some people succeed and others do not, despite similar levels of talent and opportunity. Her research revealed that one of the most powerful predictors of achievement is not intelligence or natural ability — it is the way people think about their own capabilities.
+
+People with a fixed mindset believe that their basic qualities such as intelligence, talent, and personality are carved in stone. They believe you either have these qualities or you do not. The fixed mindset creates an urgent need to prove oneself repeatedly, which leads people to avoid challenges, give up quickly when facing obstacles, and ignore useful feedback.
+
+People with a growth mindset, by contrast, believe that their basic qualities can be cultivated through dedication and hard work. They understand that intelligence and talent are starting points, not ceilings. They embrace challenges because they see them as opportunities to grow. They persist through setbacks because they understand that struggle is part of the learning process, not evidence of failure.
+
+Dweck's research showed that the mindset a person holds has direct consequences for their achievement. Students who were taught that the brain is like a muscle that grows stronger with use showed dramatically improved academic performance compared to students who received no such teaching.
+
+The good news is that mindsets are not permanent. People can learn to shift from a fixed to a growth orientation by paying attention to how they respond to challenge and failure, and deliberately choosing the growth response each time.`,
+     questions:[
+       {q:'What is the defining belief of someone with a fixed mindset?',opts:['Abilities grow through effort','Talent is just a starting point','Basic qualities are essentially unchangeable','Challenges lead to growth'],ans:2},
+       {q:'What did Dweck\'s research show about students taught the brain grows with use?',opts:['They became more risk-averse','Their performance declined slightly','Their academic performance improved dramatically','They avoided difficult tasks'],ans:2},
+     ,
+       {q:'What do growth mindset people believe about intelligence and talent?',opts:['They are fixed traits you either have or do not','They are irrelevant to achievement','They are starting points, not ceilings','They only matter in academic settings'],ans:2},
+       {q:'What does the fixed mindset create according to the passage?',opts:['A strong desire to learn from failure','An urgent need to prove oneself repeatedly','Greater resilience in the face of challenges','A focus on long-term growth over short-term results'],ans:1},
+       {q:'How do growth mindset people respond to setbacks?',opts:['They avoid future challenges to protect their confidence','They give up and reassess their goals','They persist because they understand struggle is part of learning','They seek external validation before continuing'],ans:2},
+       {q:'What does Dweck compare the brain to in her teaching?',opts:['A computer that needs regular updates','A muscle that grows stronger with use','A storage system with limited capacity','A network that expands through social connection'],ans:1},
+       {q:'According to the passage, are mindsets permanent?',opts:['Yes, they are set in childhood and cannot change','Yes, but only with professional help','No, people can shift from fixed to growth by choosing growth responses','No, they change automatically with age'],ans:2},]},
+  ],
+  phr:[
+    {label:'Dense Text — Key Employment Laws',
+     text:`The Fair Labor Standards Act establishes minimum wage, overtime pay, recordkeeping, and child labor standards affecting full-time and part-time workers in the private sector and in federal, state, and local governments. Covered nonexempt employees must receive overtime pay for hours worked over forty in a workweek at a rate not less than one and one-half times their regular rate of pay.
+
+The Family and Medical Leave Act entitles eligible employees of covered employers to take unpaid, job-protected leave for specified family and medical reasons, with continuation of group health insurance coverage under the same terms and conditions as if the employee had not taken leave. Eligible employees are entitled to twelve workweeks of leave in a twelve-month period for the birth of a child, the placement of a child for adoption or foster care, a serious health condition of the employee, or to care for a spouse, child, or parent with a serious health condition.
+
+Title VII of the Civil Rights Act of 1964 prohibits employment discrimination based on race, color, religion, sex, and national origin. The Equal Employment Opportunity Commission enforces federal laws prohibiting employment discrimination and applies to most employers with at least fifteen employees.
+
+The Americans with Disabilities Act prohibits discrimination against qualified individuals with disabilities in job application procedures, hiring, advancement, compensation, and other terms and conditions of employment. An employer must provide reasonable accommodation to an employee or applicant with a disability unless doing so would cause undue hardship.`,
+     questions:[
+       {q:'Under the FLSA, at what rate must overtime be paid for hours over 40 in a workweek?',opts:['Regular rate of pay','One and one-half times the regular rate','Double the regular rate','Two and one-half times the regular rate'],ans:1},
+       {q:'How many workweeks of FMLA leave are eligible employees generally entitled to per year?',opts:['Six workweeks','Eight workweeks','Ten workweeks','Twelve workweeks'],ans:3},
+     ,
+       {q:'What does Title VII of the Civil Rights Act prohibit discrimination based on?',opts:['Age, disability, and veteran status','Race, color, religion, sex, and national origin','Marital status, religion, and political affiliation','Citizenship, sex, and educational background'],ans:1},
+       {q:'What is the minimum number of employees for Title VII to apply to an employer?',opts:['Five or more','Ten or more','Fifteen or more','Twenty-five or more'],ans:2},
+       {q:'What must an employer provide under the Americans with Disabilities Act?',opts:['Full salary continuation during leave','Guaranteed promotion upon return from leave','Reasonable accommodation unless it causes undue hardship','Private workspace for all employees with disabilities'],ans:2},
+       {q:'Which federal law establishes minimum wage and child labor standards?',opts:['The Family and Medical Leave Act','The Fair Labor Standards Act','The Americans with Disabilities Act','Title VII of the Civil Rights Act'],ans:1},
+       {q:'What does "undue hardship" mean in the context of the ADA?',opts:['Any accommodation that costs money','Accommodation that is inconvenient for managers','Significant difficulty or expense relative to the employer size and resources','Any modification to standard job duties'],ans:2},]},
+    {label:'Dense Text — Labor Relations',
+     text:`The National Labor Relations Act grants employees the right to form, join, or assist labor organizations, to bargain collectively through representatives of their own choosing, and to engage in other concerted activities for the purpose of collective bargaining or mutual aid or protection. Employers are prohibited from interfering with, restraining, or coercing employees in the exercise of these rights.
+
+An unfair labor practice charge may be filed when an employer disciplines or discharges an employee for engaging in protected concerted activity. Protected concerted activity includes not only formal union organizing but also informal discussions among two or more employees about wages, hours, or working conditions.
+
+Progressive discipline is a structured approach to managing employee performance and conduct problems that uses increasingly severe steps to address deficiencies. A typical progressive discipline policy includes verbal warning, written warning, suspension, and termination. The purpose of progressive discipline is to give employees the opportunity to correct behavior before more serious consequences are imposed, and to create a documented record of performance issues.
+
+At-will employment, which is the default rule in most United States jurisdictions, allows employers to terminate employees for any reason or no reason at all, as long as the reason is not illegal. Exceptions include terminations that violate public policy, implied contracts, or the covenant of good faith and fair dealing.`,
+     questions:[
+       {q:'Which of the following is protected concerted activity under the NLRA?',opts:['An employee complaining privately in a personal diary','Two employees discussing their wages with each other','An employee refusing a lawful supervisor instruction','An employee filing an individual safety grievance'],ans:1},
+       {q:'What is the primary purpose of progressive discipline?',opts:['To immediately terminate underperforming employees','To give employees a chance to correct behavior before serious consequences','To document performance only for legal defense','To satisfy NLRA requirements'],ans:1},
+     ,
+       {q:'What does the NLRA grant employees the right to do?',opts:['File unlimited grievances without consequence','Form, join, or assist labor organizations and bargain collectively','Override management decisions through majority vote','Refuse any work assignment they disagree with'],ans:1},
+       {q:'What are the typical steps in progressive discipline in order?',opts:['Suspension, written warning, verbal warning, termination','Verbal warning, written warning, suspension, termination','Written warning, verbal warning, termination, suspension','Termination, suspension, written warning, verbal warning'],ans:1},
+       {q:'What is at-will employment?',opts:['Employment that requires a written contract to terminate','Employment where the employer can only terminate for documented cause','Employment where either party can end the relationship for any legal reason or no reason','Employment guaranteed for a fixed term'],ans:2},
+       {q:'When can an unfair labor practice charge be filed?',opts:['Only after a union has been formally certified','When an employer disciplines an employee for engaging in protected concerted activity','Whenever an employee disagrees with a disciplinary action','Only by union representatives on behalf of members'],ans:1},
+       {q:'Which of the following is an exception to at-will employment?',opts:['Poor performance documented over six months','A termination that violates public policy','A disagreement between employee and supervisor','Any termination during a performance improvement plan'],ans:1},]},
+    {label:'Dense Text — Compensation and Benefits',
+     text:`The Employee Retirement Income Security Act sets minimum standards for most voluntarily established retirement and health plans in private industry to provide protection for individuals in these plans. ERISA requires plans to provide participants with important information about plan features and funding, and establishes fiduciary responsibilities for those who manage and control plan assets.
+
+The Consolidated Omnibus Budget Reconciliation Act generally requires that group health plans sponsored by employers with twenty or more employees offer employees and their families a temporary extension of health coverage when coverage under the plan would otherwise end. Qualifying events for continuation coverage include voluntary or involuntary job loss, reduction in hours worked, and other life events.
+
+Job evaluation is the systematic process of assessing the relative worth of jobs within an organization for the purpose of establishing an internally equitable pay structure. Common methods include the ranking method, the classification method, the point factor method in which compensable factors are awarded points, and the factor comparison method.
+
+The Equal Pay Act of 1963 requires that men and women in the same establishment receive equal pay for equal work. The jobs need not be identical, but they must be substantially equal in terms of skill, effort, and responsibility performed under similar working conditions.`,
+     questions:[
+       {q:'COBRA continuation coverage generally applies to employers with how many or more employees?',opts:['Ten or more','Fifteen or more','Twenty or more','Fifty or more'],ans:2},
+       {q:'Which job evaluation method awards points based on the degree to which compensable factors are present?',opts:['Ranking method','Classification method','Point factor method','Factor comparison method'],ans:2},
+     ,
+       {q:'What does ERISA require retirement and health plans to provide participants?',opts:['A guaranteed minimum benefit amount','Important information about plan features and funding','Free legal representation in benefit disputes','Automatic enrollment for all eligible employees'],ans:1},
+       {q:'What is the purpose of job evaluation?',opts:['To assess individual employee performance','To determine how many employees to hire','To assess the relative worth of jobs for establishing equitable pay','To rank employees for promotion decisions'],ans:2},
+       {q:'What does the Equal Pay Act of 1963 require?',opts:['Equal benefits for all employees regardless of hours worked','Men and women in the same establishment receive equal pay for equal work','All employees doing similar work receive identical salaries','Pay transparency for all positions in an organization'],ans:1},
+       {q:'What must jobs be to require equal pay under the Equal Pay Act?',opts:['Identical in every respect','In the same department or division','Substantially equal in skill, effort, and responsibility under similar conditions','Assigned the same job title by the employer'],ans:2},
+       {q:'What fiduciary responsibility does ERISA establish?',opts:['Employers must match all employee retirement contributions','Those who manage plan assets bear fiduciary responsibilities for those assets','All plan participants must be offered the same investment options','Plan administrators must personally guarantee benefit payouts'],ans:1},]},
+  ],
+};
+const SPEED_CATS=[
+  {max:150,label:'Developing',color:'var(--red)',desc:'Below average speed. Most adults read 200-250 WPM. Significant gains are achievable with technique work.',tips:[{t:'Stop sub-vocalizing',d:'Suppress the inner voice that says every word. Let your eyes absorb words visually.',u:''},{t:'Use a finger as a pacer',d:'Move it slightly faster than comfortable. Your eyes follow naturally.',u:''},{t:'Read in word groups',d:'Process 2-3 words per eye fixation instead of one at a time.',u:''},{t:'Build daily reading volume',d:'Read easier material for 15-20 minutes daily to build fluency.',u:''},{t:'Try RSVP training',d:'Spreeder.com forces faster reading by showing words one at a time.',u:'https://www.spreeder.com'}]},
+  {max:250,label:'Average',color:'var(--accent)',desc:'Typical adult reading pace. Small technique adjustments can add 50-100 WPM.',tips:[{t:'Reduce regression',d:'Resist re-reading sentences. Trust your comprehension on the first pass.',u:''},{t:'Expand your visual span',d:'Focus on the center of a phrase and let peripheral vision capture surrounding words.',u:''},{t:'Preview before reading',d:'Skim headings and first sentences before reading fully.',u:''},{t:'Vary your pace',d:'Speed up through familiar content, slow down for new concepts.',u:''},{t:'Timed drills',d:'Set a 10-minute timer and try to read more pages than last session.',u:''}]},
+  {max:350,label:'Above Average',color:'var(--grn)',desc:'Faster than most adults. Refine your technique to push into 350+ while maintaining retention.',tips:[{t:'Train peripheral vision',d:'Practice pulling meaning from line edges without moving your eyes to the margins.',u:''},{t:'Use SQ3R',d:'Survey, Question, Read, Recite, Review. Pre-questioning a chapter speeds comprehension.',u:''},{t:'Read first and last sentences first',d:'Topic sentences carry 80% of meaning.',u:''},{t:'Challenge yourself with harder texts',d:'Dense material raises your ceiling on all reading.',u:''},{t:'Try BeeLine Reader',d:'Color gradients guide your eyes across lines, reducing regression.',u:'https://www.beelinereader.com'}]},
+  {max:500,label:'Fast Reader',color:'var(--ink)',desc:'Top tier of natural readers. Pair your speed with strong retention systems.',tips:[{t:'Comprehension is your constraint now',d:'Implement active recall after every major section.',u:''},{t:'Annotate minimally but deliberately',d:'Brief notes per section encode material without breaking flow.',u:''},{t:'Test comprehension immediately',d:'After each chapter, write the 3-5 most important points from memory.',u:''},{t:'Use Feynman checks',d:'If you cannot explain it plainly, your speed exceeded your absorption.',u:''},{t:'Push to 500+ with RSVP',d:'Spreeder trains your brain to process text at 500+ WPM.',u:'https://www.spreeder.com'}]},
+  {max:Infinity,label:'Speed Reader',color:'#b87fff',desc:'Exceptional speed. Ensure comprehension and retention match your pace.',tips:[{t:'Comprehension checks are non-negotiable',d:'Build structured recall into every session.',u:''},{t:'Slow down for complex material',d:'Downshift deliberately for dense concepts and technical language.',u:''},{t:'Teach what you read',d:'Explaining concepts is the most reliable comprehension test.',u:''},{t:'Pair speed with spaced repetition',d:'High reading volume only converts to knowledge with regular review.',u:'https://apps.ankiweb.net/'},{t:'Two-pass reading',d:'Speed-read for overview, then slow for deep processing.',u:''}]},
+];
+
+// ══ STATE ══
+let subs=[],active=null,cal={},mDate=null,speedHistory=[],selectedBookId=null;
+let editingBookId=null;
+let focusSessions=[];
+let timer={running:false,intervalId:null,totalSeconds:0,remainingSeconds:0,elapsedSeconds:0,subjectId:null,bookId:null,sessionId:null};
+let settings={name:'',dailyHours:0,sessionMins:45,defaultGoal:0,showBaseline:true,compact:false,accentIndex:0};
+let stPhase='idle',stType=null,stStart=null,stElapsed=0,stTimerID=null,stCdID=null,stCdVal=3,stAnswers={},stPassageIdx=0;
+let lastPassIdx={general:-1,phr:-1};
+let rowCounters={sec:0,dom:0};
+
+// ══ STORAGE ══
+function save(){
+  try{
+    localStorage.setItem('scc_subs',JSON.stringify(subs));
+    localStorage.setItem('scc_active',active||'');
+    localStorage.setItem('scc_cal',JSON.stringify(cal));
+    localStorage.setItem('scc_speed',JSON.stringify(speedHistory));
+    localStorage.setItem('scc_settings',JSON.stringify(settings));
+    localStorage.setItem('scc_focus',JSON.stringify(focusSessions));
+    const el=document.getElementById('settingsLastSave');
+    if(el) el.textContent='All data saved · '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  }catch(e){console.warn(e);}
+}
+function saveSetting(key,val){settings[key]=val;save();applySettings();}
+function load(){
+  try{
+    const a=localStorage.getItem('scc_subs');if(a)subs=JSON.parse(a);
+    const b=localStorage.getItem('scc_active');if(b)active=b;
+    const c=localStorage.getItem('scc_cal');if(c)cal=JSON.parse(c);
+    const sp=localStorage.getItem('scc_speed');if(sp)speedHistory=JSON.parse(sp);
+    const st=localStorage.getItem('scc_settings');if(st)settings={...settings,...JSON.parse(st)};
+    const fc=localStorage.getItem('scc_focus');if(fc)focusSessions=JSON.parse(fc);
+  }catch(e){console.warn(e);}
+}
+function applySettings(){
+  applyTheme(THEMES[settings.accentIndex||0]);
+  document.body.classList.toggle('compact',!!settings.compact);
+  const sub=document.getElementById('headerSub');
+  if(sub) sub.textContent=settings.name?'Welcome back, '+settings.name:'Learning Tracker';
+  const sn=document.getElementById('setName');if(sn)sn.value=settings.name||'';
+  const sh=document.getElementById('setHours');if(sh)sh.value=settings.dailyHours||'';
+  const ss=document.getElementById('setSession');if(ss)ss.value=settings.sessionMins||45;
+  const sdg=document.getElementById('setDefaultGoal');if(sdg)sdg.value=settings.defaultGoal||'';
+  const sb=document.getElementById('setShowBaseline');if(sb)sb.checked=settings.showBaseline!==false;
+  const sc=document.getElementById('setCompact');if(sc)sc.checked=!!settings.compact;
+  renderAccentSwatches();
+}
+
+// ══ EXPORT/IMPORT ══
+function buildExport(){return JSON.stringify({subs,active,cal,speedHistory,settings,focusSessions,v:6},null,2);}
+function openSync(tab){switchSyncTab(tab);document.getElementById('syncModal').classList.add('open');}
+function closeSync(){document.getElementById('syncModal').classList.remove('open');}
+function switchSyncTab(tab){
+  ['export','import'].forEach(t=>{document.getElementById('syntab-'+t).classList.toggle('on',t===tab);document.getElementById('synp-'+t).classList.toggle('on',t===tab);});
+  if(tab==='export')document.getElementById('exportBox').textContent=buildExport();
+}
+function selAll(){const el=document.getElementById('exportBox');const r=document.createRange();r.selectNodeContents(el);const s=window.getSelection();s.removeAllRanges();s.addRange(r);}
+function copyExport(){const d=buildExport();if(navigator.clipboard){navigator.clipboard.writeText(d).then(()=>showToast('Copied!')).catch(()=>fbCopy(d));}else fbCopy(d);}
+function fbCopy(t){const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');showToast('Copied!');}catch(e){}document.body.removeChild(ta);}
+function dlBackup(){const blob=new Blob([buildExport()],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='study-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url);showToast('Downloaded!');}
+function loadFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{document.getElementById('importArea').value=ev.target.result;showToast('File loaded — click Import');};r.readAsText(f);}
+function doImport(){
+  const raw=document.getElementById('importArea').value.trim();if(!raw){showToast('Nothing to import');return;}
+  try{const d=JSON.parse(raw);if(!d.subs||!Array.isArray(d.subs))throw new Error('bad');
+    subs=d.subs;active=d.active||(d.subs[0]&&d.subs[0].id)||null;cal=d.cal||{};speedHistory=d.speedHistory||[];
+    if(d.settings)settings={...settings,...d.settings};
+    focusSessions=d.focusSessions||[];
+    save();closeSync();renderAll();showToast('Imported!');}
+  catch(e){showToast('Invalid data — check paste');}
+}
+
+// ══ DATA MANAGEMENT ══
+function clearSpeedHistory(){if(!confirm('Clear all speed test history?'))return;speedHistory=[];save();renderSpeedHistory();showToast('Speed history cleared');}
+function confirmReset(){document.getElementById('resetConfirm').style.display='block';}
+function doReset(){
+  subs=[];active=null;cal={};speedHistory=[];selectedBookId=null;focusSessions=[];
+  settings={name:'',dailyHours:0,sessionMins:45,defaultGoal:0,showBaseline:true,compact:false,accentIndex:0};
+  localStorage.clear();document.getElementById('resetConfirm').style.display='none';
+  init();showToast('All data reset');
+}
+
+// ══ HELPERS ══
+const today=()=>new Date().toISOString().split('T')[0];
+const fmtDate=s=>new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const dLeft=s=>Math.max(0,Math.ceil((new Date(s+'T00:00:00')-new Date(today()+'T00:00:00'))/86400000));
+const getSub=()=>subs.find(s=>s.id===active)||null;
+function bTotal(b){return b.sections&&b.sections.length?b.sections.reduce((s,x)=>s+(x.pages||0),0):(b.total||0);}
+function bRead(b){return b.sections&&b.sections.length?b.sections.filter(x=>x.done).reduce((s,x)=>s+(x.pages||0),0):(b.read||0);}
+function get7DayAvg(bookId){
+  let tot=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);const ds=d.toISOString().split('T')[0];const bp=(cal[ds]||{}).bookPages||{};tot+=bookId?(bp[bookId]||0):Object.values(bp).reduce((s,v)=>s+v,0);}return tot/7;
+}
+function getDaysLogged(){return Object.values(cal).filter(l=>l.read||(l.bookPages&&Object.values(l.bookPages).some(v=>v>0))).length;}
+function getSpeedCat(wpm){return SPEED_CATS.find(c=>wpm<=c.max)||SPEED_CATS[SPEED_CATS.length-1];}
+function paceLabel(ratio,days){
+  if(days<3)return{label:'Building baseline',cls:'pb-n',icon:'...'};
+  if(ratio<=0.80)return{label:'Comfortable',cls:'pb-c',icon:'✓'};
+  if(ratio<=1.10)return{label:'On Track',cls:'pb-o',icon:'→'};
+  if(ratio<=1.40)return{label:'Aggressive',cls:'pb-a',icon:'!'};
+  return{label:'At Risk',cls:'pb-r',icon:'⚠'};
+}
+
+// ══ SUBJECTS ══
+function openNewSub(){['nsName','nsEmoji','nsDate'].forEach(id=>document.getElementById(id).value='');document.getElementById('newSubModal').classList.add('open');}
+function closeNewSub(){document.getElementById('newSubModal').classList.remove('open');}
+function addSubject(){
+  const name=document.getElementById('nsName').value.trim(),emoji=document.getElementById('nsEmoji').value.trim()||'📖',date=document.getElementById('nsDate').value;
+  if(!name){showToast('Enter a subject name');return;}
+  subs.push({id:'sub_'+Date.now(),name,emoji,date:date||null,books:[]});
+  active=subs[subs.length-1].id;closeNewSub();save();renderAll();showToast(emoji+' '+name+' created!');
+}
+function switchSub(id){active=id;selectedBookId=null;save();renderAll();}
+function delSub(id,e){
+  e.stopPropagation();if(subs.length<=1){showToast('Need at least one subject');return;}
+  subs=subs.filter(s=>s.id!==id);if(active===id)active=subs[0].id;selectedBookId=null;save();renderAll();
+}
+function renderSubTabs(){
+  const wrap=document.getElementById('subjectSwitcherWrap');
+  const sub=getSub();
+  // Update countdown pill in header
+  const pill=document.getElementById('cdPill');
+  if(sub&&sub.date){document.getElementById('daysLeft').textContent=dLeft(sub.date);document.getElementById('cdLbl').textContent='days · '+fmtDate(sub.date);pill.style.display='block';}
+  else pill.style.display='none';
+  if(!wrap)return;
+  if(!subs.length){wrap.innerHTML='';return;}
+  const deadlineBadge=sub&&sub.date?`<div class="sub-deadline-badge"><div class="sub-dl-n">${dLeft(sub.date)}</div><div class="sub-dl-l">days left</div></div>`:'';
+  wrap.innerHTML=`<div class="sub-switcher">
+    <select class="sub-select" onchange="switchSub(this.value)">
+      ${subs.map(s=>`<option value="${s.id}" ${s.id===active?'selected':''}>${s.emoji} ${s.name}</option>`).join('')}
+    </select>
+    <button class="add-sub-inline" onclick="openNewSub()">+ New Subject</button>
+    ${deadlineBadge}
+  </div>`;
+}
+
+// ══ BUILDER (sections + domains) ══
+function addRow(containerId,type,initVal){
+  rowCounters[type]++;
+  const id=type+'row'+rowCounters[type];
+  const container=document.getElementById(containerId);
+  const ph=container.querySelector('.builder-placeholder');if(ph)ph.remove();
+  const row=document.createElement('div');row.id=id;
+  if(type==='sec'){
+    row.className='brow sec-row';
+    row.innerHTML='<div class="sec-name-row">'
+      +'<input type="text" placeholder="Section or chapter name">'
+      +'<button class="rm-btn" onclick="rmRow(\''+id+'\',\'sec\')">✕</button>'
+      +'</div>'
+      +'<div class="sec-detail-row">'
+      +'<div class="sec-field"><label>Start Pg</label><input type="number" placeholder="1" min="1"></div>'
+      +'<div class="sec-field"><label>Pages</label><input type="number" placeholder="0" min="0" oninput="recalcBuilder(\'sec\')"></div>'
+      +'<div class="sec-date-field"><label>Due Date</label><input type="date"></div>'
+      +'</div>';
+  } else {
+    row.className='brow dom-row';
+    const pct=initVal||0;
+    row.innerHTML=`<input type="text" placeholder="Domain name" class="dom-name-inp">
+      <div class="slider-group">
+        <input type="range" min="0" max="100" value="${pct}" class="dom-slider" oninput="onDomSlider(this,'${id}')">
+        <span class="slider-pct" id="spct-${id}">${pct}%</span>
+      </div>
+      <button class="rm-btn" onclick="rmRow('${id}','dom')">✕</button>`;
+  }
+  container.appendChild(row);
+  recalcBuilder(type);
+}
+function rmRow(id,type){
+  document.getElementById(id)?.remove();
+  recalcBuilder(type);
+  const container=document.getElementById(type+'Rows');
+  if(container&&!container.querySelector('.brow')){
+    container.innerHTML='<div class="builder-placeholder">No '+(type==='sec'?'sections':'domains')+' added</div>';
+  }
+}
+function recalcBuilder(type){
+  const container=document.getElementById(type+'Rows');if(!container)return;
+  const rows=container.querySelectorAll('.brow');
+  if(type==='sec'){
+    let total=0;
+    rows.forEach(r=>{const pi=r.querySelectorAll('.sec-detail-row input[type=number]');const fallback=r.querySelectorAll('input[type=number]');const pagesEl=pi.length>=2?pi[1]:fallback[0];total+=(parseInt(pagesEl?.value)||0);});
+    const totEl=document.getElementById('secTotal'),totVal=document.getElementById('secTotalVal');
+    if(rows.length>0&&totEl&&totVal){totEl.style.display='block';totVal.textContent=total;const mi=document.getElementById('bTotal');if(mi){mi.value=total;mi.readOnly=true;mi.style.opacity='.5';}}
+    else{if(totEl)totEl.style.display='none';const mi=document.getElementById('bTotal');if(mi){mi.readOnly=false;mi.style.opacity='1';}}
+  } else {
+    // Domain: sum sliders and update indicator
+    let total=0;
+    rows.forEach(r=>{const sl=r.querySelector('.dom-slider');total+=(parseInt(sl?.value)||0);});
+    const ind=document.getElementById('domIndicator');
+    const indNum=document.getElementById('domIndNum');
+    const indMsg=document.getElementById('domIndMsg');
+    if(!ind)return;
+    if(rows.length===0){ind.style.display='none';return;}
+    ind.style.display='flex';
+    ind.className='dom-indicator '+(total===100?'exact':total>100?'over':'under');
+    if(indNum){indNum.textContent=total+'%';indNum.className='dom-ind-num '+(total===100?'exact':total>100?'over':'under');}
+    if(indMsg){
+      if(total===100)indMsg.textContent='✓ Perfect — all domains add up to 100%';
+      else if(total>100)indMsg.textContent='Over by '+(total-100)+'% — reduce some domains';
+      else indMsg.textContent='Under by '+(100-total)+'% — '+(rows.length===1?'set to 100%':'distribute the remaining percentage');
+    }
+  }
+}
+function onDomSlider(slider,rowId){
+  const pctEl=document.getElementById('spct-'+rowId);
+  if(pctEl)pctEl.textContent=(parseInt(slider.value)||0)+'%';
+  recalcBuilder('dom');
+}
+function autoBalance(){
+  const container=document.getElementById('domRows');if(!container)return;
+  const rows=[...container.querySelectorAll('.brow')];
+  if(!rows.length)return;
+  const each=Math.floor(100/rows.length);
+  const remainder=100-(each*rows.length);
+  rows.forEach((r,i)=>{
+    const sl=r.querySelector('.dom-slider');
+    const val=each+(i===0?remainder:0);
+    if(sl){sl.value=val;const id=r.id;const pctEl=document.getElementById('spct-'+id);if(pctEl)pctEl.textContent=val+'%';}
+  });
+  recalcBuilder('dom');
+}
+function getBuilderData(type){
+  const container=document.getElementById(type+'Rows');if(!container)return[];
+  const rows=container.querySelectorAll('.brow');const result=[];
+  rows.forEach(r=>{
+    const inputs=r.querySelectorAll('input');
+    if(type==='sec'){
+      const nameEl=r.querySelector('.sec-name-row input'),detailInps=r.querySelectorAll('.sec-detail-row input');
+      const name=(nameEl?nameEl.value.trim():''),startPage=parseInt(detailInps[0]?.value)||0,pages=parseInt(detailInps[1]?.value)||0,due=detailInps[2]?.value||'';
+      if(name||pages) result.push({id:'sec_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:name||'Untitled',startPage,pages,due,done:false});
+    } else {
+      const sl=r.querySelector('.dom-slider');
+      const name=inputs[0]?.value.trim(),weight=parseInt(sl?.value)||0;
+      if(name||weight) result.push({id:'dom_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:name||'Untitled',weight});
+    }
+  });
+  return result;
+}
+function clearBuilder(type){
+  const container=document.getElementById(type+'Rows');if(!container)return;
+  container.innerHTML='<div class="builder-placeholder">No '+(type==='sec'?'sections':'domains')+' added</div>';
+  const totEl=document.getElementById(type+'Total');if(totEl)totEl.style.display='none';
+  if(type==='sec'){const mi=document.getElementById('bTotal');if(mi){mi.value='';mi.readOnly=false;mi.style.opacity='1';}}
+}
+function populateBuilder(type,items){
+  clearBuilder(type);
+  items.forEach(item=>{
+    rowCounters[type]++;
+    const id=type+'row'+rowCounters[type];
+    const container=document.getElementById(type+'Rows');
+    const ph=container.querySelector('.builder-placeholder');if(ph)ph.remove();
+    const row=document.createElement('div');row.className='brow';row.id=id;
+    if(type==='sec'){
+      row.className='brow sec-row';
+      row.innerHTML='<div class="sec-name-row">'
+        +'<input type="text" value="'+(item.name||'')+'" placeholder="Section or chapter name">'
+        +'<button class="rm-btn" onclick="rmRow(\''+id+'\',\'sec\')">\u2715</button>'
+        +'</div>'
+        +'<div class="sec-detail-row">'
+        +'<div class="sec-field"><label>Start Pg</label><input type="number" value="'+(item.startPage||'')+'" placeholder="1" min="1"></div>'
+        +'<div class="sec-field"><label>Pages</label><input type="number" value="'+(item.pages||'')+'" placeholder="0" min="0" oninput="recalcBuilder(\'sec\')"></div>'
+        +'<div class="sec-date-field"><label>Due Date</label><input type="date" value="'+(item.due||'')+'"></div>'
+        +'</div>';
+    } else {
+      row.className='brow dom-row';
+      const pct=item.weight||0;
+      row.innerHTML=`<input type="text" value="${item.name||''}" placeholder="Domain name" class="dom-name-inp">
+        <div class="slider-group">
+          <input type="range" min="0" max="100" value="${pct}" class="dom-slider" oninput="onDomSlider(this,'${id}')">
+          <span class="slider-pct" id="spct-${id}">${pct}%</span>
+        </div>
+        <button class="rm-btn" onclick="rmRow('${id}','dom')">✕</button>`;
+    }
+    container.appendChild(row);
+  });
+  recalcBuilder(type);
+}
+
+// ══ ADD/EDIT BOOK MODAL ══
+function openAddBook(){
+  editingBookId=null;
+  document.getElementById('bookModalTitle').textContent='Add Study Material';
+  document.getElementById('bookModalSaveBtn').textContent='Add Material';
+  ['bTitle','bTotal','bLink'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('bGoal').value=settings.defaultGoal||'';
+  document.getElementById('bStart').value=today();
+  const sub=getSub();
+  document.getElementById('bEnd').value=(sub&&sub.date)?sub.date:'';
+  clearBuilder('sec');clearBuilder('dom');
+  rowCounters={sec:0,dom:0};
+  document.getElementById('bookModal').classList.add('open');
+}
+function openEditBook(bid,e){
+  if(e)e.stopPropagation();
+  const sub=getSub();if(!sub)return;
+  const book=sub.books.find(b=>b.id===bid);if(!book)return;
+  editingBookId=bid;
+  document.getElementById('bookModalTitle').textContent='Edit Material';
+  document.getElementById('bookModalSaveBtn').textContent='Save Changes';
+  document.getElementById('bTitle').value=book.title||'';
+  document.getElementById('bLink').value=book.link||'';
+  document.getElementById('bGoal').value=book.dailyGoal||'';
+  document.getElementById('bStart').value=book.start||today();
+  document.getElementById('bEnd').value=book.end||'';
+  const hasSecs=book.sections&&book.sections.length;
+  document.getElementById('bTotal').value=hasSecs?'':book.total||'';
+  clearBuilder('sec');clearBuilder('dom');rowCounters={sec:0,dom:0};
+  if(hasSecs) populateBuilder('sec',book.sections);
+  if(book.domains&&book.domains.length) populateBuilder('dom',book.domains);
+  document.getElementById('bookModal').classList.add('open');
+}
+function closeBookModal(){document.getElementById('bookModal').classList.remove('open');editingBookId=null;}
+function saveBook(){
+  const sub=getSub();if(!sub)return;
+  const title=document.getElementById('bTitle').value.trim();
+  const link=document.getElementById('bLink').value.trim();
+  const goalV=parseInt(document.getElementById('bGoal').value)||0;
+  const totalV=parseInt(document.getElementById('bTotal').value)||0;
+  const start=document.getElementById('bStart').value;
+  const end=document.getElementById('bEnd').value;
+  const sections=getBuilderData('sec');
+  const domains=getBuilderData('dom');
+  if(!title){showToast('Enter a title');return;}
+  if(!end){showToast('Set a goal end date');return;}
+  if(!sections.length&&!totalV){showToast('Enter total pages or add sections');return;}
+  if(domains.length>0){
+    const domTotal=domains.reduce((s,d)=>s+d.weight,0);
+    if(domTotal!==100){showToast('Domain weights must total 100% (currently '+domTotal+'%)');return;}
+  }
+
+  if(editingBookId){
+    const book=sub.books.find(b=>b.id===editingBookId);if(!book)return;
+    const hadSecs=book.sections&&book.sections.length;
+    // Preserve done state for existing sections by id
+    const existingDone={};if(hadSecs)book.sections.forEach(s=>existingDone[s.id]=s.done);
+    sections.forEach(s=>{if(existingDone[s.id]!==undefined)s.done=existingDone[s.id];});
+    book.title=title;book.dailyGoal=goalV;book.start=start||today();book.end=end;
+    book.sections=sections;book.domains=domains;book.link=link;
+    if(!sections.length){book.total=totalV;}
+    closeBookModal();save();renderBooks();updateStats();renderPaceAnalysis();showToast('Material updated!');
+  } else {
+    sub.books.push({id:'bk_'+Date.now(),title,link,total:totalV,read:0,start:start||today(),end,dailyGoal:goalV,sections,domains,notes:[],showSecs:true});
+    closeBookModal();save();renderBooks();updateStats();renderPaceAnalysis();showToast('Material added!');
+  }
+}
+
+// ══ BOOKS ══
+function selectBook(bid){
+  selectedBookId=(selectedBookId===bid)?null:bid;
+  renderBooks();
+}
+function delBook(bid,e){
+  if(e)e.stopPropagation();
+  const sub=getSub();if(!sub)return;
+  if(!confirm('Remove this material?'))return;
+  sub.books=sub.books.filter(b=>b.id!==bid);
+  if(selectedBookId===bid)selectedBookId=null;
+  save();renderBooks();updateStats();renderPaceAnalysis();
+}
+function toggleSection(bookId,secId,e){
+  if(e)e.stopPropagation();
+  const sub=getSub();if(!sub)return;
+  const book=sub.books.find(b=>b.id===bookId);if(!book)return;
+  const sec=book.sections.find(s=>s.id===secId);if(!sec)return;
+  sec.done=!sec.done;
+  const ds=today();if(!cal[ds])cal[ds]={read:false,strats:[],notes:'',bookPages:{}};if(!cal[ds].bookPages)cal[ds].bookPages={};
+  cal[ds].bookPages[bookId]=Math.max(0,(cal[ds].bookPages[bookId]||0)+(sec.done?sec.pages:-sec.pages));cal[ds].read=true;
+  save();renderBooks();updateStats();renderPaceAnalysis();showToast(sec.done?'✓ '+sec.name+' (+'+sec.pages+' pgs)':'Unmarked: '+sec.name);
+}
+function toggleSecList(bookId,e){if(e)e.stopPropagation();const sub=getSub();if(!sub)return;const b=sub.books.find(b=>b.id===bookId);if(!b)return;b.showSecs=!b.showSecs;save();renderBooks();}
+
+function renderNotesSection(b){
+  const bkNotes=b.notes||[];
+  const lbl='Notes'+(bkNotes.length?' ('+bkNotes.length+')':'');
+  const noNotes='<div style="font-family:\'DM Mono\',monospace;font-size:.64rem;color:var(--tx3);padding:.35rem .55rem">No notes yet</div>';
+  const items=bkNotes.map(function(n){
+    const safe=n.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<div class="note-item">'
+      +'<div class="note-item-body">'
+      +'<div class="note-item-date">'+fmtNoteDate(n.date)+'</div>'
+      +'<div class="note-item-text">'+safe+'</div>'
+      +'</div>'
+      +'<button class="note-del-btn" onclick="deleteNote(\''+b.id+'\',\''+n.id+'\',event)" title="Delete note">✕</button>'
+      +'</div>';
+  }).join('');
+  return '<div class="exp-section">'
+    +'<div class="exp-section-hdr"><span class="exp-section-lbl">'+lbl+'</span></div>'
+    +'<div class="notes-add-row">'
+    +'<textarea id="noteinput-'+b.id+'" placeholder="Add a note..." onclick="event.stopPropagation()" '
+    +'onkeydown="if(event.key===\'Enter\'&&(event.ctrlKey||event.metaKey)){event.preventDefault();addNote(\''+b.id+'\');}"></textarea>'
+    +'<button class="notes-add-btn" onclick="event.stopPropagation();addNote(\''+b.id+'\')">Add</button>'
+    +'</div>'
+    +(bkNotes.length?items:noNotes)
+    +'</div>';
+}
+function calcCompletion(b){
+  const left=bTotal(b)-bRead(b);if(!left)return null;
+  const latest=speedHistory[0];
+  const hrs=settings.dailyHours||0;
+  if(latest&&latest.studyWPM>0&&hrs>0){
+    const pph=latest.studyWPM*60/250;
+    const dailyCap=pph*hrs;
+    const days=Math.ceil(left/dailyCap);
+    const finish=new Date();finish.setDate(finish.getDate()+days);
+    return {days,finish,pph:Math.round(pph),dailyCap:Math.round(dailyCap),wpm:latest.studyWPM,hrs};
+  }
+  return null;
+}
+function openFocusTimerFor(bookId,subjectId,e){
+  if(e)e.stopPropagation();
+  openFocusTimer();
+  setTimeout(function(){
+    const ss=document.getElementById('timerSubjectSelect');
+    if(ss){ss.value=subjectId;onTimerSubjectChange();}
+    const bs=document.getElementById('timerBookSelect');
+    if(bs)bs.value=bookId;
+  },80);
+}
+function addNote(bookId){
+  const sub=getSub();if(!sub)return;
+  const book=sub.books.find(b=>b.id===bookId);if(!book)return;
+  const ta=document.getElementById('noteinput-'+bookId);if(!ta)return;
+  const text=ta.value.trim();
+  if(!text){showToast('Write something first');return;}
+  if(!book.notes)book.notes=[];
+  book.notes.unshift({id:'note_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),date:new Date().toISOString(),text});
+  save();renderBooks();showToast('Note added');
+}
+function deleteNote(bookId,noteId,e){
+  if(e)e.stopPropagation();
+  const sub=getSub();if(!sub)return;
+  const book=sub.books.find(b=>b.id===bookId);if(!book)return;
+  book.notes=(book.notes||[]).filter(n=>n.id!==noteId);
+  save();renderBooks();
+}
+function fmtNoteDate(iso){
+  const d=new Date(iso);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+}
+
+function renderBooks(){
+  const sub=getSub();
+  const wrap=document.getElementById('booksListWrap');
+
+  // TOC pending inline card
+  const tocPending=localStorage.getItem('scc_toc_pending');
+  const pendingCard=tocPending
+    ?`<div class="toc-pending-card" id="tocPendingInline" onclick="openImportTOC()">
+        <span class="tpc-icon">&#128193;</span>
+        <div class="tpc-body">
+          <div class="tpc-title">TOC Import Ready</div>
+          <div class="tpc-sub">Tap to import your toc.json file</div>
+        </div>
+        <span class="tpc-arrow">&#8594;</span>
+      </div>`
+    :'<div id="tocPendingInline" style="display:none"></div>';
+
+  if(!subs.length){
+    wrap.innerHTML=pendingCard+`<div class="first-launch">
+      <h2>Welcome to Study Command</h2>
+      <p>Create your first subject to start tracking your reading progress, pace, and study habits.</p>
+      <button class="btn-a" style="margin-top:0" onclick="openNewSub()">+ Create Your First Subject</button>
+    </div>`;
+    return;
+  }
+
+  if(!sub||!sub.books.length){
+    wrap.innerHTML=pendingCard+`<div class="page-hdr"><span class="page-hdr-title">Materials</span><button class="add-mat-btn" onclick="openAddBook()">+ Add Material</button></div>
+      <div class="empty"><div class="ei">📚</div>No materials yet — add your first one</div>`;
+    return;
+  }
+
+  const days=getDaysLogged();
+  let html=pendingCard+`<div class="page-hdr"><span class="page-hdr-title">Materials</span><button class="add-mat-btn" onclick="openAddBook()">+ Add Material</button></div>`;
+
+  html+=sub.books.map(b=>{
+    const tot=bTotal(b),rd=bRead(b),left=tot-rd,pct=tot>0?Math.round(rd/tot*100):0;
+    const dl=dLeft(b.end),need=dl>0?Math.ceil(left/dl):left;
+    const avg7=get7DayAvg(b.id),ratio=avg7>0?need/avg7:(need>0?999:0);
+    const done=pct>=100,behind=!done&&ratio>1.4,warn=!done&&ratio>1.1&&ratio<=1.4;
+    const pl=paceLabel(ratio,days);
+    const isSel=selectedBookId===b.id;
+
+    // Collapsed header
+    let card=`<div class="bkcard ${isSel?'selected':''}" id="bkcard-${b.id}">
+      <div class="bk-collapsed" onclick="selectBook('${b.id}')">
+        <div class="bk-collapsed-left">
+          <div class="bk-title">${b.title}</div>
+          <div class="bk-mini-progress">
+            <div class="bk-mini-bar"><div class="bk-mini-fill ${done?'done':''}" style="width:${pct}%"></div></div>
+            <span class="bk-mini-pct">${rd}/${tot} pgs · ${pct}%</span>
+            <span class="pace-badge ${pl.cls}">${pl.icon} ${pl.label}</span>
+          </div>
+        </div>
+        <div class="bk-collapsed-right">
+          <div class="bk-actions" onclick="event.stopPropagation()">
+            ${b.link?`<a class="bk-link-icon" href="${b.link}" target="_blank" rel="noopener" title="Open resource" onclick="event.stopPropagation()">&#128279;</a>`:''}
+            <button class="bk-edit-btn" onclick="openEditBook('${b.id}',event)" title="Edit">✎</button>
+            <button class="bk-del-btn" onclick="delBook('${b.id}',event)" title="Remove">✕</button>
+          </div>
+        </div>
+      </div>`;
+
+    if(isSel){
+      const vc=done?'ci':behind?'cr':warn?'ca':'cg';
+      const comp=calcCompletion(b);
+      card+=`<div class="bk-expanded">
+        <button class="start-reading-btn" onclick="openFocusTimerFor('${b.id}','${sub.id}',event)">&#9654; Start Reading Session</button>
+        ${comp?`<div class="completion-box">At <strong>${comp.wpm} WPM</strong> study speed and <strong>${comp.hrs}h/day</strong> available &rarr; finish in <strong>~${comp.days} day${comp.days!==1?'s':''}</strong> (~${comp.dailyCap} pgs/day &bull; ${comp.finish.toLocaleDateString('en-US',{month:'short',day:'numeric',year:comp.days>365?'numeric':undefined})})</div>`:''}
+        <div class="bkstats">
+          <div class="bs"><span class="bsl">Pgs/Day Needed</span><span class="bsv ${vc}">${done?'Done':need}</span></div>
+          <div class="bs"><span class="bsl">Remaining</span><span class="bsv">${left} / ${tot}</span></div>
+          <div class="bs"><span class="bsl">Deadline</span><span class="bsv">${fmtDate(b.end)} <span style="color:var(--tx3);font-size:.72em">(${dl}d)</span></span></div>
+        </div>
+        <div class="avg-row">
+          <div class="avg-item"><div class="avg-lbl">7-Day Avg</div><div class="avg-val" style="color:${avg7>0?'var(--grn)':'var(--tx3)'}">${avg7>0?avg7.toFixed(1)+'/d':'—'}</div></div>
+          <div class="avg-sep"></div>
+          <div class="avg-item"><div class="avg-lbl">Your Goal</div><div class="avg-val" style="color:${b.dailyGoal?'var(--accent)':'var(--tx3)'}">${b.dailyGoal?b.dailyGoal+'/d':'—'}</div></div>
+          <div class="avg-sep"></div>
+          <div class="avg-item"><div class="avg-lbl">App Suggests</div><div class="avg-val" style="color:var(--ink)">${avg7>0?Math.round(avg7)+'/d':'—'}</div></div>
+        </div>
+        <div class="bk-prog">
+          <div class="bk-prog-info"><span>${rd} pages read</span><span>${pct}%</span></div>
+          <div class="pbar"><div class="pfill ${done?'done':''}" style="width:${pct}%"></div></div>
+        </div>`;
+
+      // Sections
+      if(b.sections&&b.sections.length){
+        const shown=b.showSecs!==false,dc=b.sections.filter(s=>s.done).length;
+        card+=`<div class="exp-section">
+          <div class="exp-section-hdr">
+            <span class="exp-section-lbl">Sections (${dc}/${b.sections.length} done)</span>
+            <button class="toggle-btn" onclick="toggleSecList('${b.id}',event)">${shown?'Hide':'Show'}</button>
+          </div>`;
+        if(shown){
+          card+=b.sections.map(s=>`<div class="sec-item ${s.done?'si-done':''}" onclick="toggleSection('${b.id}','${s.id}',event)">
+            <div class="sec-chk">${s.done?'✓':''}</div>
+            <span class="sec-name">${s.name}</span>
+            <span class="sec-pgs">${s.pages} pgs</span>
+            ${s.due?`<span class="sec-due-lbl">${fmtDate(s.due)}</span>`:''}
+          </div>`).join('');
+        }
+        card+=`</div>`;
+      }
+
+      // Domains
+      if(b.domains&&b.domains.length){
+        const totalW=b.domains.reduce((s,d)=>s+d.weight,0)||100;
+        card+=`<div class="exp-section">
+          <div class="exp-section-hdr"><span class="exp-section-lbl">Study Domains</span></div>
+          ${b.domains.map(d=>`<div class="dom-item">
+            <span class="dom-name">${d.name}</span>
+            <div class="dom-bar-wrap"><div class="dom-bar-fill" style="width:${Math.min(100,d.weight/totalW*100)}%"></div></div>
+            <span class="dom-weight">${d.weight}%</span>
+          </div>`).join('')}
+        </div>`;
+      }
+
+      // Notes section — helper function avoids nested template literal
+      card+=renderNotesSection(b);
+
+      card+=`</div>`; // close bk-expanded
+    }
+
+    card+=`</div>`;
+    return card;
+  }).join('');
+
+  wrap.innerHTML=html;
+}
+
+function updateStats(){
+  const sub=getSub();
+  if(!sub||!sub.books.length){['st0','st1','st2','st3'].forEach(id=>document.getElementById(id).textContent=id==='st3'?'0%':'0');return;}
+  const tot=sub.books.reduce((s,b)=>s+bTotal(b),0),rd=sub.books.reduce((s,b)=>s+bRead(b),0);
+  const daily=sub.books.reduce((s,b)=>{const l=bTotal(b)-bRead(b);if(!l)return s;const d=dLeft(b.end);return s+(d>0?Math.ceil(l/d):l);},0);
+  document.getElementById('st0').textContent=sub.books.length;
+  document.getElementById('st1').textContent=tot-rd;
+  document.getElementById('st2').textContent=daily;
+  document.getElementById('st3').textContent=tot>0?Math.round(rd/tot*100)+'%':'0%';
+}
+
+// ══ PACE ANALYSIS ══
+function renderPaceAnalysis(){
+  const sub=getSub(),el=document.getElementById('paceBody');
+  if(!sub||!sub.books.length){
+    el.innerHTML='<span style="font-size:.82rem;color:var(--tx3)">Add materials to unlock pace analysis.</span>';
+    renderPaceBaseline(el);return;
+  }
+  const days=getDaysLogged(),avg7=get7DayAvg();
+  const totalNeed=sub.books.reduce((s,b)=>{const l=bTotal(b)-bRead(b);if(!l)return s;const d=dLeft(b.end);return s+(d>0?Math.ceil(l/d):l);},0);
+  const ratio=avg7>0?totalNeed/avg7:(totalNeed>0?999:0);
+  const pace=paceLabel(ratio,days);
+  const bookRows=sub.books.filter(b=>bTotal(b)-bRead(b)>0).map(b=>{
+    const l=bTotal(b)-bRead(b),d=dLeft(b.end),need=d>0?Math.ceil(l/d):l,avg=get7DayAvg(b.id),r=avg>0?need/avg:(need>0?999:0),pl=paceLabel(r,days);
+    return `<div class="pbook-row"><span class="pbook-name">${b.title}</span><span style="font-family:'DM Mono',monospace;font-size:.7rem">${need} pgs/d</span><span class="pace-badge ${pl.cls}" style="margin-top:0;margin-left:.35rem;padding:.1rem .35rem;font-size:.54rem">${pl.icon}</span></div>`;
+  }).join('');
+  const userGoals=sub.books.map(b=>b.dailyGoal||0).filter(g=>g>0);
+  const avgGoal=userGoals.length?Math.round(userGoals.reduce((s,g)=>s+g,0)/userGoals.length):null;
+  let honest='';
+  if(days>=3&&avg7>0){
+    if(totalNeed<=avg7)honest=`At your 7-day average of <strong style="color:var(--grn)">${avg7.toFixed(1)} pgs/day</strong>, you can comfortably meet all your deadlines.`;
+    else{const atRisk=sub.books.filter(b=>{const l=bTotal(b)-bRead(b);if(!l)return false;const d=dLeft(b.end);const need=d>0?Math.ceil(l/d):l;const a=get7DayAvg(b.id);return a>0&&need>a*1.1;});
+      honest=`Combined need is <strong style="color:var(--red)">${totalNeed} pgs/day</strong> vs your average of <strong>${avg7.toFixed(1)}</strong>. `;
+      if(atRisk.length>1)honest+=`Hitting all ${atRisk.length} deadlines simultaneously will be difficult at your current pace.`;
+      else if(atRisk.length)honest+=`Most at risk: <strong style="color:var(--accent)">${atRisk.map(b=>b.title).join(', ')}</strong>.`;
+    }
+    if(avgGoal&&avg7<avgGoal*0.7)honest+=` Your actual average (${Math.round(avg7)}) is well below your stated goal of ${avgGoal} pgs/day.`;
+  }else if(days<3)honest=`Log at least 3 reading days for a personalized assessment. (${days}/3 so far)`;
+  el.innerHTML=`
+    <div class="pace-row"><span class="pace-lbl">7-Day Average</span><span class="pace-val" style="color:${avg7>0?'var(--grn)':'var(--tx3)'}">${avg7>0?avg7.toFixed(1)+' pgs/day':'—'}</span></div>
+    ${avgGoal?`<div class="pace-row"><span class="pace-lbl">Your Daily Goal</span><span class="pace-val">${avgGoal} pgs/day</span></div>`:''}
+    <div class="pace-row"><span class="pace-lbl">Total Daily Need</span><span class="pace-val">${totalNeed} pgs/day</span></div>
+    <div class="pace-sep"></div>
+    <div class="pace-row"><span class="pace-lbl">Overall Status</span><span class="pace-badge ${pace.cls}" style="margin-top:0">${pace.icon} ${pace.label}</span></div>
+    ${bookRows?`<div style="margin-top:.15rem">${bookRows}</div>`:''}
+    ${honest?`<div class="pace-sep"></div><div class="honest-box"><span style="font-family:'DM Mono',monospace;font-size:.54rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)">Honest Assessment</span><p style="margin-top:.4rem;font-size:.8rem;color:var(--tx2);line-height:1.75">${honest}</p></div>`:''}`;
+  renderPaceBaseline(el);
+}
+function renderPaceBaseline(parentEl){
+  if(settings.showBaseline===false)return;
+  const sub=getSub();
+  // Deadline block (bold, above baseline)
+  const ddiv=document.createElement('div');
+  let deadlineHtml='<div class="pace-sep"></div><div style="padding:.65rem 0">';
+  deadlineHtml+='<div class="pace-deadline-hdr">Deadline</div>';
+  if(sub&&sub.books.length){
+    const booksWithEnd=sub.books.filter(b=>b.end&&bTotal(b)-bRead(b)>0);
+    if(booksWithEnd.length){
+      booksWithEnd.slice(0,4).forEach(b=>{
+        const dl=dLeft(b.end);
+        deadlineHtml+='<div class="pace-deadline-row"><span style="font-size:.78rem;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:.5rem">'+b.title+'</span>'
+          +'<span class="pace-deadline-date">'+fmtDate(b.end)+'</span>'
+          +'<span class="pace-deadline-days" style="margin-left:.45rem">('+dl+'d)</span></div>';
+      });
+    } else {
+      deadlineHtml+='<div style="font-size:.75rem;color:var(--tx3)">No active deadlines</div>';
+    }
+  } else {
+    deadlineHtml+='<div style="font-size:.75rem;color:var(--tx3)">No materials added yet</div>';
+  }
+  deadlineHtml+='</div>';
+  ddiv.innerHTML=deadlineHtml;
+  parentEl.appendChild(ddiv);
+
+  const latest=speedHistory[0]||null;
+  const div=document.createElement('div');
+  if(latest){
+    const hrs=settings.dailyHours,dailyEst=hrs>0?Math.round(latest.studyWPM*hrs*60/250):null;
+    div.innerHTML=`<div class="pace-sep"></div><div style="padding:.7rem 0"><div style="font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:.5rem">⚡ Measured Baseline · ${latest.date}</div><div class="bl-grid"><div class="bl-box"><div class="bl-val" style="color:var(--accent)">${latest.wpm}</div><div class="bl-lbl">WPM</div></div><div class="bl-box"><div class="bl-val" style="color:var(--grn)">${latest.pph}</div><div class="bl-lbl">Pgs/Hr</div></div><div class="bl-box"><div class="bl-val" style="color:var(--ink)">${latest.pp45}</div><div class="bl-lbl">Pgs/45m</div></div></div>${dailyEst?`<div style="margin-top:.48rem;font-family:'DM Mono',monospace;font-size:.58rem;color:var(--tx2);text-align:center">At ${hrs}h/day → ~<strong style="color:var(--accent)">${dailyEst} pages/day</strong> capacity</div>`:''}<div style="margin-top:.42rem;text-align:center"><span style="font-family:'DM Mono',monospace;font-size:.54rem;color:var(--accent);cursor:pointer" onclick="gotoPage('speedtest',document.querySelectorAll('.nt')[3])">⚡ Retake to update</span></div></div>`;
+  } else {
+    div.innerHTML=`<div class="pace-sep"></div><div style="text-align:center;padding:.55rem 0"><span style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--accent);cursor:pointer" onclick="gotoPage('speedtest',document.querySelectorAll('.nt')[3])">⚡ Take reading speed test to add measured baseline</span></div>`;
+  }
+  parentEl.appendChild(div);
+}
+
+// ══ CALENDAR ══
+function buildCal(){
+  const td=today();
+  const start=new Date();start.setDate(start.getDate()-14);start.setHours(0,0,0,0);
+  const end=new Date();end.setDate(end.getDate()+60);end.setHours(0,0,0,0);
+  const months={};const cur=new Date(start);
+  while(cur<=end){const mk=cur.getFullYear()+'-'+String(cur.getMonth()+1).padStart(2,'0');if(!months[mk])months[mk]={y:cur.getFullYear(),m:cur.getMonth(),days:[]};months[mk].days.push(new Date(cur));cur.setDate(cur.getDate()+1);}
+  const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];let html='';
+  Object.values(months).forEach(mo=>{
+    const mn=new Date(mo.y,mo.m,1).toLocaleDateString('en-US',{month:'long'});
+    html+=`<div class="msep">${mn} <span>${mo.y}</span></div><div class="dgrid">${DAYS.map(d=>`<div class="dh">${d}</div>`).join('')}`;
+    const fdow=mo.days[0].getDay();for(let i=0;i<fdow;i++)html+=`<div class="dc ec"></div>`;
+    mo.days.forEach(d=>{
+      const ds=d.toISOString().split('T')[0],log=cal[ds]||{};
+      const past=ds<td,isT=ds===td,fut=ds>td;
+      const hasLog=log.read||(log.bookPages&&Object.values(log.bookPages).some(v=>v>0));
+      const cls=isT?'today':past&&hasLog?'hlog':past?'past':fut?'fl':'';
+      let dots='';if(log.read)dots+=`<div class="dot rd"></div>`;
+      (log.strats||[]).forEach(sid=>{const i=STRATS.findIndex(s=>s.id===sid);if(i>=0)dots+=`<div class="dot s${i}"></div>`;});
+      const click=(isT||past)?`onclick="openDay('${ds}')"`:'';
+      html+=`<div class="dc ${cls}" ${click}><span class="dnum">${d.getDate()}</span><div class="ddots">${dots}</div></div>`;
+    });
+    const ldow=mo.days[mo.days.length-1].getDay();for(let i=ldow+1;i<7;i++)html+=`<div class="dc ec"></div>`;
+    html+=`</div>`;
+  });
+  document.getElementById('calGrid').innerHTML=html;updateStreak();renderWeek();renderForecast();
+}
+function updateStreak(){
+  let s=0;const cur=new Date();cur.setHours(0,0,0,0);
+  while(true){const ds=cur.toISOString().split('T')[0];if(cal[ds]&&cal[ds].read){s++;cur.setDate(cur.getDate()-1);}else break;}
+  document.getElementById('streakNum').textContent=s;
+  document.getElementById('totalDays').textContent=Object.values(cal).filter(l=>l.read).length+' days logged';
+}
+function renderWeek(){
+  const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);rows.push(d);}
+  document.getElementById('weekBox').innerHTML=rows.map(d=>{
+    const ds=d.toISOString().split('T')[0],log=cal[ds]||{};
+    const strs=(log.strats||[]).map(sid=>STRATS.find(s=>s.id===sid)?.name).filter(Boolean);
+    const totalPgs=Object.values(log.bookPages||{}).reduce((s,v)=>s+v,0),isTd=ds===today();
+    return `<div style="display:flex;gap:.5rem;align-items:flex-start;padding:.42rem 0;border-bottom:1px solid rgba(255,255,255,.04)"><div style="font-family:'DM Mono',monospace;font-size:.58rem;color:${isTd?'var(--accent)':'var(--tx3)'};width:66px;flex-shrink:0;padding-top:.1rem">${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div><div style="flex:1">${log.read?`<span style="font-size:.76rem;color:var(--grn)">✓${totalPgs>0?' '+totalPgs+' pgs':''}</span>`:`<span style="font-size:.76rem;color:var(--tx3)">—</span>`}${strs.length?`<div style="font-size:.68rem;color:var(--tx2);margin-top:.14rem">${strs.join(', ')}</div>`:''}${log.notes?`<div style="font-size:.65rem;color:var(--tx3);font-style:italic;margin-top:.1rem">"${log.notes}"</div>`:''}</div></div>`;
+  }).join('');
+}
+function renderForecast(){
+  const sub=getSub(),el=document.getElementById('forecastBox');
+  if(!sub||!sub.books.length){el.innerHTML='<span style="color:var(--tx3)">Add materials to see your forecast.</span>';return;}
+  const avg7=get7DayAvg(),days=getDaysLogged(),totalLeft=sub.books.reduce((s,b)=>s+Math.max(0,bTotal(b)-bRead(b)),0);
+  const urgent=sub.books.filter(b=>bTotal(b)-bRead(b)>0).sort((a,b)=>dLeft(a.end)-dLeft(b.end))[0];
+  let html='';
+  if(avg7>0&&days>=3){const d=Math.ceil(totalLeft/avg7);const fd=new Date();fd.setDate(fd.getDate()+d);html+=`<div style="margin-bottom:.6rem">At <strong style="color:var(--accent)">${avg7.toFixed(1)} pgs/day</strong>, all materials finish in <strong>${d} days</strong> (~${fd.toLocaleDateString('en-US',{month:'short',day:'numeric'})}).</div>`;}
+  else if(days<3)html+=`<div style="margin-bottom:.6rem;color:var(--tx3)">Log at least 3 days to see your forecast. (${days}/3)</div>`;
+  if(urgent){const dl=dLeft(urgent.end),lft=bTotal(urgent)-bRead(urgent),need=dl>0?Math.ceil(lft/dl):lft;html+=`<div style="padding:.6rem .75rem;background:var(--accent-bg);border-radius:var(--r2);box-shadow:inset 0 0 0 1px var(--accent-ring)">🎯 <strong style="color:var(--accent)">${urgent.title}</strong> — ${need} pgs/day by ${fmtDate(urgent.end)} (${dl}d)</div>`;}
+  if(!html)html='<span style="color:var(--tx3)">Keep logging daily to unlock forecast.</span>';
+  el.innerHTML=html;
+}
+
+// ══ DAY MODAL ══
+function openDay(ds){
+  mDate=ds;const log=cal[ds]||{};
+  document.getElementById('mdTitle').textContent=new Date(ds+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const sub=getSub(),bkEl=document.getElementById('mdBooks');
+  if(!sub||!sub.books.length){bkEl.innerHTML='<div class="blog-empty" style="font-family:\'DM Mono\',monospace;font-size:.68rem;color:var(--tx3);text-align:center;padding:.7rem;background:var(--sf2);border-radius:var(--r2);margin-bottom:.85rem">No materials yet.</div>';}
+  else{
+    const prev=log.bookPages||{};
+    bkEl.innerHTML=sub.books.map(b=>{
+      const tot=bTotal(b),rd=bRead(b),left=tot-rd,dl=dLeft(b.end),target=dl>0?Math.ceil(left/dl):0,prevV=prev[b.id]||0;
+      return `<div class="blog-row ${prevV>0?'has-v':''}" id="blrow-${b.id}"><div class="blog-info"><div class="blog-title">${b.title}</div><div class="blog-meta">${rd}/${tot} read · target ~${target} pgs/day</div></div><input class="blog-inp" type="number" id="blpg-${b.id}" min="0" max="${tot}" placeholder="0" value="${prevV||''}" oninput="updBRow('${b.id}')"><span class="blog-unit">pgs</span></div>`;
+    }).join('');
+  }
+  document.getElementById('stratChks').innerHTML=STRATS.map(s=>{const on=(log.strats||[]).includes(s.id);return `<div class="cr2 ${on?'on':''}" id="sr-${s.id}" onclick="toggleSR('${s.id}')"><div class="cb2" id="sc-${s.id}">${on?'✓':''}</div><span class="clbl">${s.icon} ${s.name}</span><span class="cbdg">${s.badges[0].l}</span></div>`;}).join('');
+  document.getElementById('mdNotes').value=log.notes||'';
+  document.getElementById('dayModal').classList.add('open');
+}
+function closeDay(){document.getElementById('dayModal').classList.remove('open');mDate=null;}
+function updBRow(bid){const i=document.getElementById('blpg-'+bid),r=document.getElementById('blrow-'+bid);r.classList.toggle('has-v',(parseInt(i.value)||0)>0);}
+function toggleSR(sid){const row=document.getElementById('sr-'+sid),chk=document.getElementById('sc-'+sid);const on=row.classList.toggle('on');chk.textContent=on?'✓':'';}
+function saveDay(){
+  if(!mDate)return;const sub=getSub();
+  const strats=STRATS.filter(s=>document.getElementById('sr-'+s.id)?.classList.contains('on')).map(s=>s.id);
+  const notes=document.getElementById('mdNotes').value.trim();
+  const newPages={};let totalPgs=0;
+  if(sub&&sub.books.length){sub.books.forEach(b=>{const i=document.getElementById('blpg-'+b.id);const v=i?Math.max(0,parseInt(i.value)||0):0;if(v>0)newPages[b.id]=v;totalPgs+=v;});}
+  const prev=(cal[mDate]||{}).bookPages||{};
+  if(sub&&sub.books.length){sub.books.forEach(b=>{if(b.sections&&b.sections.length)return;const oldV=prev[b.id]||0,newV=newPages[b.id]||0,delta=newV-oldV;if(delta)b.read=Math.min(bTotal(b),Math.max(0,(b.read||0)+delta));});}
+  cal[mDate]={read:totalPgs>0||strats.length>0,strats,notes,bookPages:newPages};
+  save();closeDay();buildCal();renderBooks();updateStats();renderPaceAnalysis();showToast(totalPgs>0?'+'+totalPgs+' pgs logged ✓':'Day logged ✓');
+}
+
+// ══ STRATEGIES ══
+function renderStrats(){
+  document.getElementById('stratList').innerHTML=STRATS.map(s=>`<div class="stcard" id="sc2-${s.id}"><div class="sthdr" onclick="toggleStrat('${s.id}')"><div class="sti">${s.icon}</div><div style="flex:1"><div class="stn">${s.name}</div><div class="sttag">${s.tag}</div><div class="stbdgs">${s.badges.map(b=>`<span class="sbg ${b.c}">${b.l}</span>`).join('')}</div></div><div class="stchv">▼</div></div><div class="stbody"><p class="stdesc">${s.desc}</p><ul class="ststeps">${s.steps.map((st,i)=>`<li><div class="stepn">${i+1}</div><span>${st}</span></li>`).join('')}</ul><div class="sl" style="margin-bottom:.4rem">Source Material</div><div class="stlinks">${s.links.map(l=>`<a class="stlnk" href="${l.u}" target="_blank" rel="noopener">↗ ${l.l}</a>`).join('')}</div></div></div>`).join('');
+}
+function toggleStrat(id){document.getElementById('sc2-'+id).classList.toggle('open');}
+
+// ══ SPEED TEST ══
+function showSTPhase(name){document.querySelectorAll('.st-phase').forEach(el=>el.classList.remove('on'));document.getElementById('stp-'+name)?.classList.add('on');stPhase=name;}
+function startSpeedTest(type){
+  stType=type;stAnswers={};stCdVal=3;
+  const arr=PASSAGES[type];let idx;
+  if(arr.length===1){idx=0;}else{do{idx=Math.floor(Math.random()*arr.length);}while(idx===lastPassIdx[type]);}
+  lastPassIdx[type]=idx;stPassageIdx=idx;
+  showSTPhase('countdown');document.getElementById('stCountNum').textContent='3';
+  stCdID=setInterval(()=>{stCdVal--;if(stCdVal>0){document.getElementById('stCountNum').textContent=stCdVal;}else{clearInterval(stCdID);beginReading();}},1000);
+}
+function beginReading(){
+  const p=PASSAGES[stType][stPassageIdx];
+  document.getElementById('stPassageLbl').textContent=p.label;
+  document.getElementById('stPassageText').textContent=p.text;
+  showSTPhase('reading');stStart=Date.now();stElapsed=0;
+  stTimerID=setInterval(()=>{stElapsed=Math.floor((Date.now()-stStart)/1000);const m=Math.floor(stElapsed/60),s=stElapsed%60;document.getElementById('stLiveTimer').textContent=m+':'+(s<10?'0':'')+s;},500);
+}
+function stopReading(){
+  clearInterval(stTimerID);stElapsed=Math.max(1,Math.floor((Date.now()-stStart)/1000));
+  showSTPhase('comprehension');
+  const p=PASSAGES[stType][stPassageIdx];
+  document.getElementById('stQuestions').innerHTML=p.questions.map((q,qi)=>`<div class="comp-q"><div class="comp-q-text">Q${qi+1}: ${q.q}</div><div class="comp-opts">${q.opts.map((opt,oi)=>`<div class="comp-opt" id="opt-${qi}-${oi}" onclick="selOpt(${qi},${oi})"><div class="comp-radio"></div>${opt}</div>`).join('')}</div></div>`).join('');
+}
+function selOpt(qi,oi){
+  stAnswers[qi]=oi;
+  const p=PASSAGES[stType][stPassageIdx];
+  for(let i=0;i<p.questions[qi].opts.length;i++)document.getElementById('opt-'+qi+'-'+i)?.classList.remove('sel');
+  document.getElementById('opt-'+qi+'-'+oi)?.classList.add('sel');
+}
+function submitComp(){
+  const p=PASSAGES[stType][stPassageIdx];let correct=0;
+  p.questions.forEach((q,qi)=>{const ua=stAnswers[qi];q.opts.forEach((_,oi)=>{const el=document.getElementById('opt-'+qi+'-'+oi);if(!el)return;if(oi===q.ans)el.classList.add('correct');else if(oi===ua&&ua!==q.ans)el.classList.add('wrong');});if(ua===q.ans)correct++;});
+  const passed=correct>=Math.ceil(p.questions.length*0.5),wordCount=p.text.trim().split(/\s+/).length,wpm=Math.round((wordCount/stElapsed)*60);
+  setTimeout(()=>showSpeedResults(wpm,passed),1100);
+}
+function showSpeedResults(wpm,passed){
+  const cat=getSpeedCat(wpm),sm=settings.sessionMins||45,studyWPM=Math.round(wpm*.70),pph=Math.round((studyWPM*60)/250),pps=Math.round((studyWPM*sm)/250);
+  document.getElementById('resWPM').textContent=wpm;
+  document.getElementById('resCat').textContent=cat.label;document.getElementById('resCat').style.color=cat.color;
+  document.getElementById('resDesc').textContent=cat.desc;
+  document.getElementById('resStudyWPM').textContent=studyWPM;
+  document.getElementById('resPPH').textContent=pph;
+  document.getElementById('resPP45').textContent=pps;
+  document.getElementById('resPP45Lbl').textContent='Pages / '+sm+' min';
+  const cs=document.getElementById('resComp');cs.textContent=passed?'✓ Comprehension passed':'✗ Review your comprehension';cs.className='cscore '+(passed?'cs-p':'cs-f');
+  document.getElementById('tipsHdr').textContent=cat.label+' — How to Improve';
+  document.getElementById('tipsList').innerHTML=cat.tips.map((t,i)=>`<div class="tip-item"><div class="tip-n">${i+1}</div><div><strong style="color:var(--tx)">${t.t}</strong> — ${t.d}${t.u?`<br><a class="tip-lnk" href="${t.u}" target="_blank" rel="noopener">↗ ${t.u}</a>`:''}</div></div>`).join('');
+  const entry={date:today(),wpm,studyWPM,pph,pp45:pps,type:stType,passed,cat:cat.label};
+  speedHistory.unshift(entry);if(speedHistory.length>10)speedHistory=speedHistory.slice(0,10);
+  save();renderSpeedHistory();renderPaceAnalysis();showSTPhase('results');
+}
+function resetTest(){clearInterval(stTimerID);beginReading();}
+function backToMenu(){showSTPhase('idle');renderSpeedHistory();}
+function renderSpeedHistory(){
+  const el=document.getElementById('speedHistBox');if(!el)return;
+  if(!speedHistory.length){el.innerHTML='<div class="empty"><div class="ei">⚡</div>No tests taken yet</div>';return;}
+  el.innerHTML='<div class="speed-hist"><div class="sh-hdr">Recent Tests</div>'+speedHistory.slice(0,6).map(h=>{const cat=getSpeedCat(h.wpm);return `<div class="sh-row"><span class="sh-date">${h.date}</span><span class="sh-type">${h.type==='general'?'General':'Dense'}</span><span class="sh-wpm">${h.wpm} WPM</span><span class="sh-cat" style="color:${cat.color}">${h.cat}</span><span class="sh-pass" style="color:${h.passed?'var(--grn)':'var(--red)'}">${h.passed?'✓':''}</span></div>`;}).join('')+'</div>';
+}
+
+// ══ FOCUS TIMER ══
+function openFocusTimer(){
+  if(timer.running)pauseTimer();
+  timer.totalSeconds=0;timer.remainingSeconds=0;timer.elapsedSeconds=0;
+  clearInterval(timer.intervalId);
+  updateTimerDisplay();
+  document.getElementById('timerStatusLbl').textContent='Add time to begin';
+  document.getElementById('timerStartBtn').style.display='';
+  document.getElementById('timerPauseBtn').style.display='none';
+  document.getElementById('timerPauseBtn').textContent='⏸ Pause';
+  document.getElementById('timerPauseBtn').onclick=pauseTimer;
+  document.getElementById('timerStopBtn').style.display='none';
+  document.getElementById('timerSubjectSelect').disabled=false;
+  document.getElementById('timerBookSelect').disabled=false;
+  const selSub=document.getElementById('timerSubjectSelect');
+  selSub.innerHTML=subs.map(s=>`<option value="${s.id}" ${s.id===active?'selected':''}>${s.emoji} ${s.name}</option>`).join('');
+  onTimerSubjectChange();
+  renderTimerSessions();
+  document.getElementById('timerModal').classList.add('open');
+}
+function closeFocusTimer(){
+  if(timer.running)pauseTimer();
+  document.getElementById('timerModal').classList.remove('open');
+}
+function onTimerSubjectChange(){
+  const subId=document.getElementById('timerSubjectSelect').value;
+  const sub=subs.find(s=>s.id===subId);
+  const selBook=document.getElementById('timerBookSelect');
+  if(!sub||!sub.books.length){
+    selBook.innerHTML='<option value="">No materials yet</option>';
+    selBook.disabled=true;
+  } else {
+    selBook.disabled=false;
+    selBook.innerHTML=sub.books.map(b=>`<option value="${b.id}">${b.title}</option>`).join('');
+  }
+}
+function addPresetTime(mins){
+  timer.totalSeconds+=mins*60;
+  timer.remainingSeconds+=mins*60;
+  updateTimerDisplay();
+  if(!timer.running)document.getElementById('timerStatusLbl').textContent='Ready — press Start';
+}
+function updateTimerDisplay(){
+  const s=Math.max(0,timer.remainingSeconds);
+  const m=Math.floor(s/60),sec=s%60;
+  document.getElementById('timerDisplay').textContent=(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+}
+function startTimer(){
+  if(timer.totalSeconds===0){showToast('Add time first using the preset buttons');return;}
+  const subId=document.getElementById('timerSubjectSelect').value;
+  const bookId=document.getElementById('timerBookSelect').value;
+  if(!bookId){showToast('Select a material first');return;}
+  timer.subjectId=subId;timer.bookId=bookId;timer.running=true;
+  timer.sessionId='sess_'+Date.now();timer.elapsedSeconds=0;
+  document.getElementById('timerStartBtn').style.display='none';
+  document.getElementById('timerPauseBtn').style.display='';
+  document.getElementById('timerStopBtn').style.display='';
+  document.getElementById('timerSubjectSelect').disabled=true;
+  document.getElementById('timerBookSelect').disabled=true;
+  document.getElementById('timerStatusLbl').textContent='Running...';
+  timer.intervalId=setInterval(()=>{
+    timer.remainingSeconds=Math.max(0,timer.remainingSeconds-1);
+    timer.elapsedSeconds++;
+    updateTimerDisplay();
+    if(timer.remainingSeconds===0){
+      clearInterval(timer.intervalId);timer.running=false;
+      logTimerSession('completed');
+      document.getElementById('timerStatusLbl').textContent='Session complete!';
+      document.getElementById('timerPauseBtn').style.display='none';
+      document.getElementById('timerStopBtn').style.display='none';
+      document.getElementById('timerStartBtn').style.display='';
+      document.getElementById('timerSubjectSelect').disabled=false;
+      document.getElementById('timerBookSelect').disabled=false;
+      showToast('Session complete! '+fmtMins(timer.elapsedSeconds)+' logged');
+    }
+  },1000);
+}
+function pauseTimer(){
+  clearInterval(timer.intervalId);timer.running=false;
+  document.getElementById('timerPauseBtn').textContent='▶ Resume';
+  document.getElementById('timerPauseBtn').onclick=resumeTimer;
+  document.getElementById('timerStatusLbl').textContent='Paused — '+fmtMins(timer.elapsedSeconds)+' elapsed';
+  logTimerSession('paused');
+}
+function resumeTimer(){
+  if(timer.remainingSeconds===0){showToast('Add more time to continue');return;}
+  timer.running=true;
+  document.getElementById('timerPauseBtn').textContent='⏸ Pause';
+  document.getElementById('timerPauseBtn').onclick=pauseTimer;
+  document.getElementById('timerStatusLbl').textContent='Running...';
+  timer.intervalId=setInterval(()=>{
+    timer.remainingSeconds=Math.max(0,timer.remainingSeconds-1);
+    timer.elapsedSeconds++;
+    updateTimerDisplay();
+    if(timer.remainingSeconds===0){
+      clearInterval(timer.intervalId);timer.running=false;
+      logTimerSession('completed');
+      document.getElementById('timerStatusLbl').textContent='Session complete!';
+      document.getElementById('timerPauseBtn').style.display='none';
+      document.getElementById('timerStopBtn').style.display='none';
+      document.getElementById('timerStartBtn').style.display='';
+      document.getElementById('timerSubjectSelect').disabled=false;
+      document.getElementById('timerBookSelect').disabled=false;
+      showToast('Session complete! '+fmtMins(timer.elapsedSeconds)+' logged');
+    }
+  },1000);
+}
+function stopTimer(){
+  clearInterval(timer.intervalId);timer.running=false;
+  logTimerSession('stopped');
+  document.getElementById('timerStartBtn').style.display='';
+  document.getElementById('timerPauseBtn').style.display='none';
+  document.getElementById('timerPauseBtn').textContent='⏸ Pause';
+  document.getElementById('timerPauseBtn').onclick=pauseTimer;
+  document.getElementById('timerStopBtn').style.display='none';
+  document.getElementById('timerSubjectSelect').disabled=false;
+  document.getElementById('timerBookSelect').disabled=false;
+  timer.totalSeconds=0;timer.remainingSeconds=0;
+  updateTimerDisplay();
+  document.getElementById('timerStatusLbl').textContent='Stopped — '+fmtMins(timer.elapsedSeconds)+' logged';
+  showToast(fmtMins(timer.elapsedSeconds)+' logged');
+}
+function fmtMins(seconds){
+  const m=Math.round(seconds/60);
+  return m===0?'<1 min':m+' min'+(m!==1?'s':'');
+}
+function logTimerSession(reason){
+  if(timer.elapsedSeconds<5)return;
+  const sub=subs.find(s=>s.id===timer.subjectId);
+  const book=sub&&sub.books.find(b=>b.id===timer.bookId);
+  const entry={id:timer.sessionId||('sess_'+Date.now()),date:new Date().toISOString(),
+    subjectId:timer.subjectId,subjectName:sub?sub.name:'—',
+    bookId:timer.bookId,bookTitle:book?book.title:'—',
+    seconds:timer.elapsedSeconds,reason};
+  const idx=focusSessions.findIndex(s=>s.id===entry.id);
+  if(idx>=0)focusSessions[idx]=entry;else focusSessions.unshift(entry);
+  if(focusSessions.length>50)focusSessions=focusSessions.slice(0,50);
+  const ds=today();
+  if(!cal[ds])cal[ds]={read:false,strats:[],notes:'',bookPages:{}};
+  cal[ds].read=true;
+  save();renderTimerSessions();
+}
+function renderTimerSessions(){
+  const el=document.getElementById('timerRecentSessions');if(!el)return;
+  const recent=focusSessions.slice(0,5);
+  if(!recent.length){el.innerHTML='<div style="font-family:\'DM Mono\',monospace;font-size:.64rem;color:var(--tx3);padding:.35rem 0">No sessions yet</div>';return;}
+  el.innerHTML=recent.map(s=>{
+    const d=new Date(s.date);
+    const when=d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+    return '<div class="timer-session-row">'
+      +'<div class="timer-session-info">'
+      +'<div class="timer-session-title">'+s.bookTitle+'</div>'
+      +'<div class="timer-session-meta">'+s.subjectName+' · '+when+' · '+s.reason+'</div>'
+      +'</div>'
+      +'<div class="timer-session-mins">'+fmtMins(s.seconds)+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+
+// ══ SCAN TOC ══
+const AI_OPTIONS=[
+  {name:'Claude',sub:'claude.ai',icon:'C',url:'https://claude.ai'},
+  {name:'ChatGPT',sub:'chat.openai.com',icon:'G',url:'https://chat.openai.com'},
+  {name:'Gemini',sub:'gemini.google.com',icon:'Gm',url:'https://gemini.google.com'},
+  {name:'Copilot',sub:'copilot.microsoft.com',icon:'Co',url:'https://copilot.microsoft.com'},
+  {name:'Perplexity',sub:'perplexity.ai',icon:'P',url:'https://www.perplexity.ai'},
+  {name:'Meta AI',sub:'meta.ai',icon:'M',url:'https://www.meta.ai'},
+];
+let tocPhotos=[];
+let tocPromptText='';
+
+function buildTOCPrompt(n){
+  const note=n===0?'I will attach one or more photos of a book table of contents when I send this message.':n>1?'I am attaching '+n+' photos covering different pages of the table of contents. Please analyse all photos together as one continuous table of contents.':'I have attached a photo of a book table of contents.';
+  return note+'\n\nPlease do the following:\n\n'
+    +'1. Extract EVERY chapter and section name along with its starting page number.\n\n'
+    +'2. Format the data as a JSON array with this exact structure:\n\n'
+    +'[\n  {"name":"Chapter 1: Introduction","startPage":1},\n  {"name":"Chapter 2: Core Concepts","startPage":24}\n]\n\n'
+    +'3. Provide the JSON as a downloadable file named toc.json. Do not paste the JSON as plain text — the user needs to download the file.\n\n'
+    +'4. After the user downloads the file, tell them exactly: "Done! Now return to your Study Command app. You will see a blue Import TOC button at the bottom of the screen. Tap it, upload the toc.json file you just downloaded, enter the total number of pages in your book, and tap Import Sections."';
+}
+
+function openScanTOC(){
+  tocPhotos=[];tocPromptText='';
+  // Reset inputs
+  const ci=document.getElementById('tocPhotoInputCamera');if(ci)ci.value='';
+  const gi=document.getElementById('tocPhotoInputGallery');if(gi)gi.value='';
+  renderThumbnails();
+  const irb=document.getElementById('scanImportReadyBlock');if(irb)irb.style.display='none';
+  // Generate initial prompt (0 photos — user will add them)
+  tocPromptText=buildTOCPrompt(0);
+  const pd=document.getElementById('tocPromptDisplay');if(pd)pd.value=tocPromptText;
+  const cb=document.getElementById('scanCopiedBadge');if(cb)cb.style.display='none';
+  const sb=document.getElementById('scanCopyBtn');if(sb)sb.textContent='Copy Prompt';
+  // Populate AI grid
+  const grid=document.getElementById('aiGrid');
+  if(grid) grid.innerHTML=AI_OPTIONS.map(function(ai){
+    return '<button class="ai-btn" onclick="selectAI(&quot;'+ai.name+'&quot;,&quot;'+ai.url+'&quot;)">'
+      +'<span class="ai-btn-icon">'+ai.icon+'</span>'
+      +'<div><div class="ai-btn-name">'+ai.name+'</div><div class="ai-btn-sub">'+ai.sub+'</div></div>'
+      +'</button>';
+  }).join('');
+  document.getElementById('scanTOCModal').classList.add('open');
+}
+function triggerTOCCamera(){document.getElementById('tocPhotoInputCamera').click();}
+
+function closeScanTOC(){document.getElementById('scanTOCModal').classList.remove('open');}
+function onTOCPhotoAdded(input){
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  const reader=new FileReader();
+  reader.onload=function(e){
+    tocPhotos.push({file:file,dataUrl:e.target.result});
+    input.value='';
+    renderThumbnails();
+    tocPromptText=buildTOCPrompt(tocPhotos.length);
+    const pd=document.getElementById('tocPromptDisplay');if(pd)pd.value=tocPromptText;
+    // Reset copy state — prompt changed, re-copy needed
+    const badge=document.getElementById('scanCopiedBadge');if(badge)badge.style.display='none';
+    const btn=document.getElementById('scanCopyBtn');if(btn)btn.textContent='Copy Prompt';
+    // Re-lock AI grid since prompt changed
+    const grid=document.getElementById('aiGrid');if(grid)grid.classList.add('ai-grid-locked');
+    const hint=document.getElementById('aiUnlockHint');if(hint){hint.textContent='Copy the prompt above first to unlock AI options';hint.classList.remove('unlocked');}
+    // Update photo count label
+    const cnt=document.getElementById('tocPhotoCount');if(cnt)cnt.textContent='('+tocPhotos.length+' added)';
+    // Update instructions
+    const inst=document.getElementById('scanHintText');
+    if(inst)inst.innerHTML='<strong style="color:var(--tx)">'+tocPhotos.length+' photo'+(tocPhotos.length!==1?'s':'')+' added.</strong> Tap Take Photo again to add more pages, or tap <strong style="color:var(--tx)">Copy Prompt</strong> when ready.';
+    showToast('Photo '+tocPhotos.length+' added');
+  };
+  reader.readAsDataURL(file);
+}
+function removeTOCPhoto(idx){
+  tocPhotos.splice(idx,1);renderThumbnails();
+  tocPromptText=buildTOCPrompt(tocPhotos.length);
+  const pd=document.getElementById('tocPromptDisplay');if(pd)pd.value=tocPromptText;
+  const badge=document.getElementById('scanCopiedBadge');if(badge)badge.style.display='none';
+  const btn=document.getElementById('scanCopyBtn');if(btn)btn.textContent='Copy Prompt';
+  const grid=document.getElementById('aiGrid');if(grid)grid.classList.add('ai-grid-locked');
+  const hint=document.getElementById('aiUnlockHint');if(hint){hint.textContent='Copy the prompt above first to unlock AI options';hint.classList.remove('unlocked');}
+  const cnt=document.getElementById('tocPhotoCount');if(cnt)cnt.textContent=tocPhotos.length?'('+tocPhotos.length+' added)':'';
+  const inst=document.getElementById('scanHintText');
+  if(inst)inst.innerHTML=tocPhotos.length
+    ?'<strong style="color:var(--tx)">'+tocPhotos.length+' photo'+(tocPhotos.length!==1?'s':'')+' added.</strong> Tap Take Photo again to add more pages, or tap <strong style="color:var(--tx)">Copy Prompt</strong> when ready.'
+    :'If you do not have photos of your table of contents, tap <strong style="color:var(--tx)">Take Photo</strong> below. You can take multiple photos for multi-page TOCs.';
+}
+function renderThumbnails(){
+  const wrap=document.getElementById('tocThumbnails');
+  const grid=document.getElementById('tocThumbGrid');
+  if(!tocPhotos.length){wrap.style.display='none';return;}
+  wrap.style.display='';
+  grid.innerHTML=tocPhotos.map(function(p,i){
+    return '<div class="toc-thumb"><img src="'+p.dataUrl+'" alt="TOC page '+(i+1)+'"><button class="toc-thumb-rm" onclick="removeTOCPhoto('+i+')">x</button></div>';
+  }).join('')+'<button class="toc-add-more" onclick="document.getElementById(\x27tocPhotoInput\x27).click()"><span>+</span><span>Add</span></button>';
+}
+function dataUrlToFile(dataUrl,filename){
+  const arr=dataUrl.split(','),mime=arr[0].match(/:(.*?);/)[1];
+  const bstr=atob(arr[1]);let n=bstr.length;const u8=new Uint8Array(n);
+  while(n--)u8[n]=bstr.charCodeAt(n);
+  return new File([u8],filename,{type:mime});
+}
+async function sharePromptWithPhotos(){
+  if(!tocPromptText){showToast('No prompt generated yet');return;}
+  const files=tocPhotos.map(function(p,i){return dataUrlToFile(p.dataUrl,'toc-page-'+(i+1)+'.jpg');});
+  const shareData={title:'Study Command — TOC Scan',text:tocPromptText,files:files};
+  const badge=document.getElementById('scanSharedBadge');
+  if(navigator.canShare&&navigator.canShare(shareData)){
+    try{
+      await navigator.share(shareData);
+      if(badge)badge.style.display='';
+      localStorage.setItem('scc_toc_pending','1');
+      checkTOCPending();
+    }catch(e){
+      if(e.name!=='AbortError'){
+        // Files not shareable — try text only
+        try{await navigator.share({title:shareData.title,text:shareData.text});
+          if(badge){badge.style.display='';badge.textContent='\u2713 Prompt shared — attach your photos manually in the AI app';}
+          localStorage.setItem('scc_toc_pending','1');checkTOCPending();
+        }catch(e2){copyTOCPrompt();}
+      }
+    }
+  } else if(navigator.share){
+    // Browser supports share but not files — share text only
+    try{
+      await navigator.share({title:shareData.title,text:shareData.text});
+      if(badge){badge.style.display='';badge.textContent='\u2713 Prompt shared — attach your '+files.length+' photo'+(files.length!==1?'s':'')+' manually';}
+      localStorage.setItem('scc_toc_pending','1');checkTOCPending();
+    }catch(e){if(e.name!=='AbortError')copyTOCPrompt();}
+  } else {
+    // Desktop — fall back to copy
+    copyTOCPrompt();
+    showToast('Prompt copied — attach photos manually in your AI app');
+  }
+}
+function copyTOCPrompt(){
+  if(!tocPromptText)return;
+  const ta=document.getElementById('tocPromptDisplay');
+  if(!ta)return;
+  ta.select();ta.setSelectionRange(0,99999);
+  let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+  if(!ok&&navigator.clipboard)navigator.clipboard.writeText(tocPromptText).catch(function(){});
+  if(window.getSelection)window.getSelection().removeAllRanges();
+
+  // Download photos to gallery if any were captured
+  if(tocPhotos.length>0){
+    tocPhotos.forEach(function(p,i){
+      const a=document.createElement('a');
+      a.href=p.dataUrl;
+      a.download='toc-page-'+(i+1)+'.jpg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+    showToast('Prompt copied + '+tocPhotos.length+' photo'+(tocPhotos.length!==1?'s':'')+' saved to downloads');
+  } else {
+    showToast('Prompt copied!');
+  }
+
+  const badge=document.getElementById('scanCopiedBadge');
+  if(badge){
+    badge.style.display='';
+    badge.textContent=tocPhotos.length>0
+      ?'✓ Copied + '+tocPhotos.length+' photo'+(tocPhotos.length!==1?'s':'')+' saved! Paste into your AI app and attach the photos.'
+      :'✓ Copied! Paste into your AI app.';
+  }
+  const btn=document.getElementById('scanCopyBtn');if(btn)btn.textContent='Copied!';
+  const grid=document.getElementById('aiGrid');if(grid)grid.classList.remove('ai-grid-locked');
+  const hint=document.getElementById('aiUnlockHint');
+  if(hint){hint.textContent='Now choose your AI, paste the prompt, and attach your photos';hint.classList.add('unlocked');}
+  const n=tocPhotos.length;
+  const inst=document.getElementById('scanHintText');
+  if(inst)inst.innerHTML=n>0
+    ?'Prompt copied and photos saved to your downloads! Open an AI below, paste the prompt, and attach the photos.'
+    :'Prompt copied! Open an AI below and paste the prompt.';
+}
+
+function selectAI(name,url){
+  localStorage.setItem('scc_toc_pending','1');
+  // Don't close the modal — just open the AI in a new tab.
+  // User can return to this tab, see the import button inside the modal,
+  // or close the modal manually and use the inline pending card.
+  window.open(url,'_blank');
+  showImportReadyInScanModal();
+}
+function showImportReadyInScanModal(){
+  const el=document.getElementById('scanImportReadyBlock');
+  if(el)el.style.display='';
+  checkTOCPending();
+}
+
+// ── IMPORT TOC ──
+function openImportTOC(){
+  document.getElementById('tocJsonPaste').value='';
+  document.getElementById('tocTotalPages').value='';
+  document.getElementById('tocFileNameDisplay').textContent='';
+  document.getElementById('tocJsonFile').value='';
+  const btn=document.getElementById('importTOCSaveBtn');if(btn)btn.disabled=true;
+  const bTotal=document.getElementById('bTotal');
+  if(bTotal&&bTotal.value)document.getElementById('tocTotalPages').value=bTotal.value;
+  document.getElementById('importTOCModal').classList.add('open');
+}
+function closeImportTOC(){
+  document.getElementById('importTOCModal').classList.remove('open');
+  localStorage.removeItem('scc_toc_pending');
+  checkTOCPending();
+}
+function onTOCFileAttached(event){
+  const file=event.target.files[0];if(!file)return;
+  document.getElementById('tocFileNameDisplay').textContent=file.name;
+  // Clear paste area since file takes priority
+  document.getElementById('tocJsonPaste').value='';
+  const btn=document.getElementById('importTOCSaveBtn');if(btn)btn.disabled=false;
+  showToast('File attached — tap Import Sections');
+}
+function updateImportBtn(){
+  const hasPaste=document.getElementById('tocJsonPaste').value.trim().length>0;
+  const hasFile=document.getElementById('tocJsonFile').files&&document.getElementById('tocJsonFile').files.length>0;
+  const btn=document.getElementById('importTOCSaveBtn');if(btn)btn.disabled=!(hasPaste||hasFile);
+}
+function importTOCFile(event){
+  // Legacy — handled by onTOCFileAttached now
+  onTOCFileAttached(event);
+}
+
+function processTOCImport(){
+  // If file is attached, read it; otherwise use paste area
+  const fileInput=document.getElementById('tocJsonFile');
+  if(fileInput&&fileInput.files&&fileInput.files[0]){
+    const reader=new FileReader();
+    reader.onload=function(e){_doTOCImport(e.target.result);};
+    reader.readAsText(fileInput.files[0]);
+    return;
+  }
+  _doTOCImport(document.getElementById('tocJsonPaste').value.trim());
+}
+function _doTOCImport(raw){
+  const totalPagesVal=parseInt(document.getElementById('tocTotalPages').value)||0;
+  if(!raw||!raw.trim()){showToast('No data to import — attach a file or paste JSON');return;}
+  let entries;
+  try{
+    // Strip markdown fences, backticks, and any preamble text the AI might have added
+    const bt='`';let clean=raw.replace(new RegExp(bt+bt+bt+'json\\n?','gi'),'').replace(new RegExp(bt+bt+bt+'\\n?','gi'),'').trim();
+    // Extract JSON array if buried in text
+    const arrMatch=clean.match(/\[[\s\S]*\]/);
+    if(arrMatch)clean=arrMatch[0];
+    entries=JSON.parse(clean);
+    if(!Array.isArray(entries)||!entries.length)throw new Error('empty');
+    // Normalize field names — AIs use varied key names
+    entries=entries.map(function(e){
+      const name=e.name||e.title||e.chapter||e.section||e.heading||'Untitled';
+      const startPage=parseInt(e.startPage||e.start_page||e.page||e.pageNumber||e.page_number||e.start||0)||0;
+      return {name:String(name).trim(),startPage};
+    });
+    // Sort by startPage ascending so order is correct
+    entries.sort(function(a,b){return a.startPage-b.startPage;});
+  }catch(e){showToast('Could not parse JSON — make sure it is a valid array');return;}
+
+  // Calculate page counts from consecutive start pages
+  const sections=entries.map(function(entry,i){
+    const nextStart=i<entries.length-1
+      ?entries[i+1].startPage
+      :(totalPagesVal>0?totalPagesVal+1:entry.startPage+30);
+    const pages=Math.max(1,nextStart-entry.startPage);
+    return {
+      id:'sec_'+Date.now()+'_'+i,
+      name:entry.name,
+      startPage:entry.startPage,
+      pages:pages,
+      due:'',
+      done:false
+    };
+  });
+
+  // Populate section builder
+  clearBuilder('sec');
+  rowCounters.sec=0;
+  populateBuilder('sec',sections);
+  // Update total pages in form
+  const total=sections.reduce((s,sec)=>s+sec.pages,0);
+  const bTotal=document.getElementById('bTotal');
+  if(bTotal){bTotal.value=total;bTotal.readOnly=true;bTotal.style.opacity='.5';}
+
+  closeImportTOC();
+  if(!document.getElementById('bookModal').classList.contains('open'))openAddBook();
+  showToast(sections.length+' sections imported!');
+}
+
+function checkTOCPending(){
+  const pending=localStorage.getItem('scc_toc_pending');
+  const el=document.getElementById('tocPendingInline');
+  if(el)el.style.display=pending?'':'none';
+}
+
+// ══ NAV ══
+function gotoPage(name,el){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(t=>t.classList.remove('on'));
+  document.getElementById('pg-'+name)?.classList.add('on');
+  if(el)el.classList.add('on');
+  if(name==='calendar')buildCal();
+  if(name==='speedtest')renderSpeedHistory();
+}
+function initNavTabs(){
+  // iOS fix: touches on overflow-scroll containers get swallowed as scroll gestures.
+  // Track if finger moved — if not, treat touchend as a definitive tap.
+  document.querySelectorAll('.nt').forEach(tab=>{
+    let moved=false;
+    tab.addEventListener('touchstart',()=>{moved=false;},{passive:true});
+    tab.addEventListener('touchmove',()=>{moved=true;},{passive:true});
+    tab.addEventListener('touchend',(e)=>{
+      if(moved)return;
+      e.preventDefault();
+      tab.click();
+    });
+  });
+}
+
+// ══ TOAST ══
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+
+// ══ MODAL CLOSE ON OVERLAY ══
+['dayModal','newSubModal','syncModal','bookModal','timerModal','scanTOCModal','importTOCModal'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');if(id==='dayModal')mDate=null;if(id==='bookModal')editingBookId=null;if(id==='timerModal'&&timer.running)pauseTimer();}});
+});
+
+// ══ RENDER ALL ══
+function renderAll(){
+  renderSubTabs();renderBooks();updateStats();renderPaceAnalysis();renderStrats();renderSpeedHistory();applySettings();
+  const sub=getSub();
+  const bStart=document.getElementById('bStart');if(bStart)bStart.value=today();
+  const bEnd=document.getElementById('bEnd');if(bEnd&&sub&&sub.date)bEnd.value=sub.date;
+}
+
+// ══ INIT ══
+function init(){
+  load();
+  if(!active||!subs.find(s=>s.id===active))active=subs.length?subs[0].id:null;
+  renderAll();
+  initNavTabs();
+  checkTOCPending();
+}
+init();
+</script>
+</body>
+</html>
